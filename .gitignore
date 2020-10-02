@@ -1,0 +1,7 @@
+Makefile
+*.output
+lex.yy.c
+lex.yy.o
+*.tab.h
+*.tab.c
+inst

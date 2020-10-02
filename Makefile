@@ -1,7 +1,7 @@
 CC = gcc -Wall
 
 inst : inst.tab.c lex.yy.o 
-	gcc -o inst inst.tab.c lex.yy.o -ll
+	gcc -o inst inst.tab.c lex.yy.o -lfl
 
 lex.yy.o : lex.yy.c inst.tab.h  
 
