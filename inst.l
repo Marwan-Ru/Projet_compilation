@@ -13,6 +13,8 @@
 \-			            { return(MOINS); }
 \*			            { return(MULT); }
 \/		            	{ return(DIV); }
+\%                      { return(MOD); }
+\^                      { return(EXP); }
 \(		            	{ return(PO); }
 \)		            	{ return(PF); }
 ;		            	{ return(PV); }
@@ -25,6 +27,9 @@
 \!                      { return(NOT); }
 \&                      { return(AND); }
 \|                      { return(OR); }
+\.                      { return(POINT); }
+\[                      { return(CO); }
+\]                      { return(CF); }
 [\n]
 .
 %%

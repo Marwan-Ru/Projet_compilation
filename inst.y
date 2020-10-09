@@ -13,11 +13,13 @@ void yyerror (char const *s) {
 %token IDF
 %token INT
 %token PLUS MOINS
-%token MULT DIV
-%token PO PF
+%token MULT DIV MOD
+%token EXP
+%token PO PF CO CF
 %token PV
 %token INF SUP INFE SUPE EGAL DIF 
 %token OR AND NOT
+%token POINT
 
 %%
 programme : PROG corps
@@ -40,6 +42,8 @@ affectation : variable OPAFF expression
 	    	;
 
 variable : IDF
+		 | variable POINT IDF
+		 | variable CO expression CF
 	 	 ;
 
 expression : expr_pm
@@ -51,15 +55,20 @@ expr_pm : expr_pm PLUS expr_md
 		| expr_md
 		;
 
-expr_md : expr_md MULT expr_base
-		| expr_md DIV expr_base
-		| expr_base
+expr_md : expr_md MULT expr_exp
+		| expr_md DIV expr_exp
+		| expr_md MOD expr_exp
+		| expr_exp
 		;
+
+expr_exp : expr_exp EXP expr_base
+		 | expr_base
+		 ;
 
 expr_base : INT
 		  | MOINS INT
-		  | IDF
-		  | MOINS IDF
+		  | variable
+		  | MOINS variable
 	  	  | PO expr_pm PF
 	  	  | MOINS PO expr_pm PF
 	  	  ;
@@ -87,6 +96,8 @@ expr_bool_not : NOT expr_bool_base
 expr_bool_base : PO expr_bool_or PF
 			   | expr_comp
 			   ;
+
+			   
 
 %%
 
