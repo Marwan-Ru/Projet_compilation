@@ -19,7 +19,8 @@ void yyerror (char const *s) {
 %token PV
 %token INF SUP INFE SUPE EGAL DIF 
 %token OR AND NOT
-%token POINT
+%token POINT VIRG
+%token SI ALORS SINON
 
 %%
 programme : PROG corps
@@ -36,9 +37,12 @@ suite_liste_inst : instruction PV
 		 		 ;
 
 instruction : affectation
+			| fonction
+			| condition
 	    	;
 
 affectation : variable OPAFF expression
+			| variable OPAFF fonction
 	    	;
 
 variable : IDF
@@ -97,7 +101,21 @@ expr_bool_base : PO expr_bool_or PF
 			   | expr_comp
 			   ;
 
-			   
+
+
+
+fonction : IDF PO suite_args PF
+		 ;
+
+suite_args : expression
+		   | suite_args VIRG expression
+		   ;
+
+
+
+condition : SI expr_bool_or ALORS liste_instructions
+		  | SI expr_bool_or ALORS liste_instructions SINON liste_instructions
+		  ;
 
 %%
 
