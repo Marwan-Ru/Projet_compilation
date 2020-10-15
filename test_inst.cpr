@@ -21,4 +21,13 @@ begin
 		x <- y-3;
 		x <- 0;
 	end;
+	while x+5 > -8 do begin x <- y + -2; end;
+	do begin x <- y + -2; x <- 0; end while x+5 > -8 | !(i=0);
+	while y do begin x <- 0; end;
+	while z do
+	begin
+		x <- -test + test / -3 * -(4 + 2);
+		x <- y-3;
+		x <- 0;
+	end;
 end
