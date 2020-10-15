@@ -15,4 +15,10 @@ begin
 	if x+5 > -8 then begin x <- y + -2; end;
 	if x+5 > -8 | !(i=0) then begin x <- y + -2; x <- 0; end;
 	if y then begin x <- 0; end else begin x <- 1; end;
+	if z then
+	begin
+		x <- -test + test / -3 * -(4 + 2);
+		x <- y-3;
+		x <- 0;
+	end;
 end
