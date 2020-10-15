@@ -35,8 +35,8 @@
 "else"                          { return(SINON); }
 "while"                         { return(TANTQUE); }
 "do"                            { return(FAIRE); }
+"return"                        { return(RETOURNE); }
 [a-zA-Z][a-zA-Z0-9\_]* 	        { return(IDF); }
->>>>>>> d406c16945f5f0bc3a9b122636aff46ef1487fe7
 [\n]
 .
 %%
