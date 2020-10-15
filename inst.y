@@ -120,5 +120,9 @@ condition : SI expr_bool_or ALORS liste_instructions
 %%
 
 int main(void) {
-  yyparse();
+	#if YYDEBUG
+    yydebug = 1;
+    #endif
+	yyparse();
+	return(0);
 }
