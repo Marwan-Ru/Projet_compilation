@@ -113,15 +113,19 @@ suite_args : expression
 
 
 
-condition : SI expr_bool_or ALORS liste_instructions
-		  | SI expr_bool_or ALORS liste_instructions SINON liste_instructions
+condition : SI expr_si ALORS liste_instructions
+		  | SI expr_si ALORS liste_instructions SINON liste_instructions
 		  ;
+
+expr_si : expr_bool_or
+		| variable
+		;
 
 %%
 
 int main(void) {
 	#if YYDEBUG
-    yydebug = 1;
+    yydebug = 0;
     #endif
 	yyparse();
 	return(0);
