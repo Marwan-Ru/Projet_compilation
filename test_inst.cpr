@@ -5,13 +5,16 @@ begin
 	x <- -test + test / -3 * -(4 + 2);
 	x <- y-3;
 	x <- 0;
+
 	y <- x+5 > -8;
 	y <- !(x < 5 * -test);
+
 	z <- x.y[z+8%5+(test[654*x/z].test)];
 	z<-arbre.tableau[3].truc;
 	z <- x.ch1.ch2;
 	z <- x.s1[test.truc[3 + x]].test.y[z * det.truc[3]];
 	z <- func(x.ch1.ch2, test , 8%7);
+
 	if x+5 > -8 then begin x <- y + -2; end;
 	if x+5 > -8 | !(i=0) then begin x <- y + -2; x <- 0; end;
 	if y then begin x <- 0; end else begin x <- 1; end;
@@ -21,11 +24,19 @@ begin
 		x <- y-3;
 		x <- 0;
 	end;
+
 	while x+5 > -8 do begin x <- y + -2; end;
 	do begin x <- y + -2; x <- 0; end while x+5 > -8 | !(i=0);
 	while y do begin x <- 0; end;
 	while z do
 	begin
+		x <- -test + test / -3 * -(4 + 2);
+		x <- y-3;
+		x <- 0;
+	end;
+
+	for i=0; i < n; i <- i+1 do
+	begin	
 		x <- -test + test / -3 * -(4 + 2);
 		x <- y-3;
 		x <- 0;

@@ -22,6 +22,7 @@ void yyerror (char const *s) {
 %token POINT VIRG
 %token SI ALORS SINON
 %token TANTQUE FAIRE
+%token POUR
 
 %%
 programme : PROG corps
@@ -41,6 +42,7 @@ instruction : affectation
 			| fonction
 			| condition
 			| tantque
+			| pour
 	    	;
 
 affectation : variable OPAFF expression
@@ -107,6 +109,7 @@ expr_bool_base : PO expr_bool_or PF
 
 
 fonction : IDF PO suite_args PF
+		 | IDF PO PF
 		 ;
 
 suite_args : expression
@@ -127,6 +130,10 @@ expr_cond : expr_bool_or
 tantque : TANTQUE expr_cond FAIRE liste_instructions
 		| FAIRE liste_instructions TANTQUE expr_cond
 		;
+
+
+pour : POUR expression PV expr_cond PV instruction FAIRE liste_instructions
+	 ;
 %%
 
 int main(void) {
