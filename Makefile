@@ -12,4 +12,4 @@ lex.yy.c : inst.l
 	@flex inst.l
 
 clean:
-	@rm *.c *.h *.o
+	@rm -f *.c *.h *.o
