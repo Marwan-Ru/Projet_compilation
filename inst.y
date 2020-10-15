@@ -23,6 +23,7 @@ void yyerror (char const *s) {
 %token SI ALORS SINON
 %token TANTQUE FAIRE
 %token POUR
+%token RETOURNE
 
 %%
 programme : PROG corps
@@ -43,7 +44,12 @@ instruction : affectation
 			| condition
 			| tantque
 			| pour
+			| RETOURNE resultat_retourne
 	    	;
+
+resultat_retourne : 
+				  | expression
+				  ;
 
 affectation : variable OPAFF expression
 			| variable OPAFF fonction

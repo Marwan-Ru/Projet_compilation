@@ -36,6 +36,7 @@
 "while"                         { return(TANTQUE); }
 "do"                            { return(FAIRE); }
 "for"                           { return(POUR); }
+"return"                        { return(RETOURNE); }
 [a-zA-Z][a-zA-Z0-9\_]* 	        { return(IDF); }
 [\n]
 .
