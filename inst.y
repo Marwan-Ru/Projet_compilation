@@ -24,6 +24,7 @@ void yyerror (char const *s) {
 %token TANTQUE FAIRE
 %token POUR
 %token RETOURNE
+%token AFFICHER
 
 %%
 programme : PROG corps
@@ -45,6 +46,7 @@ instruction : affectation
 			| tantque
 			| pour
 			| RETOURNE resultat_retourne
+			| afficher
 	    	;
 
 resultat_retourne : 
@@ -56,6 +58,7 @@ affectation : variable OPAFF expression
 
 variable : IDF
 		 | variable POINT IDF
+		 | variable POINT fonction
 		 | variable CO expression CF
 	 	 ;
 
@@ -140,6 +143,9 @@ tantque : TANTQUE expr_cond FAIRE liste_instructions
 
 pour : POUR expression PV expr_cond PV instruction FAIRE liste_instructions
 	 ;
+
+afficher : AFFICHER PO expression PF
+		 ;
 %%
 
 int main(void) {

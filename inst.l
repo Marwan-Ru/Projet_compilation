@@ -37,6 +37,7 @@
 "do"                            { return(FAIRE); }
 "for"                           { return(POUR); }
 "return"                        { return(RETOURNE); }
+"print"                         { return(AFFICHER); }
 \/\/.*
 \/\*[^(\*\/)]*\*\/
 [a-zA-Z][a-zA-Z0-9\_]* 	        { return(IDF); }
