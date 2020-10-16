@@ -52,7 +52,6 @@ resultat_retourne :
 				  ;
 
 affectation : variable OPAFF expression
-			| variable OPAFF fonction
 	    	;
 
 variable : IDF

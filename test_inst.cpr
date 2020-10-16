@@ -49,4 +49,6 @@ begin
 	x.ch1
 	x.ch1[3]
 	x.ch1[3][5]
+	x.ch1[5].ch2[10]
+	x[3].ch1
 end
