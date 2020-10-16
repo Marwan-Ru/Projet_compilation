@@ -50,5 +50,10 @@ begin
 	x.ch1[3] <- 1;
 	x.ch1[3][5] <- 1;
 	x.ch1[5].ch2[10] <- 1;
-	x[3].ch1 <- 1;
+	x[3].ch1 <- 1; // test
+	// test
+	/* qrsgrqgbjhjbgsjkhvb
+	nerhjkversh
+	jk
+	gk */
 end
