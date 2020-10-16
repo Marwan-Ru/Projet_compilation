@@ -1,4 +1,5 @@
 %{
+  #include <stdio.h>
   int yylex();
   int yyerror();
   extern numligne ;
@@ -18,8 +19,8 @@
 %token TYPE
 %token INT
 /* %token REEL */
-/* %token BOOLEEN */
-/* %token CARACTERE */
+%token BOOL
+%token CHAR
 %token IDF
 /* %token CHAINE */
 /* %token CSTE_ENTIERE */
@@ -81,6 +82,8 @@ nom_type : type_simple
          ;
 
 type_simple : INT
+            | CHAR
+            | BOOL
             ;
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type

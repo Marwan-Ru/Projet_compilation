@@ -23,6 +23,9 @@ of                        {return(DE);}
 
 [a-zA-Z][a-zA-Z0-9]* 	  {return(IDF);}
 0|[1-9][0-9]*		  {return(INT);}
+(\'[^']\')|\\             {return(CHAR);}
+0|1                       {return(BOOL);}
+
 
 \n                        {numligne++ ;} 
 [ \t]                       ;
