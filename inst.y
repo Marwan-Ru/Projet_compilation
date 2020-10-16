@@ -85,6 +85,7 @@ expr_base : INT
 		  | MOINS variable
 	  	  | PO expr_pm PF
 	  	  | MOINS PO expr_pm PF
+		  | fonction
 	  	  ;
 
 expr_comp : expr_pm INF expr_pm
@@ -115,10 +116,10 @@ expr_bool_base : PO expr_bool_or PF
 
 
 fonction : IDF PO suite_args PF
-		 | IDF PO PF
 		 ;
 
-suite_args : expression
+suite_args : 
+		   | expression
 		   | suite_args VIRG expression
 		   ;
 

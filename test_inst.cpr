@@ -44,4 +44,9 @@ begin
 		x <- y-3;
 		x <- 0;
 	end;
+
+	x
+	x.ch1
+	x.ch1[3]
+	x.ch1[3][5]
 end
