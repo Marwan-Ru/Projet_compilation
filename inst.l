@@ -8,6 +8,10 @@
 "end"		                    { return(FIN); }
 "<-"		        	        { return(OPAFF); }
 ([0]|[1-9][0-9]*)		        { return(INT); }
+([0]|[1-9][0-9]*)\.[0-9]*	    { return(FLOAT); }
+(\'[^(\')]\')|("'\''")          { return(CHAR); }
+\"[^(\")]*\"                    { return(STRING); }
+"true"|"false"                  { return(BOOL); }
 \+			                    { return(PLUS); }
 \-			                    { return(MOINS); }
 \*			                    { return(MULT); }
@@ -44,5 +48,3 @@
 [\n]
 .
 %%
-
-//([0]|[1-9][0-9]*)(.[0-9]*)?	    { return(FLOAT); }
