@@ -11,7 +11,8 @@ void yyerror (char const *s) {
 %token PROG DEBUT FIN
 %token OPAFF
 %token IDF
-%token INT FLOAT CHAR STRING BOOL
+%token INT FLOAT BOOL
+%token GUILLEMET STRING CHAR
 %token PLUS MOINS
 %token MULT DIV MOD
 %token EXP
@@ -70,7 +71,7 @@ expression : expr_pm
 
 
 
-constante : STRING
+constante : GUILLEMET STRING GUILLEMET
 		  | CHAR
 		  ;
 

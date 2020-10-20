@@ -10,7 +10,8 @@
 ([0]|[1-9][0-9]*)		        { return(INT); }
 ([0]|[1-9][0-9]*)\.[0-9]*	    { return(FLOAT); }
 (\'[^(\')]\')|("'\''")          { return(CHAR); }
-\"[^(\")]*\"                    { return(STRING); }
+[^(\")]*                        { return(STRING); }
+\"                              { return(GUILLEMET); }
 "true"|"false"                  { return(BOOL); }
 \+			                    { return(PLUS); }
 \-			                    { return(MOINS); }
@@ -46,5 +47,5 @@
 \/\*[^(\*\/)]*\*\/
 [a-zA-Z][a-zA-Z0-9\_]* 	        { return(IDF); }
 [\n]
-.
+[ ]
 %%
