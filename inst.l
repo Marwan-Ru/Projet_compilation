@@ -2,6 +2,8 @@
 #include "inst.tab.h"
 %}
 
+%option yylineno
+
 %%
 "program"\n	        	        { return(PROG); }
 "begin"  	        	        { return(DEBUT); }
@@ -9,7 +11,7 @@
 "<-"		        	        { return(OPAFF); }
 ([0]|[1-9][0-9]*)		        { return(INT); }
 ([0]|[1-9][0-9]*)\.[0-9]*	    { return(FLOAT); }
-(\'[^(\')]\')|("'\''")          { return(CHAR); }
+('[^']')|'\\''                  { return(CHAR); }
 \"[^(\")]*\"                    { return(STRING); }
 "true"|"false"                  { return(BOOL); }
 \+			                    { return(PLUS); }
@@ -44,7 +46,8 @@
 "print"                         { return(AFFICHER); }
 \/\/.*
 \/\*[^(\*\/)]*\*\/
-[a-zA-Z][a-zA-Z0-9\_]* 	        { return(IDF); }
-[\n]
-[ ]
+[a-zA-Z][a-zA-Z0-9]* 	        { return(IDF); }
+[[:blank:]\r\n]
+\"                              { return(GUILLEMET); }
+'                               { return(PARENTHESE); }
 %%

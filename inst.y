@@ -1,12 +1,17 @@
 %{
 #include <stdio.h>
+#include <string.h>
 
 int yylex();
+extern int yylineno;
 
-void yyerror (char const *s) {
-	fprintf (stderr, "%s\n", s);
+void yyerror (char const *str) {
+    fprintf(stderr,"Error | Line: %d\n%s\n",yylineno,str);
 }
 %}
+
+%define parse.error verbose
+%locations
 
 %token PROG DEBUT FIN
 %token OPAFF
@@ -26,6 +31,7 @@ void yyerror (char const *s) {
 %token POUR
 %token RETOURNE
 %token AFFICHER
+%token GUILLEMET PARENTHESE
 
 %%
 programme : PROG corps
@@ -171,10 +177,10 @@ afficher : AFFICHER PO expression PF
 		 ;
 %%
 
-int main(void) {
-	#if YYDEBUG
-    yydebug = 0;
-    #endif
+int main(int argc, char *argv[]) {
+	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 ||
+					 strcmp(argv[1], "-d") == 0))
+		yydebug = 1;
 	yyparse();
 	return(0);
 }
