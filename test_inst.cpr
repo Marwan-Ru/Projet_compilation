@@ -67,5 +67,5 @@ begin
 	c <- '\'';
 	c <- '.';
 	c <- '~';
-	c <- "test;
+	c <- "test";
 end
