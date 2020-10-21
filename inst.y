@@ -32,6 +32,7 @@ void yyerror (char const *str) {
 %token RETOURNE
 %token AFFICHER
 %token GUILLEMET PARENTHESE
+%token UNEXPECTED
 
 %%
 programme : PROG corps

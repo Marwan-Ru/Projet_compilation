@@ -68,4 +68,7 @@ begin
 	c <- '.';
 	c <- '~';
 	c <- "test";
+	c <- "\"";
+	c <- true;
+	c <- true | (false & 5 != 2.5);
 end

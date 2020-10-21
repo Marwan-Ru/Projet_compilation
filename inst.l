@@ -12,7 +12,7 @@
 ([0]|[1-9][0-9]*)		        { return(INT); }
 ([0]|[1-9][0-9]*)\.[0-9]*	    { return(FLOAT); }
 ('[^']')|'\\''                  { return(CHAR); }
-\"[^(\")]*\"                    { return(STRING); }
+\"((\\\")|[^(\")])*\"           { return(STRING); }
 "true"|"false"                  { return(BOOL); }
 \+			                    { return(PLUS); }
 \-			                    { return(MOINS); }
@@ -50,4 +50,5 @@
 [[:blank:]\r\n]
 \"                              { return(GUILLEMET); }
 '                               { return(PARENTHESE); }
+.                               { return(UNEXPECTED); }
 %%
