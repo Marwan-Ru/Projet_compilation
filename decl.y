@@ -2,7 +2,7 @@
   #include <stdio.h>
   int yylex();
   int yyerror();
-  extern numligne ;
+  extern int numligne ;
 %}
 
 %token PROG
@@ -18,20 +18,21 @@
 
 %token TYPE
 %token INT
-/* %token REEL */
+%token REEL
 %token BOOL
 %token CHAR
 %token IDF
-/* %token CHAINE */
-/* %token CSTE_ENTIERE */
+%token CHAINE
+%token CSTE_ENTIERE
 %token VAR
 
 %token DE
 %token TABLEAU
 %token STRUCT
 %token FSTRUCT
-/* %token PROCEDURE */
-/* %token FONCTION */
+%token PROCEDURE
+%token FONCTION
+%token RETOURNE
 
 %%
 programme : PROG corps
@@ -46,8 +47,8 @@ liste_declarations :
 
 declaration : declaration_type
             | declaration_variable
-            /* | declaration_procedure */
-            /* | declaration_fonction */
+            | declaration_procedure 
+            | declaration_fonction 
             ;
 
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
@@ -84,37 +85,31 @@ nom_type : type_simple
 type_simple : INT
             | CHAR
             | BOOL
+            | REEL
+            | CHAINE CO CSTE_ENTIERE CF
             ;
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type
                      ;
 
+declaration_procedure : PROCEDURE IDF liste_parametres corps
+                      ;
+
+liste_parametres : 
+                 | PO liste_param PF
+                 ;
+
+liste_param : un_param
+            | liste_param PV un_param
+            ;
+
+un_param : IDF DEUX_POINTS type_simple
+         ;
+
+declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps
+                     ;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* dimension : CO liste_dimensions CF */
-
-/* liste_dimensions : une_dimension */
-/*                  | liste_dimensions VIRGULE dimension */
-/*                  ; */
-
-/* une_dimension : expression POINT POINT expression */
-/*               ; */
-
-/* liste_champs : un_champ */
-/*              | liste_champs POINT_VIRGULE un_champ */
-/*              ; */
 
 %%
 int yyerror()

@@ -11,6 +11,16 @@ struct                    {return(STRUCT);}
 fin[ ]*struct             {return(FSTRUCT);}	   
 tab                       {return(TABLEAU);}
 of                        {return(DE);}
+proc                      {return(PROCEDURE);}
+funct                     {return(FONCTION);}
+return                    {return(RETOURNE);}
+
+int                       {return(INT);}
+char                      {return(CHAR);}
+bool                      {return(BOOL);}
+float                     {return(REEL);}
+string                    {return(CHAINE);}
+cst                       {return(CSTE_ENTIERE);}
 
 ,                         {return (VIRGULE);}
 \.                        {return (POINT);}
@@ -22,9 +32,6 @@ of                        {return(DE);}
 \)                        {return (PF);}
 
 [a-zA-Z][a-zA-Z0-9]* 	  {return(IDF);}
-0|[1-9][0-9]*		  {return(INT);}
-(\'[^']\')|\\             {return(CHAR);}
-0|1                       {return(BOOL);}
 
 
 \n                        {numligne++ ;} 
