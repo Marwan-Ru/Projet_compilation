@@ -165,5 +165,6 @@ void inserer_element_trie (liste *l, element elem, int (*foncComp) (const void *
   }
 
   inserer_element_liste(&ptr, elem);
-  last->suivant = ptr;
+  if (last != NULL) last->suivant = ptr;
+  else *l = ptr;
 }

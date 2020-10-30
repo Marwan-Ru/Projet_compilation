@@ -1,22 +1,39 @@
 CC = gcc -Wall
-LexYaccCible = inst
+CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g
+CIBLELEXYACC=inst
 
-inste: LexYaccCible = inst
-inste: lexyacc
+inst : CIBLELEXYACC=inst
+inst : lexyacc
 
-decl: LexYaccCible = decl
-decl: lexyacc
+decl : CIBLELEXYACC=decl
+decl : lexyacc
 
-lexyacc : clean $(LexYaccCible).tab.c lex.yy.o 
-	$(CC) -DYYDEBUG=1 -o bin/$(LexYaccCible) obj/$(LexYaccCible).tab.c obj/lex.yy.o -lfl
+lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o 
+	$(CC) -DYYDEBUG=1 -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -lfl
 
-lex.yy.o : obj/lex.yy.c obj/$(LexYaccCible).tab.h  
+lex.yy.o : lex.yy.c
+	$(CC) -c -o obj/lex.yy.o obj/lex.yy.c
 
-$(LexYaccCible).tab.c : src/$(LexYaccCible).y
-	@bison -d -v src/$(LexYaccCible).y
+$(CIBLELEXYACC).tab.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y
+	bison -d -v src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y -b obj/$(CIBLELEXYACC)
 
-lex.yy.c : src/$(LexYaccCible).l
-	@flex src/$(LexYaccCible).l
+lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
+	flex -o obj/lex.yy.c src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 
-clean:
-	@rm -f *.c *.h *.o
+cleanCIBLELexYacc :
+	rm -f bin/$(CIBLELEXYACC) obj/*
+
+
+
+
+testListe: clean obj/tst_liste.o obj/liste.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)
+
+obj/%.o: src/tables/%.c inc/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+obj/tst_liste.o: tst/tst_liste.c
+	$(CC) $(CFLAGS) -c tst/tst_liste.c -o obj/tst_liste.o
+
+clean :
+	rm -f bin/* obj/*
