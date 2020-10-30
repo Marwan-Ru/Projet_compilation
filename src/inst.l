@@ -45,7 +45,6 @@
 "return"                        { return(RETOURNE); }
 "print"                         { return(AFFICHER); }
 \/\/.*
-\/\*[^(\*\/)]*\*\/
 [a-zA-Z][a-zA-Z0-9]* 	        { return(IDF); }
 [[:blank:]\r\n]
 \"                              { return(GUILLEMET); }

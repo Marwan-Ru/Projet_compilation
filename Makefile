@@ -1,30 +1,22 @@
 CC = gcc -Wall
+LexYaccCible = inst
 
-inst : clean inst.tab.c lex.yy.o 
-	$(CC) -DYYDEBUG=1 -o inst inst.tab.c lex.yy.o -lfl
+inste: LexYaccCible = inst
+inste: lexyacc
 
-lex.yy.o : lex.yy.c inst.tab.h  
+decl: LexYaccCible = decl
+decl: lexyacc
 
-inst.tab.c : inst.y
-	@bison -d -v inst.y
+lexyacc : clean $(LexYaccCible).tab.c lex.yy.o 
+	$(CC) -DYYDEBUG=1 -o bin/$(LexYaccCible) obj/$(LexYaccCible).tab.c obj/lex.yy.o -lfl
 
-lex.yy.c : inst.l
-	@flex inst.l
+lex.yy.o : obj/lex.yy.c obj/$(LexYaccCible).tab.h  
+
+$(LexYaccCible).tab.c : src/$(LexYaccCible).y
+	@bison -d -v src/$(LexYaccCible).y
+
+lex.yy.c : src/$(LexYaccCible).l
+	@flex src/$(LexYaccCible).l
 
 clean:
 	@rm -f *.c *.h *.o
-
-
-# decl : decl.tab.c lex.yy.o 
-# 	$(CC) -o decl decl.tab.c lex.yy.o -ly -ll
-
-# lex.yy.o : lex.yy.c decl.tab.h  
-
-# decl.tab.c : decl.y
-# 	bison -d -v decl.y
-
-# lex.yy.c : decl.l
-# 	flex decl.l
-
-# clean:
-# 	rm -f *.c *.h *.o
