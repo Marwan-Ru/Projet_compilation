@@ -28,14 +28,17 @@ cleanCIBLELexYacc :
 
 
 
-testListe: clean obj/tst_liste.o obj/liste.o obj/allocation.o
+tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)
 
-obj/%.o: src/tables/%.c inc/%.h
+tst_tabLex : clean obj/tst_tabLex.o obj/tableLex.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_tabLex $(wildcard obj/*.o)
+
+obj/tst_%.o: tst/tst_%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-obj/tst_liste.o: tst/tst_liste.c
-	$(CC) $(CFLAGS) -c tst/tst_liste.c -o obj/tst_liste.o
+obj/%.o : src/tables/%.c inc/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
 	@rm -f bin/* obj/*
