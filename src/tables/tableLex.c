@@ -73,3 +73,8 @@ int getLexNum (lexeme *tl, hashTable ht, char *lexeme) {
 
     return posTab;
 }
+
+/* Renvoie 1 si le lexeme existe dans tl, 0 sinon */
+int lexemeExiste (lexeme *tl, hashTable ht, char *lexeme) {
+    return getLexNum(tl, ht, lexeme) != -1;
+}

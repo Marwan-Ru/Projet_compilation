@@ -14,6 +14,8 @@ int main () {
     printf("longueur: %d\n", l);
     printf("lex 4: %s\n", getLex(tl, &l, 3).lexeme);
     printf("num 'test3': %d\n", getLexNum(tl, ht, "test3"));
+    printf("'test2' existe?: %d\n", lexemeExiste(tl, ht, "test2"));
+    printf("'test5' existe?: %d\n", lexemeExiste(tl, ht, "test5"));
 
     exit(EXIT_SUCCESS);
 }

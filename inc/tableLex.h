@@ -33,4 +33,7 @@ lexeme getLex (lexeme *tl, int *longTabLex, unsigned int num);
 /* Renvoie la position de lexeme dans le tableau tl */
 int getLexNum (lexeme *tl, hashTable ht, char *lexeme);
 
+/* Renvoie 1 si le lexeme existe dans tl, 0 sinon */
+int lexemeExiste (lexeme *tl, hashTable ht, char *lexeme);
+
 #endif
