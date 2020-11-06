@@ -14,14 +14,14 @@ hash(char *str)
     return hash % T_TABLELEX;
 }
 
-lexeme *initTableLex () {
-    lexeme *tl = allocation_mem(T_TABLELEX,sizeof(struct s_lexeme));
+lexeme *tl_init () {
+    lexeme *tl = allocation_mem(T_TABLELEX, sizeof(struct s_lexeme));
     return tl;
 }
 
-hashTable initHashTable() {
+hashTable ht_init () {
     int i;
-    hashTable ht = allocation_mem(T_TABLELEX,sizeof(int));
+    hashTable ht = allocation_mem(T_TABLELEX, sizeof(int));
     for (i = 0; i < T_TABLELEX; i++) {
         ht[i] = -1;
     }
@@ -29,7 +29,7 @@ hashTable initHashTable() {
 }
 
 /* Ajoute le lexeme au tableau tl de longueur longTableLex. La table de hashage ht permet un accès plus rapide */
-void addLex (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme) {
+void tl_ajout (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme) {
     int longueurLex = strlen(lexeme), posTab;
     long hashLex = hash(lexeme);
 
@@ -52,7 +52,7 @@ void addLex (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme) {
 }
 
 /* Renvoie le lexeme stocké à la position num de la table tl */
-lexeme getLex (lexeme *tl, int *longTabLex, unsigned int num) {
+lexeme tl_getLex (lexeme *tl, int *longTabLex, unsigned int num) {
     if (num >= *longTabLex) {
         fprintf(stderr, "Erreur! Accès à un lexeme inexistant.\n");
         exit(EXIT_FAILURE);
@@ -61,7 +61,7 @@ lexeme getLex (lexeme *tl, int *longTabLex, unsigned int num) {
 }
 
 /* Renvoie la position de lexeme dans le tableau tl */
-int getLexNum (lexeme *tl, hashTable ht, char *lexeme) {
+int tl_getLexNum (lexeme *tl, hashTable ht, char *lexeme) {
     long hashLex = hash(lexeme);
     int longueurLex = strlen(lexeme), posTab;
 
@@ -75,6 +75,12 @@ int getLexNum (lexeme *tl, hashTable ht, char *lexeme) {
 }
 
 /* Renvoie 1 si le lexeme existe dans tl, 0 sinon */
-int lexemeExiste (lexeme *tl, hashTable ht, char *lexeme) {
-    return getLexNum(tl, ht, lexeme) != -1;
+int tl_existe (lexeme *tl, hashTable ht, char *lexeme) {
+    return tl_getLexNum(tl, ht, lexeme) != -1;
+}
+
+/* Libère la mémoire associé à la table lexicographique tl et sa table de hashage ht */
+void tl_detruire (lexeme *tl, hashTable ht) {
+    if (tl != NULL) libere_mem(&tl);
+    if (ht != NULL) libere_mem(&ht);
 }

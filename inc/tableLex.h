@@ -18,22 +18,25 @@ typedef struct s_lexeme {
     int suivant;
 } lexeme;
 
-lexeme *initTableLex ();
+lexeme *tl_init ();
 
 typedef int *hashTable;
 
-hashTable initHashTable();
+hashTable ht_init();
 
 /* Ajoute le lexeme au tableau tl de longueur longTableLex. La table de hashage ht permet un accès plus rapide */
-void addLex (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme);
+void tl_ajout (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme);
 
 /* Renvoie le lexeme stocké à la position num de la table tl */
-lexeme getLex (lexeme *tl, int *longTabLex, unsigned int num);
+lexeme tl_getLex (lexeme *tl, int *longTabLex, unsigned int num);
 
 /* Renvoie la position de lexeme dans le tableau tl */
-int getLexNum (lexeme *tl, hashTable ht, char *lexeme);
+int tl_getLexNum (lexeme *tl, hashTable ht, char *lexeme);
 
 /* Renvoie 1 si le lexeme existe dans tl, 0 sinon */
-int lexemeExiste (lexeme *tl, hashTable ht, char *lexeme);
+int tl_existe (lexeme *tl, hashTable ht, char *lexeme);
+
+/* Libère la mémoire associé à la table lexicographique tl et sa table de hashage ht */
+void tl_detruire (lexeme *tl, hashTable ht);
 
 #endif

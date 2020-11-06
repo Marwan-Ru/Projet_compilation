@@ -1,5 +1,5 @@
 CC = @gcc
-CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g
+CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
 CIBLELEXYACC=inst
 
 inst : CIBLELEXYACC=inst
@@ -33,6 +33,9 @@ tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
 
 tst_tabLex : clean obj/tst_tabLex.o obj/tableLex.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_tabLex $(wildcard obj/*.o)
+
+tst_tabTypes : clean obj/tst_tabTypes.o obj/tableTypes.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_tabTypes $(wildcard obj/*.o)
 
 obj/tst_%.o: tst/tst_%.c
 	$(CC) $(CFLAGS) -c $< -o $@
