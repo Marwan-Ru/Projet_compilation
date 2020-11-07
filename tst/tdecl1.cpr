@@ -1,12 +1,35 @@
 program
-variable b : int ;
 type t1 : struct
-            ch1 : int ;
+        ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
 	  fin struct ;
+
+variable t1 : int ;
+
 type t2 : struct
-            ch1 : int ;
+        ch1 : int ;
 	    ch3 : t1 ;
-	    ch4 : 'a' ;
 	  finstruct ;
+
+type t3 : tab[bla..bla] of int ;
+
+variable v1 : int ;
+variable v2 : string[cst] ;
+
+proc p1 (toto : int; tata : char) 
+	type t1 : struct
+        ch1 : int ;
+	    ch2 : float ;
+	    ch3 : t3 ;
+	  fin struct ;
+;
+
+funct f1 (toto : int) return int 
+	variable v1 : int ;
+	type t2 : struct
+        ch1 : int ;
+	    ch3 : t1 ;
+	finstruct ;
+	type t3 : tab[bla..bla] of int ;
+;
