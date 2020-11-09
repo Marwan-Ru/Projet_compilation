@@ -1,4 +1,4 @@
-CC = gcc
+CC = @gcc
 CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
 CIBLELEXYACC=inst
 
@@ -15,15 +15,15 @@ lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
 
 $(CIBLELEXYACC).tab.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y
-	bison -d -v src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y -b obj/$(CIBLELEXYACC)
+	@bison -d -v src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y -b obj/$(CIBLELEXYACC)
 
 lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
-	flex -o obj/lex.yy.c src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
+	@flex -o obj/lex.yy.c src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 
 cleanCIBLELexYacc :
-	rm -f bin/$(CIBLELEXYACC) obj/*
-	mkdir -p obj
-	mkdir -p bin
+	@rm -f bin/$(CIBLELEXYACC) obj/*
+	@mkdir -p obj
+	@mkdir -p bin
 
 
 
@@ -44,6 +44,6 @@ obj/%.o : src/tables/%.c inc/%.h
 	$(CC) $(CFLAGS) -c $< -o $
 
 clean :
-	rm -f bin/* obj/*
-	mkdir -p obj
-	mkdir -p bin
+	@rm -f bin/* obj/*
+	@mkdir -p obj
+	@mkdir -p bin
