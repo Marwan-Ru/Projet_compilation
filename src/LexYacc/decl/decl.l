@@ -1,5 +1,6 @@
 %{
 #include "decl.tab.h"
+#include <string.h>
 int numligne=1 ;
 %}
 
@@ -31,7 +32,7 @@ cst                       {return(CSTE_ENTIERE);}
 \(                        {return (PO);}
 \)                        {return (PF);}
 
-[a-zA-Z][a-zA-Z0-9]* 	  {return(IDF);}
+[a-zA-Z][a-zA-Z0-9]* 	  {yylval.nomVar = strdup(yytext); return(IDF);}
 
 
 \n                        {numligne++ ;} 

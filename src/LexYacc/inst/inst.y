@@ -10,6 +10,14 @@ void yyerror (char const *str) {
 }
 %}
 
+%union {
+	int intVal;
+    float floatVal;
+    char *stringVal;
+	char charVal;
+	int boolVal;
+}
+
 %define parse.error verbose
 %locations
 
