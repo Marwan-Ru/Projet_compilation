@@ -1,4 +1,4 @@
-CC = @gcc
+CC = gcc
 CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
 CIBLELEXYACC=inst
 
@@ -38,10 +38,10 @@ tst_tabTypes : clean obj/tst_tabTypes.o obj/tableTypes.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_tabTypes $(wildcard obj/*.o)
 
 obj/tst_%.o: tst/tst_%.c
-	$(CC) $(CFLAGS) -c $< -o $
+	$(CC) $(CFLAGS) -c $< -o $@
 
 obj/%.o : src/tables/%.c inc/%.h
-	$(CC) $(CFLAGS) -c $< -o $
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
 	@rm -f bin/* obj/*

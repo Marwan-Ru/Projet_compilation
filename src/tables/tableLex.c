@@ -1,5 +1,9 @@
 #include "tableLex.h"
 
+int hashTable[T_TABLELEX];
+lexeme tableLex[T_TABLELEX];
+int longTabLex;
+
 /* Dan Bernstein http://www.cse.yorku.ca/~oz/hash.html */
 /* Légèrement modifiée */
 unsigned long
@@ -14,73 +18,92 @@ hash(char *str)
     return hash % T_TABLELEX;
 }
 
-lexeme *tl_init () {
-    lexeme *tl = allocation_mem(T_TABLELEX, sizeof(struct s_lexeme));
-    return tl;
-}
-
-hashTable ht_init () {
+void ht_init () {
     int i;
-    hashTable ht = allocation_mem(T_TABLELEX, sizeof(int));
     for (i = 0; i < T_TABLELEX; i++) {
-        ht[i] = -1;
+        hashTable[i] = -1;
     }
-    return ht;
 }
 
-/* Ajoute le lexeme au tableau tl de longueur longTableLex. La table de hashage ht permet un accès plus rapide */
-void tl_ajout (lexeme *tl, int *longTabLex, hashTable ht, char *lexeme) {
+/* Initialise la table lexicographique avec les types de base et des lignes vides */
+void tl_init () {
+    int i;
+
+    ht_init();
+    longTabLex = 0;
+
+    tl_ajout("int");
+    tl_ajout("float");
+    tl_ajout("bool");
+    tl_ajout("char");
+
+    for (i = 4; i < T_TABLELEX; i++) {
+        tableLex[i].longueur = -1;
+        tableLex[i].suivant = -1;
+    }
+}
+
+/* Ajoute le lexeme à la table lexicographique de longueur longTableLex */
+void tl_ajout (char *lexeme) {
     int longueurLex = strlen(lexeme), posTab;
     long hashLex = hash(lexeme);
 
-    if (*longTabLex + 1 >= T_TABLELEX) {
+    if (longTabLex + 1 >= T_TABLELEX) {
         fprintf(stderr, "Erreur! Dépassement de la limite de lexèmes autorisées!\n");
         exit(EXIT_FAILURE);
     }
 
-    tl[*longTabLex].lexeme = lexeme;
-    tl[*longTabLex].longueur = longueurLex;
-    tl[*longTabLex].suivant = -1;
+    tableLex[longTabLex].lexeme = allocation_mem(strlen(lexeme)+1, sizeof(char));
+    strcpy(tableLex[longTabLex].lexeme, lexeme);
+    tableLex[longTabLex].longueur = longueurLex;
+    tableLex[longTabLex].suivant = -1;
     
-    if (ht[hashLex] == -1) ht[hashLex] = *longTabLex; 
+    if (hashTable[hashLex] == -1) hashTable[hashLex] = longTabLex; 
     else {
-        posTab = ht[hashLex];
-        while (tl[posTab].suivant != -1) posTab = tl[posTab].suivant;
-        tl[posTab].suivant = *longTabLex;
+        posTab = hashTable[hashLex];
+        while (tableLex[posTab].suivant != -1) posTab = tableLex[posTab].suivant;
+        tableLex[posTab].suivant = longTabLex;
     }
-    (*longTabLex)++;
+    longTabLex++;
 }
 
-/* Renvoie le lexeme stocké à la position num de la table tl */
-lexeme tl_getLex (lexeme *tl, int *longTabLex, unsigned int num) {
-    if (num >= *longTabLex) {
+/* Renvoie le lexeme stocké à la position num de la table lexicographique */
+char *tl_getLex (unsigned int num) {
+    if (num >= longTabLex) {
         fprintf(stderr, "Erreur! Accès à un lexeme inexistant.\n");
         exit(EXIT_FAILURE);
     }
-    return tl[num];
+    return tableLex[num].lexeme;
 }
 
-/* Renvoie la position de lexeme dans le tableau tl */
-int tl_getLexNum (lexeme *tl, hashTable ht, char *lexeme) {
+/* Renvoie le numéro lexicographique du lexeme */
+int tl_getLexNum (char *lexeme) {
     long hashLex = hash(lexeme);
     int longueurLex = strlen(lexeme), posTab;
 
-    posTab = ht[hashLex];
+    posTab = hashTable[hashLex];
 
-    while (posTab != -1 && (tl[posTab].longueur != longueurLex || strcmp(tl[posTab].lexeme, lexeme) != 0)) {
-        posTab = tl[posTab].suivant;
+    while (posTab != -1 && (tableLex[posTab].longueur != longueurLex || strcmp(tableLex[posTab].lexeme, lexeme) != 0)) {
+        posTab = tableLex[posTab].suivant;
     }
 
     return posTab;
 }
 
-/* Renvoie 1 si le lexeme existe dans tl, 0 sinon */
-int tl_existe (lexeme *tl, hashTable ht, char *lexeme) {
-    return tl_getLexNum(tl, ht, lexeme) != -1;
+/* Renvoie 1 si le lexeme existe dans la table lexicographique, 0 sinon */
+int tl_existe (char *lexeme) {
+    return tl_getLexNum(lexeme) != -1;
 }
 
-/* Libère la mémoire associé à la table lexicographique tl et sa table de hashage ht */
-void tl_detruire (lexeme *tl, hashTable ht) {
-    if (tl != NULL) libere_mem(&tl);
-    if (ht != NULL) libere_mem(&ht);
+/* Renvoie le nombre de lexeme stocké dans la table lexicographique */
+int tl_longTabLex() {
+    return longTabLex;
+}
+
+/* Libère la mémoire associé à la table lexicographique */
+void tl_detruire () {
+    int i;
+    for (i = 0; i < T_TABLELEX; i++) {
+        libere_mem(&(tableLex[i].lexeme));
+    }
 }
