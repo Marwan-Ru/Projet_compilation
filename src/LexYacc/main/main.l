@@ -16,7 +16,7 @@
 "type"                          { return(TYPE); }
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
-"fin"[[:blank:]]?"struct"          { return(FSTRUCT); }
+"fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
 "proc"                          { return(PROCEDURE); }
 "funct"                         { return(FONCTION); }	   
 "tab"                           { return(TABLEAU); }
@@ -84,7 +84,7 @@
 "print"                         { return(AFFICHER); }
 
     /* Commentaires */
-\/\/.*
+\/\/.*                          
 
     /* Identifiants */
 [a-zA-Z][a-zA-Z0-9]* 	        { yylval.stringVal = strdup(yytext); return(IDF); }

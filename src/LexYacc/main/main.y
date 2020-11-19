@@ -2,6 +2,7 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include <math.h>
 	#include "tableLex.h"
 
 	int yylex();
@@ -23,6 +24,7 @@
 %define parse.error verbose
 %locations
 
+/** Symboles terminaux **/
     /* Structure du programme */
 %token PROG "'program'"
 %token DEBUT "'begin'"
@@ -94,6 +96,9 @@
 %token IDF "identifiant"
 	/* Misc */
 %token INNATENDU "expression"
+
+/** Typage des non-terminaux **/
+%nterm <type> nonterm...
 
 %%
 programme : PROG IDF corps
@@ -249,19 +254,19 @@ constante : STRING
 
 		/* Expressions arithmétiques */
 
-expr_pm : expr_pm PLUS expr_md
-		| expr_pm MOINS expr_md
+expr_pm : expr_pm PLUS expr_md { $$ = $1 + $3; }
+		| expr_pm MOINS expr_md { $$ = $1 - $3; }
 		| expr_md
 		;
 
-expr_md : expr_md MULT expr_exp
-		| expr_md DIV expr_exp
-		| expr_md MOD expr_exp
+expr_md : expr_md MULT expr_exp { $$ = $1 * $3; } 
+		| expr_md DIV expr_exp { $3 == 0 ? yyerror("Division par zéro!") : $$ = $1 / $3; } 
+		| expr_md MOD expr_exp { $$ = $1 % $3; } 
 		| expr_exp
 		;
 
-expr_exp : expr_exp EXP expr_base
-		 | MOINS expr_base
+expr_exp : expr_exp EXP expr_base { $$ = pow($1, $3); } 
+		 | MOINS expr_base { $$ = -$1; }
 		 | expr_base
 		 ;
 
