@@ -12,14 +12,14 @@
 typedef struct {
   int taille_zone; 
   int niv_imbric;
-  void *arbre; /*à verif*/
+  int *arbre; /*TO DO : changer en bon type*/
 } champ;
 
 #define NB_REGIONS 10
 
 void init();
 
-void ajout_reg (int num_reg, int taillez, int niv, void *pointeur);
+void ajout_reg (int num_reg, int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
 
 champ get_reg (int num_reg);
 
