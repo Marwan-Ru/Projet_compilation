@@ -57,6 +57,7 @@ suite_liste_inst : instruction PV
 		 		 ;
 
 instruction : affectation
+            | variable POINT fonction
 			| fonction
 			| condition
 			| tantque
@@ -106,14 +107,12 @@ expr_md : expr_md MULT expr_exp
 
 expr_exp : expr_exp EXP expr_base
 		 | expr_base
+         | MOINS expr_base
 		 ;
 
 expr_base : constante_maths
-		  | MOINS constante_maths
 		  | variable
-		  | MOINS variable
 	  	  | PO expr_pm PF
-	  	  | MOINS PO expr_pm PF
 		  | fonction
 	  	  ;
 
