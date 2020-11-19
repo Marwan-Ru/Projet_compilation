@@ -15,7 +15,7 @@ typedef struct {
   void *arbre; /*à verif*/
 } champ;
 
-#define NB_REGIONS
+#define NB_REGIONS 10
 
 void init();
 
