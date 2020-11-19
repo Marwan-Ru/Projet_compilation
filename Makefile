@@ -30,6 +30,8 @@ cleanCIBLELexYacc :
 
 
 
+tst_tabreg: clean obj/tst_tabreg.o obj/tabreg.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_tabreg $(wildcard obj/*.o)
 
 tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)
