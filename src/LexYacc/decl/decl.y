@@ -5,6 +5,11 @@
   extern int numligne ;
 %}
 
+%union 
+{
+  char *nomVar;
+}
+
 %token PROG
 
 %token VIRGULE

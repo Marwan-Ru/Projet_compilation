@@ -2,20 +2,20 @@
 #include "stdio.h"
 
 int main () {
-    lexeme *tl = initTableLex();
-    hashTable ht = initHashTable();
-    int l = 0;
+    tl_init();
 
-    addLex(tl, &l, ht, "test1");
-    addLex(tl, &l, ht, "test2");
-    addLex(tl, &l, ht, "test3");
-    addLex(tl, &l, ht, "test4");
+    tl_ajout("test1");
+    tl_ajout("test2");
+    tl_ajout("test3");
+    tl_ajout("test4");
 
-    printf("longueur: %d\n", l);
-    printf("lex 4: %s\n", getLex(tl, &l, 3).lexeme);
-    printf("num 'test3': %d\n", getLexNum(tl, ht, "test3"));
-    printf("'test2' existe?: %d\n", lexemeExiste(tl, ht, "test2"));
-    printf("'test5' existe?: %d\n", lexemeExiste(tl, ht, "test5"));
+    printf("longueur: %d\n", tl_longTabLex());
+    printf("lex 4: %s\n", tl_getLex(3));
+    printf("num 'test3': %d\n", tl_getLexNum("test3"));
+    printf("'test2' existe?: %d\n", tl_existe("test2"));
+    printf("'test5' existe?: %d\n", tl_existe("test5"));
+
+    tl_detruire();
 
     exit(EXIT_SUCCESS);
 }
