@@ -18,7 +18,7 @@ lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
 
 $(CIBLELEXYACC).tab.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y
-	@bison -Wcounterexamples -d -v src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y -b obj/$(CIBLELEXYACC)
+	@bison -d -v src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y -b obj/$(CIBLELEXYACC)
 
 lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 	@flex -o obj/lex.yy.c src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
@@ -29,7 +29,8 @@ cleanCIBLELexYacc :
 	@mkdir -p bin
 
 
-
+tst_tabreg : clean obj/tst_tabreg.o obj/tablereg.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_tabreg $(wildcard obj/*.o)
 
 tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)
