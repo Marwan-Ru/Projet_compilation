@@ -6,7 +6,7 @@
 #define T_TABLEDECL 5000
 #define T_TABLEPRINC 500 //dois être de la meme taille que la table des lexicaux
 
-enum nature{TYPE_S, TYPE_S, VAR, PARAM, PROC, FUNCT};
+enum nature{TYPE_S, TYPE_T, VAR, PARAM, PROC, FUNCT};
 
 typedef struct s_decl{
     int NATURE;     //Ce champs peut prendre les valeurs de l'enumeration nature (ou -1 si vide)
@@ -39,14 +39,17 @@ decl* td_init();
  *et son nom (utilisation de la table lexico), 
  *retourne 0 si tout s'est passé correctement
  */
-int td_add(decl* table, int nature, char * nom, int numregion);
+int td_ajout(decl* table, int nature, char * nom, int numregion);
 
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
-decl td_getobj(int num);
+decl td_getdecl(int num);
 
 /*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique
  *Donne la derniere declaration de ce nom (ou -1 si elle n'existe pas)*/
 decl td_getlastdecl(char* nom);
+
+/*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
+int td_detruire();
 
 
 #endif
