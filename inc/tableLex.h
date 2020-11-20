@@ -32,6 +32,9 @@ int tl_existe (char *lexeme);
 /* Renvoie le nombre de lexeme stocké dans la table lexicographique */
 int tl_longTabLex();
 
+/* Affiche tous les lexèmes avec le numéro lexicographique la longueur et le lexème suivant s'il y a */
+void tl_afficher();
+
 /* Libère la mémoire associé à la table lexicographique */
 void tl_detruire ();
 

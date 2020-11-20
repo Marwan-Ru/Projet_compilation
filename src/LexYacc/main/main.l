@@ -8,7 +8,7 @@
 %%
 
     /* Structure du programme */
-"program"\n	        	        { return(PROG); }
+"program"	        	        { return(PROG); }
 "begin"  	        	        { return(DEBUT); }
 "end"		                    { return(FIN); }
 
@@ -31,7 +31,7 @@
 
     /* Types de données */
 ([0]|[1-9][0-9]*)		        { yylval.intVal = atoi(yytext); return(INT); }
-([0]|[1-9][0-9]*)\.[0-9]*	    { yylval.floatVal = atof(yytext); return(FLOAT); }
+([0]|[1-9][0-9]*)\.[0-9]+	    { yylval.floatVal = atof(yytext); return(FLOAT); }
 ('[^']')|'\\''                  { yylval.charVal = yytext[0]; return(CHAR); }
 \"((\\\")|[^(\")])*\"           { yylval.stringVal = strdup(yytext); return(STRING); }
 "true"|"false"                  { yylval.boolVal = (yytext[0] == 't'); return(BOOL); }

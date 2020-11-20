@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
+CC = @gcc
+CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g
 CIBLELEXYACC=main
 
 main : CIBLELEXYACC=main
@@ -11,8 +11,8 @@ inst : lexyacc
 decl : CIBLELEXYACC=decl
 decl : lexyacc
 
-lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o 
-	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -ly -lfl -lm
+lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/allocation.o
+	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c $(wildcard obj/*.o) -ly -lfl
 
 lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
