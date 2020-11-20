@@ -1,6 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
-CIBLELEXYACC=inst
+CIBLELEXYACC=main
+
+main : CIBLELEXYACC=main
+main : lexyacc
 
 inst : CIBLELEXYACC=inst
 inst : lexyacc
@@ -9,7 +12,7 @@ decl : CIBLELEXYACC=decl
 decl : lexyacc
 
 lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o 
-	$(CC) -Wall -DYYDEBUG=1 -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -ly -lfl
+	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -ly -lfl
 
 lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
@@ -26,7 +29,8 @@ cleanCIBLELexYacc :
 	@mkdir -p bin
 
 
-
+tst_tabreg : clean obj/tst_tabreg.o obj/tablereg.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_tabreg $(wildcard obj/*.o)
 
 tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)

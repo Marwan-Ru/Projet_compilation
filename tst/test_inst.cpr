@@ -56,6 +56,7 @@ begin
 
 	print("*/");
 	print(func(z[x.ch1.ch2][2].name()));
+	a.b();
 
 	c <- 22;
 	c <- 22.6;
