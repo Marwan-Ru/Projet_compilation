@@ -39,14 +39,14 @@ decl* td_init();
  *et son nom (utilisation de la table lexico), 
  *retourne 0 si tout s'est passé correctement
  */
-int td_add(lexeme *tl, hashTable ht, decl* table, int nature, char * nom, int numregion);
+int td_add(decl* table, int nature, char * nom, int numregion);
 
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
-decl td_getobj(decl* table, int num);
+decl td_getobj(int num);
 
 /*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique
  *Donne la derniere declaration de ce nom (ou -1 si elle n'existe pas)*/
-decl td_getlastdecl(decl* table, char* nom);
+decl td_getlastdecl(char* nom);
 
 
 #endif
