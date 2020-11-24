@@ -37,7 +37,12 @@ int td_ajout(decl* table, int nature, char * nom, int numregion){
                 /*A faire plut tard recupere l'index dans la table des types*/
             }else if(nature = VAR || nature == PARAM){
                 d.index = 0;
-                /*En train d'y faire*/
+                /*index, dans la table des déclarations, de l'enregistrement associé à la déclaration du type de la variable ou du paramètre 
+                dont on mémorise la déclaration*/
+            }else if(nature == PROC || nature == FUNCT){
+                /*index dans la table contenant la description de l'entête de la procédure ou de la fonction (table de représentation des types 
+                et des entêtes de sous-programmes)*/
+                d.index = 0;
             }
         }
     }

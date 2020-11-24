@@ -12,7 +12,7 @@ decl : CIBLELEXYACC=decl
 decl : lexyacc
 
 lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o 
-	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -ly -lfl
+	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -lfl
 
 lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
