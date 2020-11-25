@@ -130,7 +130,7 @@ declaration : declaration_type
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type { printf("+%s (%d)\n",$<stringVal>2, yylineno); tl_ajout($<stringVal>2); }
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type { tl_ajout($<stringVal>2); }
                  ; 
 
 suite_declaration_type : STRUCT liste_champs FSTRUCT
@@ -143,7 +143,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type { printf("+%s (%d)\n",$<stringVal>1, yylineno); tl_ajout($<stringVal>1); }
+un_champ : IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>1); }
          ;
 
 		/* Déclaration de tableaux */
@@ -162,14 +162,14 @@ une_dimension : expression POINTPOINT expression
 	/** Déclaration de variables **/
 
 
-declaration_variable : VAR IDF DEUX_POINTS nom_type { printf("+%s (%d)\n",$<stringVal>2, yylineno);  tl_ajout($<stringVal>2); }
+declaration_variable : VAR IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>2); }
                      ;
 
 
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps {  printf("+%s (%d)\n",$<stringVal>2, yylineno); tl_ajout($<stringVal>2); }
+declaration_procedure : PROCEDURE IDF liste_parametres corps {  tl_ajout($<stringVal>2); }
                       ;
 
 liste_parametres : 
@@ -180,14 +180,14 @@ liste_param : un_param
             | liste_param PV un_param
             ;
 
-un_param : IDF DEUX_POINTS type_simple { printf("+%s (%d)\n",$<stringVal>1, yylineno);  tl_ajout($<stringVal>1); }
+un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
          ;
 
 
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps { printf("+%s (%d)\n",$<stringVal>2, yylineno);  tl_ajout($<stringVal>2); }
+declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps { tl_ajout($<stringVal>2); }
                      ;
 
 
@@ -254,7 +254,7 @@ expression : expr_pm
 		   | constante
 		   ;
 
-constante : STRING  { printf("+%s (%d)\n",$<stringVal>1, yylineno);  tl_ajout($<stringVal>1); }
+constante : STRING  { tl_ajout($<stringVal>1); }
 		  | CHAR
 		  ;
 

@@ -10,14 +10,6 @@
 
 void tt_init ();
 
-/* Fonction locale permettant de vérifier si t valeurs rentre dans une table des types.
-   Affiche une erreur et quitte si ce n'est pas le cas */
-void verifTaille (int t);
-
-/* Fonction locale permettant l'ajout de nb valeurs à la table des types.
-   Renvoie la position des données ajoutées */
-int ajoutsValTab (int nb, va_list vl);
-
 
 /* Ajoute les informations concernant une structure à la table de représentation des types.
    Les derniers paramètres de la fonction correspondent à nbChamps fois trois entiers indiquants,
