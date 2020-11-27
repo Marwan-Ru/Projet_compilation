@@ -17,8 +17,9 @@ typedef struct s_lexeme {
 /* Initialise la table lexicographique avec les types de base et des lignes vides */
 void tl_init ();
 
-/* Ajoute le lexeme à la table lexicographique de longueur longTableLex */
-void tl_ajout (char *lexeme);
+/* Ajoute le lexeme à la table lexicographique de longueur longTableLex.
+   Renvoie le nouveau numéro lexicographique associé au lexème */
+int tl_ajout (char *lexeme);
 
 /* Renvoie le lexeme stocké à la position num de la table lexicographique */
 char *tl_getLex (unsigned int num);

@@ -44,8 +44,9 @@ void tl_init () {
     }
 }
 
-/* Ajoute le lexeme à la table lexicographique de longueur longTableLex */
-void tl_ajout (char *lexeme) {
+/* Ajoute le lexeme à la table lexicographique de longueur longTableLex.
+   Renvoie le nouveau numéro lexicographique associé au lexème */
+int tl_ajout (char *lexeme);
     int longueurLex = strlen(lexeme), posTab;
     long hashLex = hash(lexeme);
 
@@ -68,6 +69,7 @@ void tl_ajout (char *lexeme) {
         tableLex[posTab].suivant = longTabLex;
     }
     longTabLex++;
+    return longTabLex-1;
 }
 
 /* Renvoie le lexeme stocké à la position num de la table lexicographique */
