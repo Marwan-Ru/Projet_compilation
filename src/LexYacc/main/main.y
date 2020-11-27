@@ -173,11 +173,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>2); }
 	/** Déclaration de procédures **/
 
 
-<<<<<<< HEAD
-declaration_procedure : PROCEDURE IDF liste_parametres corps {  tl_ajout($<stringVal>2); }
-=======
 declaration_procedure : PROCEDURE IDF liste_parametres corps FPROCEDURE { tr_ajout_reg(0, cmp_reg,0); tl_ajout($<stringVal>2); }
->>>>>>> pab
                       ;
 
 liste_parametres : 
@@ -195,11 +191,7 @@ un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
 	/** Déclaration de fonctions **/
 
 
-<<<<<<< HEAD
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps { tl_ajout($<stringVal>2); }
-=======
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps FFONCTION { tr_ajout_reg(0, cmp_reg,0); printf("j'ajoute \n"); printf("+%s (%d)\n",$<stringVal>2, yylineno);  tl_ajout($<stringVal>2); }
->>>>>>> pab
+declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps FFONCTION { tr_ajout_reg(0, cmp_reg,0); tl_ajout($<stringVal>2); }
                      ;
 
 
