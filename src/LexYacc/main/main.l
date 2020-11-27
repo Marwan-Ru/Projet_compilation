@@ -1,12 +1,12 @@
 %{
 #include "main.tab.h"
 #include <string.h>
+int cmp_reg = 0;
 %}
 
 %option yylineno
 
 %%
-
     /* Structure du programme */
 "program"	        	        { return(PROG); }
 "begin"  	        	        { return(DEBUT); }
@@ -17,8 +17,10 @@
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
 "fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
-"proc"                          { return(PROCEDURE); }
-"funct"                         { return(FONCTION); }	   
+"proc"                          { cmp_reg++; return(PROCEDURE); }
+"fin"[[:blank:]]?"proc"         { cmp_reg--; return(FPROCEDURE); }
+"funct"                         { cmp_reg++; return(FONCTION); }	
+"fin"[[:blank:]]?"funct"        { cmp_reg--; return(FFONCTION); }
 "tab"                           { return(TABLEAU); }
 "of"                            { return(DE); }
 
