@@ -3,9 +3,11 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include "tableLex.h"
+	#include "tablereg.h"
 
 	int yylex();
 	extern int yylineno;
+	extern int cmp_reg;
 
 	void yyerror (char const *str) {
 		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
@@ -33,14 +35,16 @@
     /* Structure du programme */
 %token PROG "program"
 %token DEBUT "begin"
-%token FIN "fin"
+%token FIN "end"
     /* Déclarations */
 %token TYPE "type"
 %token VAR "variable"
 %token STRUCT "struct"
 %token FSTRUCT "finstruct"
 %token PROCEDURE "proc"
+%token FPROCEDURE "finproc"
 %token FONCTION "funct"
+%token FFONCTION "finfunct"
 %token TABLEAU "tab"
 %token DE "of"
     /* Noms de types de données */
@@ -103,8 +107,8 @@
 %token INNATENDU "expression"
 
 %%
-programme : PROG IDF corps
-		  | PROG corps
+programme : PROG IDF corps FIN IDF { tr_ajout_reg(0, cmp_reg,0); }
+		  | PROG corps FIN { tr_ajout_reg(0, cmp_reg,0); }
 		  ;
 
 corps : liste_declarations liste_instructions
@@ -120,7 +124,7 @@ liste_declarations :
                    | liste_declarations declaration PV
                    ;
 
-declaration : declaration_type
+declaration : declaration_type 
             | declaration_variable
             | declaration_procedure 
             | declaration_fonction 
@@ -169,7 +173,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type { printf("+%s (%d)\n",$<stri
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps {  printf("+%s (%d)\n",$<stringVal>2, yylineno); tl_ajout($<stringVal>2); }
+declaration_procedure : PROCEDURE IDF liste_parametres corps FPROCEDURE { tr_ajout_reg(0, cmp_reg,0); printf("j'ajoute \n"); printf("+%s (%d)\n",$<stringVal>2, yylineno); tl_ajout($<stringVal>2); }
                       ;
 
 liste_parametres : 
@@ -187,7 +191,7 @@ un_param : IDF DEUX_POINTS type_simple { printf("+%s (%d)\n",$<stringVal>1, yyli
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps { printf("+%s (%d)\n",$<stringVal>2, yylineno);  tl_ajout($<stringVal>2); }
+declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps FFONCTION { tr_ajout_reg(0, cmp_reg,0); printf("j'ajoute \n"); printf("+%s (%d)\n",$<stringVal>2, yylineno);  tl_ajout($<stringVal>2); }
                      ;
 
 
@@ -367,10 +371,13 @@ int main(int argc, char *argv[]) {
 		yydebug = 1;
 
 	tl_init();
+	tr_init();
 
 	yyparse();
 
 	tl_afficher();
+	tr_affiche();
+	printf("compteur : %d \n", cmp_reg);
 
 	exit(EXIT_SUCCESS);
 }

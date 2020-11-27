@@ -22,7 +22,8 @@ program inutile
             proc c
             begin
                 j <- 2;
-            end;
+            end
+            fin proc;
             proc saisie
                 variable i : int ;
             begin
@@ -38,37 +39,46 @@ program inutile
                     end ;
                     T <- j ;
                 end ;
-            end ;
+            end 
+            fin proc ;
         begin
             saisie() ;
-        end;
+        end
+        fin proc ;
     begin
         b ();
-    end ;
+    end 
+    fin proc ;
 
     proc e
         proc f
             proc g
             begin
                 a() ;
-            end;
+            end
+            fin proc ;
         begin
             g() ;
-        end;
+        end
+        fin proc ;
         proc h
         begin
             f() ;
-        end;
+        end
+        fin proc ;
     begin
         h ();
-    end ;
+    end 
+    fin proc;
 
     proc i 
         variable T : int ;
     begin
         e() ;
         T <- j ;
-    end ;
+    end 
+    fin proc;
 begin
 i() ;
-end
+end 
+end inutile 
