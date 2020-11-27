@@ -46,11 +46,11 @@ void tl_init () {
 
 /* Ajoute le lexeme à la table lexicographique de longueur longTableLex.
    Renvoie le nouveau numéro lexicographique associé au lexème */
-int tl_ajout (char *lexeme);
+int tl_ajout (char *lexeme) {
     int longueurLex = strlen(lexeme), posTab;
     long hashLex = hash(lexeme);
 
-    if (tl_existe(lexeme)) return;
+    if (tl_existe(lexeme)) return tl_getLexNum(lexeme);
 
     if (longTabLex + 1 >= T_TABLELEX) {
         fprintf(stderr, "Erreur! Dépassement de la limite de lexèmes autorisées!\n");
