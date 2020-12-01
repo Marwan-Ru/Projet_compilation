@@ -1,6 +1,7 @@
 CC = @gcc
-CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g
-CIBLELEXYACC=main
+CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
+CIBLELEXYACC = main
+
 
 main : CIBLELEXYACC=main
 main : lexyacc
@@ -11,7 +12,7 @@ inst : lexyacc
 decl : CIBLELEXYACC=decl
 decl : lexyacc
 
-lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/allocation.o
+lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/allocation.o
 	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c $(wildcard obj/*.o) -ly -lfl
 
 lex.yy.o : lex.yy.c
@@ -23,31 +24,28 @@ $(CIBLELEXYACC).tab.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).y
 lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 	@flex -o obj/lex.yy.c src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 
-cleanCIBLELexYacc :
-	@rm -f bin/$(CIBLELEXYACC) obj/*
-	@mkdir -p obj
-	@mkdir -p bin
 
 
-tst_tabreg : clean obj/tst_tabreg.o obj/tablereg.o obj/allocation.o
-	$(CC) $(CFLAGS) -o bin/tst_tabreg $(wildcard obj/*.o)
-
-tst_liste : clean obj/tst_liste.o obj/liste.o obj/allocation.o
-	$(CC) $(CFLAGS) -o bin/tst_liste $(wildcard obj/*.o)
-
-tst_tabLex : clean obj/tst_tabLex.o obj/tableLex.o obj/allocation.o
-	$(CC) $(CFLAGS) -o bin/tst_tabLex $(wildcard obj/*.o)
-
-tst_tabTypes : clean obj/tst_tabTypes.o obj/tableTypes.o obj/allocation.o
-	$(CC) $(CFLAGS) -o bin/tst_tabTypes $(wildcard obj/*.o)
+tst_% : cleanTarget obj/%.o obj/tst_%.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/$@ $(filter-out $<,$^)
 
 obj/tst_%.o: tst/tst_%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-obj/%.o : src/tables/%.c inc/%.h
+obj/table%.o : src/tables/table%.c inc/table%.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean :
-	@rm -f bin/* obj/*
+obj/arbre%.o : src/arbre/arbre%.c inc/arbre%.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+obj/%.o : src/%.c inc/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
+cleanTarget:
+	@rm -f obj/* bin/$(MAKECMDGOALS)
 	@mkdir -p obj
 	@mkdir -p bin
+
+clean: cleanTarget
+	@rm -f bin/*

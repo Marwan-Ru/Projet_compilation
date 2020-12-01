@@ -1,3 +1,13 @@
+/* Auteur: Gustav Hubert
+ * Description: - Module implémentant une table de représentation
+ *                des  types et des entêtes de sous-programmes.
+ *                Cette table contient la description des types,
+ *                des procédures et fonctions déclaré(e)s dans 
+ *                le programme.
+ *                - Pour utiliser le module il suffit de le charger 
+ *                puis d'appeler tt_init().
+ */
+
 #include "tableTypes.h"
 
 int tt[T_TABLETYPES];

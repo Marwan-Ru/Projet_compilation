@@ -45,7 +45,7 @@ int tr_reg_existe (int num_reg) { /*Si c'est implémenté ou pas encore dans la 
 void tr_affiche () {
   int i;
   for (i = 0; i < NB_REGIONS-480; i++) {
-    printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %d \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, tablereg[i].arbre);
+    printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %p \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
   }
 }
 

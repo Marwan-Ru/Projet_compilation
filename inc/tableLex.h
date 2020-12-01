@@ -1,3 +1,14 @@
+/*       Auteur: Gustav Hubert
+ * Description: - Module implémentant une table lexicographique. 
+ *             Celle-ci permet le stockage de lexèmes (chaînes 
+ *             de caractères) ainsi que leurs association à un
+ *             numéro lexicographique unique (entier).
+ *              - Pour utiliser le module il suffit de le charger 
+ *             puis d'appeler tl_init().
+ *              - Ne pas oublier d'appeler tl_detruire() après
+ *             utilisation.
+ */
+
 #ifndef TABLELEX
 #define TABLELEX
 
