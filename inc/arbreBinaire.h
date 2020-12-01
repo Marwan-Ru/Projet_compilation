@@ -24,10 +24,10 @@ arbre ab_creerVide ();
 /* Vérifie si l'arbre est vide */
 int ab_estVide (arbre a);
 
-/* Renvoie un arbre sans fils et ayant comme ab_getRacine val */
+/* Renvoie un arbre sans fils et ayant comme racine val */
 arbre ab_creerFeuille (void *val);
 
-/* Renvoie un arbre ayant val pour ab_getRacine ainsi que
+/* Renvoie un arbre ayant val pour racine ainsi que
    filsgauche et filsdroit comme sous-arbre gauche 
    et sous-arbre droit respectivement */
 arbre ab_creerNoeud (void *val, arbre filsgauche, arbre filsdroit);
@@ -42,7 +42,7 @@ arbre ab_setFilsGauche (arbre a, arbre filsgauche);
    Renvoie le même arbre a */
 arbre ab_setFilsDroit (arbre a, arbre filsdroit);
 
-/* Renvoie la ab_getRacine de l'arbre a */
+/* Renvoie la racine de l'arbre a */
 void *ab_getRacine (arbre a);
 
 /* Renvoie le fils gauche de l'arbre a */
@@ -52,11 +52,12 @@ arbre ab_getFilsGauche (arbre a);
 arbre ab_getFilsDroit (arbre a);
 
 /* Libère récursivement la mémoire allouée à l'arbre a
-   et ses descendants */
-arbre ab_detruire (arbre a);
+   et ses descendants. Utilise la fonction de destruction 
+   dstr sur les valeurs s'il ne s'agit pas de NULL */
+arbre ab_detruire (arbre a, void (*dstr)(void *));
 
 /* Renvoie la hauteur de l'arbre a.
-   La ab_getRacine compte pour 1 */
+   La racine compte pour 1 */
 int ab_hauteur (arbre a);
 
 /* Renvoie le nombre total de fils

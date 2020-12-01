@@ -23,13 +23,13 @@ int main () {
     printf("Arbre a: Vide? %d, Hauteur: %d, Fils: %d\n", 
             ab_estVide(a), ab_hauteur(a), ab_nombreFils(a));
 
-    ab_detruire(a);
+    ab_detruire(a, NULL);
     a = ab_creerFeuille(entier);
     printf("Arbre a: Vide? %d, Hauteur: %d, Fils: %d\n", 
             ab_estVide(a), ab_hauteur(a), ab_nombreFils(a));
 
-	b = ab_creerNoeud(reel, NULL, ab_creerFeuille(entier));
-	c = ab_creerNoeud(caractere, ab_creerFeuille(entier), NULL);
+	b = ab_creerNoeud(reel, NULL, NULL);
+	c = ab_creerNoeud(caractere, NULL, NULL);
 
     ab_setFilsGauche(a, b);
     ab_setFilsDroit(a, c);
@@ -44,12 +44,8 @@ int main () {
 	printf("filsDroit(a): Vide? %d, Hauteur: %d, Fils: %d\n", 
             ab_estVide(tmp), ab_hauteur(tmp), ab_nombreFils(tmp));
 
-	a = ab_detruire(a);
+	a = ab_detruire(a, libere_mem);
 	printf("Arbre a vide ? %d\n", ab_estVide(a));
-
-	libere_mem(&entier);
-	libere_mem(&reel);
-	libere_mem(&caractere);
 
     exit(EXIT_SUCCESS);
 }

@@ -17,7 +17,7 @@ int ab_estVide (arbre a) {
     return a == ab_creerVide();
 }
 
-/* Renvoie un arbre sans fils et ayant comme ab_getRacine val */
+/* Renvoie un arbre sans fils et ayant comme racine val */
 arbre ab_creerFeuille (void *val) {
     arbre a = allocation_mem(1, sizeof(struct struct_arbre));
     a->fDroit = ab_creerVide();
@@ -26,7 +26,7 @@ arbre ab_creerFeuille (void *val) {
     return a;
 }
 
-/* Renvoie un arbre ayant val pour ab_getRacine ainsi que
+/* Renvoie un arbre ayant val pour racine ainsi que
    filsgauche et filsdroit comme sous-arbre gauche 
    et sous-arbre droit respectivement */
 arbre ab_creerNoeud (void *val, arbre filsgauche, arbre filsdroit) {
@@ -54,7 +54,7 @@ arbre ab_setFilsDroit (arbre a, arbre filsdroit) {
     return a;    
 }
 
-/* Renvoie la ab_getRacine de l'arbre a */
+/* Renvoie la racine de l'arbre a */
 void *ab_getRacine (arbre a) {
     if (!ab_estVide(a)) return a->val;
     else return NULL;
@@ -73,18 +73,23 @@ arbre ab_getFilsDroit (arbre a) {
 }
 
 /* Libère récursivement la mémoire allouée à l'arbre a
-   et ses descendants */
-arbre ab_detruire (arbre a) {
+   et ses descendants. Utilise la fonction de destruction 
+   dstr sur les valeurs s'il ne s'agit pas de NULL */
+arbre ab_detruire (arbre a, void (*dstr)(void *)) {
     if (!ab_estVide (a)) {
-        ab_detruire (a->fGauche);
-        ab_detruire (a->fDroit);
+        /* Fils */
+        a->fGauche = ab_detruire (a->fGauche, dstr);
+        a->fDroit = ab_detruire (a->fDroit, dstr);
+        /* Valeur */
+        if (dstr != NULL) (*dstr)(&(a->val));
+        /* Self */
         libere_mem (&a);
     }
-    return NULL;
+    return ab_creerVide();
 }
 
 /* Renvoie la hauteur de l'arbre a.
-   La ab_getRacine compte pour 1 */
+   La racine compte pour 1 */
 int ab_hauteur (arbre a) {
     int gMax, dMax;
 

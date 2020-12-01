@@ -1,1 +1,2 @@
 -Rendre les tables dynamiques (?)
+-Support pour types de base plus grand (long, double...)
