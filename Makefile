@@ -26,6 +26,9 @@ lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 
 
 
+tst_arbreAbstrait: cleanTarget obj/arbreAbstrait.o obj/arbreBinaire.o obj/tst_arbreAbstrait.o obj/allocation.o
+	$(CC) $(CFLAGS) -o bin/tst_arbreAbstrait obj/arbreAbstrait.o obj/arbreBinaire.o obj/tst_arbreAbstrait.o obj/allocation.o
+
 tst_% : cleanTarget obj/%.o obj/tst_%.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/$@ $(filter-out $<,$^)
 

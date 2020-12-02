@@ -14,15 +14,27 @@
 /* GESTION DES CELLULES DE L'ARBRE */
 
 /* Renvoie une nouvelle cellule composée d'id et de val */
-celluleAA aa_creerCellule (enum Identifiant id, void *val) {
-    celluleAA cel = allocation_mem(1, sizeof(struct_celluleAA));
+celluleAA aa_creerCellule (Identifiant id, void *val) {
+    celluleAA cel = allocation_mem(1, sizeof(struct struct_celluleAA));
     cel->id = id;
     cel->donnees = val;
     return cel;
 }
 
-/* Libère la mémoire associée à la cellule cel */
-void aa_detruireCellule (celluleAA cel) {
+/* Renvoie l'identifiant de la cellule cel */
+Identifiant aa_idCellule (celluleAA cel) {
+    return cel->id;
+}
+
+/* Renvoie la donnée associée à la cellule cel */
+void *aa_donneesCellule (celluleAA cel) {
+    return cel->donnees;
+}
+
+/* Libère la mémoire associée à la cellule pointé par celPtr */
+void aa_detruireCellule (void *celPtr) {
+    celluleAA *cel = (celluleAA *) celPtr;
+    libere_mem(&((*cel)->donnees));
     libere_mem(cel);
 }
 
@@ -41,7 +53,7 @@ int aa_estVide (arbre a) {
 /* Renvoie un arbre abstrait identifié par id et 
    n'ayant ni fils, ni frère. val correspond à la
    donnée potentiellement associé à id */
-arbre aa_creerFeuille (enum Identifiant id, void *val) {
+arbre aa_creerFeuille (Identifiant id, void *val) {
     celluleAA cel = aa_creerCellule(id, val);
 
     return ab_creerFeuille(cel);
@@ -50,7 +62,7 @@ arbre aa_creerFeuille (enum Identifiant id, void *val) {
 /* Crée et renvoie un arbre abstrait identifié par id.
    Les abres fils et frère peuvent également être indiqués. 
    val correspond à la donnée potentiellement associé à id */
-arbre aa_creerNoeud (enum Identifiant id, void *val, arbre fils, arbre frere) {
+arbre aa_creerNoeud (Identifiant id, void *val, arbre fils, arbre frere) {
     celluleAA cel = aa_creerCellule(id, val);
 
     /* Le fils gauche de l'arbre binaire correspond toujours au fils et
