@@ -8,6 +8,7 @@
 	int yylex();
 	extern int yylineno;
 	extern int cmp_reg;
+	int numreg = 0;
 
 	void yyerror (char const *str) {
 		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
@@ -107,8 +108,8 @@
 %token INNATENDU "expression"
 
 %%
-programme : PROG IDF corps FIN IDF { tr_ajout_reg(0, cmp_reg,0); }
-		  | PROG corps FIN { tr_ajout_reg(0, cmp_reg,0); }
+programme : PROG IDF corps FIN IDF /* { tr_ajout_reg(0, cmp_reg,0); } */
+		  | PROG corps FIN /* { tr_ajout_reg(0, cmp_reg,0); } */
 		  ;
 
 corps : liste_declarations liste_instructions
@@ -173,7 +174,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>2); }
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps FPROCEDURE { tr_ajout_reg(0, cmp_reg,0); tl_ajout($<stringVal>2); }
+declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps FPROCEDURE { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
                       ;
 
 liste_parametres : 
@@ -181,7 +182,7 @@ liste_parametres :
                  ;
 
 liste_param : un_param
-            | liste_param PV un_param
+            | liste_param {cmp_reg++; } PV un_param
             ;
 
 un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
@@ -191,7 +192,7 @@ un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps FFONCTION { tr_ajout_reg(0, cmp_reg,0); tl_ajout($<stringVal>2); }
+declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps FFONCTION { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
                      ;
 
 
@@ -371,13 +372,13 @@ int main(int argc, char *argv[]) {
 		yydebug = 1;
 
 	tl_init();
-	tr_init();
+	/*tr_init();*/
 
 	yyparse();
 
 	tl_afficher();
-	tr_affiche();
-	printf("compteur : %d \n", cmp_reg);
+	/*tr_affiche();*/
+	//printf("compteur : %d \n", cmp_reg);
 
 	exit(EXIT_SUCCESS);
 }

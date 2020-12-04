@@ -17,9 +17,9 @@ int cmp_reg = 0;
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
 "fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
-"proc"                          { cmp_reg++; return(PROCEDURE); }
+"proc"                          { return(PROCEDURE); }
 "fin"[[:blank:]]?"proc"         { cmp_reg--; return(FPROCEDURE); }
-"funct"                         { cmp_reg++; return(FONCTION); }	
+"funct"                         { return(FONCTION); }	
 "fin"[[:blank:]]?"funct"        { cmp_reg--; return(FFONCTION); }
 "tab"                           { return(TABLEAU); }
 "of"                            { return(DE); }
