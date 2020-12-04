@@ -1,5 +1,5 @@
 CC = @gcc
-CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g -fsanitize=address
+CFLAGS = -Wall -ansi -pedantic-errors -O0 -I "inc" -g
 CIBLELEXYACC = main
 
 
