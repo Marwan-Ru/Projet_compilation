@@ -15,18 +15,19 @@ typedef struct {
   int *arbre; /*TO DO : changer en bon type*/
 } champ;
 
-#define NB_REGIONS 10
+#define NB_REGIONS 500
 
-void init();
 
-void ajout_reg (int num_reg, int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
+void tr_init();
 
-champ get_reg (int num_reg);
+void tr_ajout_reg (int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
 
-int reg_existe (int num_reg);
+champ tr_get_reg (int num_reg);
 
-void affiche ();
+int tr_reg_existe (int num_reg);
 
-void reg_detruire ();
+void tr_affiche ();
+
+void tr_detruire ();
 
 #endif

@@ -43,7 +43,8 @@ void yyerror (char const *str) {
 %token UNEXPECTED
 
 %%
-programme : PROG corps
+programme : PROG IDF corps
+		  | PROG corps
 		  ;
 
 corps : liste_instructions
@@ -66,18 +67,18 @@ instruction : affectation
 			| afficher
 	    	;
 
-resultat_retourne : 
-				  | expression
-				  ;
-
 affectation : variable OPAFF expression
 	    	;
 
 variable : IDF
 		 | variable POINT IDF
 		 | variable POINT fonction
-		 | variable CO expression CF
+		 | variable CO liste_indices CF
 	 	 ;
+
+liste_indices : expr_pm
+              | liste_indices VIRG expr_pm
+              ;
 
 expression : expr_pm
 		   | expr_bool_or
@@ -169,8 +170,8 @@ condition : SI expr_cond ALORS liste_instructions
 		  ;
 
 expr_cond : expr_bool_or
-		| variable
-		;
+		  | variable
+		  ;
 
 
 tantque : TANTQUE expr_cond FAIRE liste_instructions
@@ -180,6 +181,10 @@ tantque : TANTQUE expr_cond FAIRE liste_instructions
 
 pour : POUR expression PV expr_cond PV instruction FAIRE liste_instructions
 	 ;
+
+resultat_retourne : 
+				  | expression
+				  ;
 
 afficher : AFFICHER PO expression PF
 		 ;

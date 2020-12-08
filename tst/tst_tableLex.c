@@ -15,6 +15,8 @@ int main () {
     printf("'test2' existe?: %d\n", tl_existe("test2"));
     printf("'test5' existe?: %d\n", tl_existe("test5"));
 
+    tl_afficher();
+
     tl_detruire();
 
     exit(EXIT_SUCCESS);

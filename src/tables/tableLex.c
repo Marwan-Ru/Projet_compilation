@@ -1,3 +1,14 @@
+/*       Auteur: Gustav Hubert
+ * Description: - Module implémentant une table lexicographique. 
+ *             Celle-ci permet le stockage de lexèmes (chaînes 
+ *             de caractères) ainsi que leurs association à un
+ *             numéro lexicographique unique (entier).
+ *              - Pour utiliser le module il suffit de le charger 
+ *             puis d'appeler tl_init().
+ *              - Ne pas oublier d'appeler tl_detruire() après
+ *             utilisation.
+ */
+
 #include "tableLex.h"
 
 int hashTable[T_TABLELEX];
@@ -39,14 +50,18 @@ void tl_init () {
 
     for (i = 4; i < T_TABLELEX; i++) {
         tableLex[i].longueur = -1;
+        tableLex[i].lexeme = "";
         tableLex[i].suivant = -1;
     }
 }
 
-/* Ajoute le lexeme à la table lexicographique de longueur longTableLex */
-void tl_ajout (char *lexeme) {
+/* Ajoute le lexeme à la table lexicographique de longueur longTableLex.
+   Renvoie le nouveau numéro lexicographique associé au lexème */
+int tl_ajout (char *lexeme) {
     int longueurLex = strlen(lexeme), posTab;
     long hashLex = hash(lexeme);
+
+    if (tl_existe(lexeme)) return tl_getLexNum(lexeme);
 
     if (longTabLex + 1 >= T_TABLELEX) {
         fprintf(stderr, "Erreur! Dépassement de la limite de lexèmes autorisées!\n");
@@ -65,6 +80,7 @@ void tl_ajout (char *lexeme) {
         tableLex[posTab].suivant = longTabLex;
     }
     longTabLex++;
+    return longTabLex-1;
 }
 
 /* Renvoie le lexeme stocké à la position num de la table lexicographique */
@@ -100,10 +116,53 @@ int tl_longTabLex() {
     return longTabLex;
 }
 
+/* Fonction utilitaire privée permettant l'affichage des lignes sans informations pour tl_afficher */
+void afficherLigneTab (int pos) {
+    int i;
+
+    if (pos == -1) {
+        printf("   ╒═════╤");
+        for (i = 0; i < 20; i++) printf("═");
+        printf("╤═════╕\n");
+    } else if (pos == 0) {
+        printf("   ├─────┼");
+        for (i = 0; i < 20; i++) printf("─");
+        printf("┼─────┤\n");
+    } else if (pos == 1) {
+        printf("   ╘═════╧");
+        for (i = 0; i < 20; i++) printf("═");
+        printf("╧═════╛\n");
+    }
+}
+
+/* Affiche tous les lexèmes avec le numéro lexicographique la longueur et le lexème suivant s'il y a */
+void tl_afficher() {
+    int i, l = tl_longTabLex();
+    lexeme tmp;
+
+    printf("Table Lexicographique :\n");
+    afficherLigneTab(-1);
+    printf("   │long.│       lexème       │suiv.│\n");
+    
+    for (i = 0; i < l+2 && i < T_TABLELEX; i++) {
+        tmp = tableLex[i];
+        afficherLigneTab(0);
+        printf("%3d│%5d│%20.20s│%5d│\n", i, tmp.longueur, tmp.lexeme, tmp.suivant);
+    }
+
+    if (i < T_TABLELEX - 2) {
+        afficherLigneTab(0);
+        printf("   │  ...│                 ...│  ...│\n");
+        afficherLigneTab(0);
+        printf("%3d│   -1│                    │   -1│\n", T_TABLELEX-1);
+    }
+    afficherLigneTab(1);
+}
+
 /* Libère la mémoire associé à la table lexicographique */
 void tl_detruire () {
-    int i;
-    for (i = 0; i < T_TABLELEX; i++) {
+    int i, l = tl_longTabLex();
+    for (i = 0; i < l; i++) {
         libere_mem(&(tableLex[i].lexeme));
     }
 }

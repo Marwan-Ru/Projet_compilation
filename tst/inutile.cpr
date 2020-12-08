@@ -1,0 +1,84 @@
+program inutile
+    type date : struct
+        jour : int ;
+        mois : int ;
+        annee : int ;
+    finstruct ;
+    type personne : struct
+        numero : int ;
+        age : int ;
+        naissance : date ;
+    finstruct ;
+    type equipe : tab[1..3,1..2] of personne ;
+    variable p : personne ;
+    variable te : equipe ;
+    variable b : bool ;
+    variable i : float ;
+    variable j : int ;
+
+    proc a
+        proc b
+            variable T : int ;
+            proc c
+            begin
+                j <- 2;
+            end
+            fin proc;
+            proc saisie
+                variable i : int ;
+            begin
+                i <- 0 ; j <- 0 ;
+                while i < 3 do
+                begin
+                    i <- i+1 ;
+                    while j < 2 do
+                    begin
+                        j <- j+1 ;
+                        print("\nNumero de securite sociale :") ;
+                        return(te[i,j].numero) ;
+                    end ;
+                    T <- j ;
+                end ;
+            end 
+            fin proc ;
+        begin
+            saisie() ;
+        end
+        fin proc ;
+    begin
+        b ();
+    end 
+    fin proc ;
+
+    proc e
+        proc f
+            proc g
+            begin
+                a() ;
+            end
+            fin proc ;
+        begin
+            g() ;
+        end
+        fin proc ;
+        proc h
+        begin
+            f() ;
+        end
+        fin proc ;
+    begin
+        h ();
+    end 
+    fin proc;
+
+    proc i 
+        variable T : int ;
+    begin
+        e() ;
+        T <- j ;
+    end 
+    fin proc;
+begin
+i() ;
+end 
+end inutile 

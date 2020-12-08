@@ -1,14 +1,14 @@
 %{
 #include "main.tab.h"
 #include <string.h>
+int cmp_reg = 0;
 %}
 
 %option yylineno
 
 %%
-
     /* Structure du programme */
-"program"\n	        	        { return(PROG); }
+"program"	        	        { return(PROG); }
 "begin"  	        	        { return(DEBUT); }
 "end"		                    { return(FIN); }
 
@@ -16,9 +16,11 @@
 "type"                          { return(TYPE); }
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
-"fin"[[:blank:]]?"struct"          { return(FSTRUCT); }
+"fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
 "proc"                          { return(PROCEDURE); }
-"funct"                         { return(FONCTION); }	   
+"fin"[[:blank:]]?"proc"         { cmp_reg--; return(FPROCEDURE); }
+"funct"                         { return(FONCTION); }	
+"fin"[[:blank:]]?"funct"        { cmp_reg--; return(FFONCTION); }
 "tab"                           { return(TABLEAU); }
 "of"                            { return(DE); }
 
@@ -31,7 +33,7 @@
 
     /* Types de données */
 ([0]|[1-9][0-9]*)		        { yylval.intVal = atoi(yytext); return(INT); }
-([0]|[1-9][0-9]*)\.[0-9]*	    { yylval.floatVal = atof(yytext); return(FLOAT); }
+([0]|[1-9][0-9]*)\.[0-9]+	    { yylval.floatVal = atof(yytext); return(FLOAT); }
 ('[^']')|'\\''                  { yylval.charVal = yytext[0]; return(CHAR); }
 \"((\\\")|[^(\")])*\"           { yylval.stringVal = strdup(yytext); return(STRING); }
 "true"|"false"                  { yylval.boolVal = (yytext[0] == 't'); return(BOOL); }
@@ -84,7 +86,7 @@
 "print"                         { return(AFFICHER); }
 
     /* Commentaires */
-\/\/.*
+\/\/.*                          
 
     /* Identifiants */
 [a-zA-Z][a-zA-Z0-9]* 	        { yylval.stringVal = strdup(yytext); return(IDF); }

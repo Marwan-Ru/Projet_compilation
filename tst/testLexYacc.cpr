@@ -145,7 +145,7 @@ begin
 	print(func(z[x.ch1.ch2][2].name()));
 	
 	a.b();
-	c. <- -d();
+	c <- -d();
 
 	c <- 22;
 	c <- 22.6;
