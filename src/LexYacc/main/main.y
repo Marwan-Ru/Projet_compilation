@@ -13,12 +13,6 @@
 	void yyerror (char const *str) {
 		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
 	}
-
-	void checkLexeme(char * lexeme) {
-		if (!tl_existe(lexeme)) {
-			yyerror("Identifiant inconnue!");
-		}
-	}
 %}
 
 %union {
@@ -43,9 +37,7 @@
 %token STRUCT "struct"
 %token FSTRUCT "finstruct"
 %token PROCEDURE "proc"
-%token FPROCEDURE "finproc"
 %token FONCTION "funct"
-%token FFONCTION "finfunct"
 %token TABLEAU "tab"
 %token DE "of"
     /* Noms de types de données */
@@ -108,8 +100,7 @@
 %token INNATENDU "expression"
 
 %%
-programme : PROG IDF corps FIN IDF /* { tr_ajout_reg(0, cmp_reg,0); } */
-		  | PROG corps FIN /* { tr_ajout_reg(0, cmp_reg,0); } */
+programme : PROG IDF corps /* { tr_ajout_reg(0, cmp_reg,0); } */
 		  ;
 
 corps : liste_declarations liste_instructions
@@ -174,7 +165,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>2); }
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps FPROCEDURE { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
+declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
                       ;
 
 liste_parametres : 
@@ -192,7 +183,7 @@ un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps FFONCTION { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
+declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
                      ;
 
 
@@ -200,7 +191,7 @@ declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURN
 
 
 nom_type : type_simple
-         | IDF { checkLexeme($<stringVal>1); }
+         | IDF
          ;
 
 type_simple : T_INT
@@ -224,7 +215,6 @@ suite_liste_inst : instruction PV
 		 		 ;
 
 instruction : affectation
-            | variable POINT fonction
 			| fonction
 			| condition
 			| tantque
@@ -240,9 +230,8 @@ instruction : affectation
 affectation : variable OPAFF expression
 	    	;
 
-variable : IDF  { checkLexeme($<stringVal>1); }
-		 | variable POINT IDF  { checkLexeme($<stringVal>3); }
-		 | variable POINT fonction
+variable : IDF
+		 | variable POINT IDF
 		 | variable CO liste_indices CF
 	 	 ;
 
@@ -324,7 +313,7 @@ expr_bool_base : PO expr_bool_or PF
 	/** Appels de fonctions & procédures **/
 
 
-fonction : IDF PO suite_args PF  { checkLexeme($<stringVal>1); }
+fonction : IDF PO suite_args PF
 		 ;
 
 suite_args : 

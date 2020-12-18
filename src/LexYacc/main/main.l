@@ -5,6 +5,8 @@ int cmp_reg = 0;
 %}
 
 %option yylineno
+%option nounput
+%option noinput
 
 %%
     /* Structure du programme */
@@ -16,11 +18,9 @@ int cmp_reg = 0;
 "type"                          { return(TYPE); }
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
-"fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
+"end"[[:blank:]]?"struct"       { return(FSTRUCT); }
 "proc"                          { return(PROCEDURE); }
-"fin"[[:blank:]]?"proc"         { cmp_reg--; return(FPROCEDURE); }
 "funct"                         { return(FONCTION); }	
-"fin"[[:blank:]]?"funct"        { cmp_reg--; return(FFONCTION); }
 "tab"                           { return(TABLEAU); }
 "of"                            { return(DE); }
 
