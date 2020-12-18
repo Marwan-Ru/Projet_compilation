@@ -26,8 +26,8 @@ lex.yy.c : src/LexYacc/$(CIBLELEXYACC)/$(CIBLELEXYACC).l
 
 
 
-tst_arbreAbstrait: cleanTarget obj/arbreAbstrait.o obj/arbreBinaire.o obj/tst_arbreAbstrait.o obj/allocation.o
-	$(CC) $(CFLAGS) -o bin/tst_arbreAbstrait obj/arbreAbstrait.o obj/arbreBinaire.o obj/tst_arbreAbstrait.o obj/allocation.o
+tst_arbreAbstrait: cleanTarget obj/arbreAbstrait.o obj/tst_arbreAbstrait.o
+	$(CC) $(CFLAGS) -o bin/tst_arbreAbstrait obj/arbreAbstrait.o obj/tst_arbreAbstrait.o
 
 tst_% : cleanTarget obj/%.o obj/tst_%.o obj/allocation.o
 	$(CC) $(CFLAGS) -o bin/$@ $(filter-out $<,$^)
@@ -46,7 +46,12 @@ obj/%.o : src/%.c inc/%.h
 
 
 cleanTarget:
-	@rm -f obj/* bin/$(MAKECMDGOALS)
+	@rm -f obj/*
+	@if [ "$(MAKECMDGOALS)" != "" ]; then\
+		rm -f bin/$(MAKECMDGOALS);\
+	else\
+		rm -f bin/$(CIBLELEXYACC);\
+	fi
 	@mkdir -p obj
 	@mkdir -p bin
 
