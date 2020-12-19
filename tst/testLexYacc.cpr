@@ -24,7 +24,7 @@ proc p1 (toto : int; tata : char)
 	    ch3 : t3 ;
 	  endstruct ;
 begin
-	asdfg <- 42;
+	asdfg <- 420;
 end;
 
 proc p2 (toto : int; tata : char) 

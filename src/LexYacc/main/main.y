@@ -101,6 +101,7 @@
 
 %%
 programme : PROG IDF corps /* { tr_ajout_reg(0, cmp_reg,0); } */
+		  | PROG corps
 		  ;
 
 corps : liste_declarations liste_instructions
