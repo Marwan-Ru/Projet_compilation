@@ -3,14 +3,14 @@ type t1 : struct
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	  fin struct ;
+	  endstruct ;
 
 variable t1 : int ;
 
 type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	  finstruct ;
+	  endstruct ;
 
 type t3 : tab[bla..bla] of int ;
 
@@ -22,9 +22,9 @@ proc p1 (toto : int; tata : char)
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	  fin struct ;
+	  endstruct ;
 begin
-	asdfg <- 42;
+	asdfg <- 420;
 end;
 
 proc p2 (toto : int; tata : char) 
@@ -32,14 +32,14 @@ proc p2 (toto : int; tata : char)
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	fin struct ;
+	endstruct ;
 
 	proc p3 (toto : int; tata : char) 
 		type t5 : struct
 			ch7 : int ;
 			ch2 : float ;
 			ch3 : t3 ;
-		fin struct ;
+		endstruct ;
 	begin
 		test <- "hella lit";
 	end
@@ -54,7 +54,7 @@ funct f1 (toto : int) return int
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	finstruct ;
+	endstruct ;
 	type t3 : tab[bla..bla] of int ;
 begin
 	toto(-1);
@@ -65,7 +65,7 @@ funct f2 (toto : int; titi : int; tata : char) return int
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	finstruct ;
+	endstruct ;
 	type t3 : tab[bla..bla] of int ;
 
 	funct f3 (test : bool) return bool
@@ -75,12 +75,12 @@ funct f2 (toto : int; titi : int; tata : char) return int
 				ch1 : int ;
 			ch2 : float ;
 			ch3 : t3 ;
-			fin struct ;
+			endstruct ;
 		begin
 			t1.ch2 <- t2.ch1;
 		end;
 	begin
-		t2.ch3.launchNukes();
+		launchNukes(t2.ch3);
 	end;
 begin
 	v1 <- f2(8, 22, 6, 'c');
@@ -137,14 +137,13 @@ begin
 	x.ch1[3] <- 1;
 	x.ch1[3][5] <- 1;
 	x.ch1[5].ch2[10] <- 1;
-	x[3].ch1()[3].ch2[translate(x.coord.x, x.coord.y)] <- 1; // test
+	x[3].ch1[3].ch2[translate(x.coord.x, x.coord.y)] <- 1; // test
 
 	// test"*/'
 
 	print("*/");
-	print(func(z[x.ch1.ch2][2].name()));
+	print(func(z[x.ch1.ch2][2].name));
 	
-	a.b();
 	c <- -d();
 
 	c <- 22;

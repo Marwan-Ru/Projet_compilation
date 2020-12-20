@@ -2,8 +2,6 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
-	#include "tableLex.h"
-	#include "tablereg.h"
 
 	int yylex();
 	extern int yylineno;
@@ -13,20 +11,21 @@
 	void yyerror (char const *str) {
 		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
 	}
-
-	void checkLexeme(char * lexeme) {
-		if (!tl_existe(lexeme)) {
-			yyerror("Identifiant inconnue!");
-		}
-	}
 %}
 
+%code requires { 
+	#include "tableLex.h"
+	#include "tablereg.h"
+	#include "arbreAbstrait.h" 
+}
+
+%code {
+	arbre arbreAbstrait;
+}
+
 %union {
-	int intVal;
-    float floatVal;
-    char *stringVal;
-	char charVal;
-	int boolVal;
+	arbre t_arbre;
+	int t_int;
 }
 
 %define parse.error verbose
@@ -43,9 +42,7 @@
 %token STRUCT "struct"
 %token FSTRUCT "finstruct"
 %token PROCEDURE "proc"
-%token FPROCEDURE "finproc"
 %token FONCTION "funct"
-%token FFONCTION "finfunct"
 %token TABLEAU "tab"
 %token DE "of"
     /* Noms de types de données */
@@ -55,11 +52,11 @@
 %token T_CHAR "char"
 %token T_STRING "string"
     /* Types de données */
-%token INT "entier"
-%token FLOAT "réel"
-%token BOOL "booléen"
-%token <char const *> STRING "chaîne de caractères"
-%token CHAR "caractère"
+%token <t_int> INT "entier"
+%token <t_int> FLOAT "réel"
+%token <t_int> BOOL "booléen"
+%token <t_int> STRING "chaîne de caractères"
+%token <t_int> CHAR "caractère"
     /* Opérateurs arithmétique */
 %token PLUS "+"
 %token MOINS "-"
@@ -103,16 +100,33 @@
 %token RETOURNE "return"
 %token AFFICHER "print"
     /* Identifiants */
-%token <char const *> IDF "identifiant"
+%token <t_int> IDF "identifiant"
 	/* Misc */
 %token INNATENDU "expression"
 
+/** Symboles non-terminaux **/
+%type <t_arbre> corps liste_instructions suite_liste_inst instruction
+	/* Affectations */
+%type <t_arbre> affectation variable liste_indices
+	/* Expression */
+%type <t_arbre> expression constante 
+%type <t_arbre> expr_pm expr_md expr_exp expr_base constante_maths
+%type <t_arbre> expr_comp
+%type <t_arbre> expr_bool_and expr_bool_or expr_bool_not expr_bool_base
+	/* Appels de fonctions & procédures */
+%type <t_arbre> fonction suite_args
+	/* Structures conditionnelles */
+%type <t_arbre> condition expr_cond tantque pour
+	/* Entrées & sorties */
+%type <t_arbre> resultat_retourne afficher
+
+
 %%
-programme : PROG IDF corps FIN IDF /* { tr_ajout_reg(0, cmp_reg,0); } */
-		  | PROG corps FIN /* { tr_ajout_reg(0, cmp_reg,0); } */
+programme : PROG IDF corps { arbreAbstrait = $3; /* tr_ajout_reg(0, cmp_reg,0); */ } 
+		  | PROG corps { arbreAbstrait = $2; }
 		  ;
 
-corps : liste_declarations liste_instructions
+corps : liste_declarations liste_instructions { $$ = $2; }
       ;
 
 
@@ -135,7 +149,7 @@ declaration : declaration_type
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type { tl_ajout($<stringVal>2); }
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
                  ; 
 
 suite_declaration_type : STRUCT liste_champs FSTRUCT
@@ -148,7 +162,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>1); }
+un_champ : IDF DEUX_POINTS nom_type
          ;
 
 		/* Déclaration de tableaux */
@@ -167,15 +181,15 @@ une_dimension : expression POINTPOINT expression
 	/** Déclaration de variables **/
 
 
-declaration_variable : VAR IDF DEUX_POINTS nom_type { tl_ajout($<stringVal>2); }
+declaration_variable : VAR IDF DEUX_POINTS nom_type
                      ;
 
 
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps FPROCEDURE { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
-                      ;
+declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps { /* tr_ajout_reg(0, cmp_reg,0); */ }
+                      
 
 liste_parametres : 
                  | PO liste_param PF
@@ -185,14 +199,14 @@ liste_param : un_param
             | liste_param {cmp_reg++; } PV un_param
             ;
 
-un_param : IDF DEUX_POINTS type_simple { tl_ajout($<stringVal>1); }
+un_param : IDF DEUX_POINTS type_simple
          ;
 
 
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps FFONCTION { /* tr_ajout_reg(0, cmp_reg,0); */ tl_ajout($<stringVal>2); }
+declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps /* { tr_ajout_reg(0, cmp_reg,0); } */
                      ;
 
 
@@ -200,7 +214,7 @@ declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURN
 
 
 nom_type : type_simple
-         | IDF { checkLexeme($<stringVal>1); }
+         | IDF
          ;
 
 type_simple : T_INT
@@ -216,20 +230,20 @@ type_simple : T_INT
 
 
 
-liste_instructions : DEBUT suite_liste_inst FIN
+liste_instructions : DEBUT suite_liste_inst FIN { $$ = aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $2); }
 				   ; 
 
 suite_liste_inst : instruction PV
-		 		 | suite_liste_inst instruction PV
+		 		 | suite_liste_inst instruction PV { $$ = aa_concatPereFrere($2, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $1)); }
 		 		 ;
 
 instruction : affectation
-            | variable POINT fonction
 			| fonction
 			| condition
 			| tantque
 			| pour
-			| RETOURNE resultat_retourne
+			| RETOURNE resultat_retourne 
+				{ $$ = aa_concatPereFils(aa_creerNoeud(A_RETOURNER, -1), $2); }
 			| afficher
 	    	;
 
@@ -237,17 +251,21 @@ instruction : affectation
 	/** Affectations **/
 
 
-affectation : variable OPAFF expression
+affectation : variable OPAFF expression 
+				{ $$ = aa_concatPereFils(aa_creerNoeud(A_OPAFF, -1), aa_concatPereFrere($1, $3)); }
 	    	;
 
-variable : IDF  { checkLexeme($<stringVal>1); }
-		 | variable POINT IDF  { checkLexeme($<stringVal>3); }
-		 | variable POINT fonction
-		 | variable CO liste_indices CF
+ /* TODO: pas sûr, à tester */
+variable : IDF { $$ = aa_creerNoeud(A_IDF, $1); }
+		 | variable POINT IDF 
+		 	{ $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_CHAMP, -1), aa_creerNoeud(A_IDF, $3))); }
+		 | variable CO liste_indices CF 
+		 	{ $$ = aa_concatPereFils($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); }
 	 	 ;
 
-liste_indices : expr_pm
+liste_indices : expr_pm { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_INDICES, -1)); }
               | liste_indices VIRG expr_pm
+			  		{ $$ = aa_concatPereFrere($3, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $1)); }
               ;
 
 
@@ -259,85 +277,87 @@ expression : expr_pm
 		   | constante
 		   ;
 
-constante : STRING  { tl_ajout($<stringVal>1); }
-		  | CHAR
+constante : STRING { $$ = aa_creerNoeud(A_CSTE_CHAINE, $1); }
+		  | CHAR { $$ = aa_creerNoeud(A_CSTE_CAR, $1); }
 		  ;
 
 		/* Expressions arithmétiques */
 
-expr_pm : expr_pm PLUS expr_md
-		| expr_pm MOINS expr_md 
+expr_pm : expr_pm PLUS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_PLUS, -1), aa_concatPereFrere($1, $3)); }
+		| expr_pm MOINS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1), aa_concatPereFrere($1, $3)); }
 		| expr_md
 		;
 
-expr_md : expr_md MULT expr_exp 
-		| expr_md DIV expr_exp 
-		| expr_md MOD expr_exp
+expr_md : expr_md MULT expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MULT, -1), aa_concatPereFrere($1, $3)); }
+		| expr_md DIV expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIV, -1), aa_concatPereFrere($1, $3)); }
+		| expr_md MOD expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MODUL, -1), aa_concatPereFrere($1, $3)); }
 		| expr_exp
 		;
 
-expr_exp : expr_exp EXP expr_base
-		 | MOINS expr_base
+expr_exp : expr_exp EXP expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EXP, -1), aa_concatPereFrere($1, $3)); }
+		 | MOINS expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1), $2); }
 		 | expr_base
 		 ;
 
 expr_base : constante_maths
 		  | variable
-	  	  | PO expr_pm PF
+	  	  | PO expr_pm PF { $$ = $2; } /* TODO: vérifier si la priorité est bien respecté dans l'arbre */
 		  | fonction
 	  	  ;
 
-constante_maths : INT
-		        | FLOAT
+constante_maths : INT { $$ = aa_creerNoeud(A_CSTE_ENT, $1); }
+		        | FLOAT { $$ = aa_creerNoeud(A_CSTE_REELE, $1); }
 			    ;
 
 		/* Expressions relationnels */
 
-expr_comp : expr_pm INF expr_pm
-		  | expr_pm SUP expr_pm
-		  | expr_pm INFE expr_pm
-		  | expr_pm SUPE expr_pm
-		  | expr_pm EGAL expr_pm
-		  | expr_pm DIF expr_pm
+expr_comp : expr_pm INF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INF, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm SUP expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUP, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm INFE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INFE, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm SUPE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUPE, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm EGAL expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EGAL, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm DIF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIFF, -1), aa_concatPereFrere($1, $3)); }
 		  ;
 
 		/* Expressions logiques */
 
-expr_bool_or : expr_bool_or OR expr_bool_and
+expr_bool_or : expr_bool_or OR expr_bool_and { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_OU, -1), aa_concatPereFrere($1, $3)); }
 		     | expr_bool_and
 		     ;
 
-expr_bool_and : expr_bool_and AND expr_bool_not
+expr_bool_and : expr_bool_and AND expr_bool_not { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_ET, -1), aa_concatPereFrere($1, $3)); }
 			  | expr_bool_not
 			  ;
 
-expr_bool_not : NOT expr_bool_base
+expr_bool_not : NOT expr_bool_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_NON, -1), $2); }
 			  | expr_bool_base
 			  ;
 
-expr_bool_base : PO expr_bool_or PF
+expr_bool_base : PO expr_bool_or PF { $$ = $2; } /* TODO: pareil qu'au dessus */
 			   | expr_comp
-			   | BOOL
+			   | BOOL { $$ = aa_creerNoeud(A_CSTE_BOOL, $1); }
 			   ;
 
 
 	/** Appels de fonctions & procédures **/
 
 
-fonction : IDF PO suite_args PF  { checkLexeme($<stringVal>1); }
+fonction : IDF PO suite_args PF 
+			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		 ;
 
-suite_args : 
-		   | expression
-		   | suite_args VIRG expression
+suite_args : { $$ = NULL; }
+		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
+		   | suite_args VIRG expression { $$ = aa_concatPereFrere($3, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $1)); }
 		   ;
 
 
 	/** Structures conditionnelles **/
 
 
-condition : SI expr_cond ALORS liste_instructions
+condition : SI expr_cond ALORS liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1), aa_concatPereFrere($2, $4)); }
 		  | SI expr_cond ALORS liste_instructions SINON liste_instructions
+		  		{ $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, $6))); }
 		  ;
 
 expr_cond : expr_bool_or
@@ -345,23 +365,24 @@ expr_cond : expr_bool_or
 		  ;
 
 
-tantque : TANTQUE expr_cond FAIRE liste_instructions
-		| FAIRE liste_instructions TANTQUE expr_cond
+tantque : TANTQUE expr_cond FAIRE liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_WHILE, -1), aa_concatPereFrere($2, $4)); }
+		| FAIRE liste_instructions TANTQUE expr_cond { $$ = aa_concatPereFils(aa_creerNoeud(A_DO_WHILE, -1), aa_concatPereFrere($4, $2)); }
 		;
 
 
 pour : POUR expression PV expr_cond PV instruction FAIRE liste_instructions
+		{ $$ = aa_concatPereFils(aa_creerNoeud(A_FOR, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, aa_concatPereFrere($6, $8)))); }
 	 ;
 
 
 	/** Entrées & sorties **/
 
 
-resultat_retourne : 
+resultat_retourne : { $$ = NULL; }
 				  | expression
 				  ;
 
-afficher : AFFICHER PO expression PF
+afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, -1), $3); }
 		 ;
 
 %%
@@ -379,6 +400,8 @@ int main(int argc, char *argv[]) {
 	tl_afficher();
 	/*tr_affiche();*/
 	//printf("compteur : %d \n", cmp_reg);
+	printf("\n");
+	aa_afficher(arbreAbstrait);
 
 	exit(EXIT_SUCCESS);
 }
