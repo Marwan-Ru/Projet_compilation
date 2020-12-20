@@ -12,13 +12,8 @@ inst : lexyacc
 decl : CIBLELEXYACC=decl
 decl : lexyacc
 
-<<<<<<< HEAD
-lexyacc : cleanCIBLELexYacc $(CIBLELEXYACC).tab.c lex.yy.o 
-	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c obj/lex.yy.o -lfl
-=======
 lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/allocation.o
 	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c $(wildcard obj/*.o) -ly -lfl
->>>>>>> dev
 
 lex.yy.o : lex.yy.c
 	$(CC) -Wall -c -o obj/lex.yy.o obj/lex.yy.c
