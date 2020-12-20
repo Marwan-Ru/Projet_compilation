@@ -2,6 +2,9 @@
 #define ARBREABSTRAIT
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "allocation.h"
 
 typedef enum enum_id {
     A_VIDE,
@@ -12,12 +15,12 @@ typedef enum enum_id {
     A_CSTE_BOOL,
     A_CSTE_CAR,
     A_CSTE_CHAINE,
-    A_APPEL_PROC,
     A_APPEL_FONC,
     A_LISTE_PARAMS,
     A_OPAFF,
     A_IF_THEN_ELSE,
     A_WHILE,
+    A_DO_WHILE,
     A_FOR,
     A_OP_PLUS,
     A_OP_MOINS,
@@ -31,8 +34,11 @@ typedef enum enum_id {
     A_OP_SUPE,
     A_OP_EGAL,
     A_OP_DIFF,
+    A_OP_OU,
+    A_OP_ET,
+    A_OP_NON,
     A_LISTE_INDICES,
-    A_CHAMPS,
+    A_CHAMP,
     A_AFFICHER,
     A_RETOURNER
 } Identifiant;
@@ -42,12 +48,20 @@ typedef struct struct_arbre {
     int valeur;
 	struct struct_arbre *frere;
 	struct struct_arbre *fils;
-} arbre;
+} *arbre;
 
-arbre creerNoeud (Identifiant id, int valeur);
+arbre aa_arbreVide ();
 
-void concatPereFrere (arbre *pere, arbre *frere);
+arbre aa_creerNoeud (Identifiant id, int valeur);
 
-void concatPereFils (arbre *pere, arbre *fils);
+/* Renvoie pere */
+arbre aa_concatPereFrere (arbre pere, arbre frere);
+
+/* Renvoie pere */
+arbre aa_concatPereFils (arbre pere, arbre fils);
+
+void aa_afficher (arbre a);
+
+void aa_detruire_arbre (arbre a);
 
 #endif
