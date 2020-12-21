@@ -1,6 +1,6 @@
 #include "arbreAbstrait.h"
 
-arbre aa_arbreVide () {
+arbre aa_vide () {
 	return NULL;
 }
 
@@ -8,8 +8,8 @@ arbre aa_creerNoeud (Identifiant id, int valeur) {
 	arbre a = allocation_mem(1, sizeof(struct struct_arbre));
 	a->id = id;
 	a->valeur = valeur;
-    a->fils = aa_arbreVide();
-    a->frere = aa_arbreVide();
+    a->fils = aa_vide();
+    a->frere = aa_vide();
     return a;
 }
 
@@ -94,17 +94,18 @@ void afficher_rec (arbre a, char *indent) {
 	}
 	
 	newIndent = strdup(indent);
-	if (a->fils != aa_arbreVide() && a->frere != aa_arbreVide()) {
-		strcat(newIndent, "├frère─ ");
-		afficher_rec (a->frere, newIndent);
-		free(newIndent);
-		newIndent = strdup(indent);
-		strcat(newIndent, "└─fils─ ");
+	if (a->fils != aa_vide() && a->frere != aa_vide()) {
+		strcat(newIndent, "├─fils─ ");
 		afficher_rec (a->fils, newIndent);
-	} else if (a->frere != aa_arbreVide()) {
+		free(newIndent);
+
+		newIndent = strdup(indent);
+		strcat(newIndent, "└frère─ ");
+		afficher_rec (a->frere, newIndent);
+	} else if (a->frere != aa_vide()) {
 		strcat(newIndent, "└frère─ ");
 		afficher_rec(a->frere, newIndent);
-	} else if (a->fils != aa_arbreVide()) {
+	} else if (a->fils != aa_vide()) {
 		strcat(newIndent, "└─fils─ ");
 		afficher_rec(a->fils, newIndent);
 	}
@@ -112,9 +113,21 @@ void afficher_rec (arbre a, char *indent) {
 }
 
 void aa_afficher (arbre a) {
-	afficher_rec(a, "");
+	if (a != aa_vide()) afficher_rec(a, "");
+	else printf("A_VIDE\n");
 }
 
-void aa_detruire_arbre (arbre a) {
-    libere_mem(a);
+/* Détruit seulement la racine de l'arbre a */
+void aa_detruire (arbre a) {
+    libere_mem(&a);
+}
+
+/* Détruit récursivement tous les noeuds de l'arbre a */
+void aa_detruire_rec (arbre a) {
+	if (a == aa_vide()) return;
+	if(a->fils != aa_vide())
+		aa_detruire_rec(a->fils);
+	if(a->frere != aa_vide())
+		aa_detruire_rec(a->frere);
+    aa_detruire(a);
 }
