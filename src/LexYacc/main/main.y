@@ -305,7 +305,7 @@ expr_exp : expr_exp EXP expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EX
 
 expr_base : constante_maths
 		  | variable
-	  	  | PO expr_pm PF { $$ = $2; } /* TODO: vérifier si la priorité est bien respecté dans l'arbre */
+	  	  | PO expr_pm PF { $$ = $2; }
 		  | appel_fonction
 	  	  ;
 
@@ -337,7 +337,7 @@ expr_bool_not : NOT expr_bool_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_N
 			  | expr_bool_base
 			  ;
 
-expr_bool_base : PO expr_bool_or PF { $$ = $2; } /* TODO: pareil qu'au dessus */
+expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 			   | expr_comp
 			   | BOOL { $$ = aa_creerNoeud(A_CSTE_BOOL, $1); }
 			   ;
@@ -354,7 +354,7 @@ suite_args : { $$ = NULL; }
 		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
 		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		   ;
-		   
+
 
 	/** Structures conditionnelles **/
 
