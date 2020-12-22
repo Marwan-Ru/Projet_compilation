@@ -16,55 +16,29 @@ decl* td_init(){
         tabledecl[i].exec = -1;
     }
 }
-
 /*
- *Ajoute une declaration a partir de son type 
- *et son nom (utilisation de la table lexico), 
- *retourne 0 si tout s'est passé correctement
- */
-int td_ajout(decl* table, int nature, char * nom, int numregion){
-    if(!lexemeExiste(nom)){
-        fprintf(stderr, "Tentative de declaration avec un lexeme qui n'est pas dans la table des lexicaux\n");
-        return -1;
-    }
-    decl d = td_getdecl(tl_getLexNum(nom));
-    if(d.suivant == -1){    /*On a pas de suivant*/
-        if(d.NATURE == -1){ /*Le lexeme n'as pas encore été déclaré*/
-            d.NATURE = nature;
-            d.numregion = numregion;
-            if(nature == TYPE_S || nature == TYPE_T){
-                d.index = 0;
-                /*index dans la table contenant la description du type (table de représentation des types et des entêtes de sous-programmes)*/
-            }else if(nature = VAR || nature == PARAM){
-                d.index = 0;
-                /*index, dans la table des déclarations, de l'enregistrement associé à la déclaration du type de la variable ou du paramètre 
-                dont on mémorise la déclaration*/
-            }else if(nature == PROC || nature == FUNCT){
-                /*index dans la table contenant la description de l'entête de la procédure ou de la fonction (table de représentation des types 
-                et des entêtes de sous-programmes)*/
-                d.index = 0;
-            }
-        }
-    }
-}
-
-/*
- *Ajoute une declaration de type structure ou tableau
+ *Ajoute une declaration de type nature
  *a partir de son nom (utilisation de la table lexico), 
- *sa nature (struct ou table) et la position dans la table des types
+ *sa nature (struct ou table) et la valeur adéquate du champs index
  *(recuperation du retour de la fonction d'ajout dans la table des types).
  *retourne 0 si tout s'est passé correctement
  */
-int td_ajoutst(decl* table, int nature, char * nom, int numregion, int posTypes){
+int td_ajout(decl* table, int nature, char * nom, int numregion, int index){
     if(!lexemeExiste(nom)){
         fprintf(stderr, "Tentative de declaration avec un lexeme qui n'est pas dans la table des lexicaux\n");
         return -1;
     }
     int pos = td_getlastdeclnum(nom);
+    
+    if(tabledecl[pos].NATURE != -1){ /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
+        pos = T_TABLELEX + 1;
+        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDECL) pos++;
+    }
+
     tabledecl[pos].NATURE = nature;
     tabledecl[pos].numregion = numregion;
-    tabledecl[pos].index = posTypes;
     tabledecl[pos].suivant = -1;
+    tabledecl[pos].index = index;
     return 0;
 }
 

@@ -35,11 +35,12 @@ typedef struct s_decl{
 decl* td_init();
 
 /*
- *Ajoute une declaration a partir de son type 
- *et son nom (utilisation de la table lexico), 
+ *Ajoute une declaration de type nature
+ *a partir de son nom (utilisation de la table lexico), 
+ *sa nature (struct ou table) et la valeur adéquate du champs index
  *retourne 0 si tout s'est passé correctement
  */
-int td_ajout(decl* table, int nature, char * nom, int numregion);
+int td_ajout(decl* table, int nature, char * nom, int numregion, int index);
 
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
 decl td_getdecl(int num);
