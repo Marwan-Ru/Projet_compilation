@@ -122,7 +122,7 @@
 
 
 %%
-programme : PROG IDF corps { arbreAbstrait = $3; /* tr_ajout_reg(0, cmp_reg,0); */ } 
+programme : PROG IDF corps { arbreAbstrait = $3; } 
 		  | PROG corps { arbreAbstrait = $2; }
 		  ;
 
@@ -133,18 +133,24 @@ corps : liste_declarations liste_instructions { $$ = $2; }
 
 /*** DÉCLARATIONS ***/
 
-
-
-liste_declarations :
-                   | liste_declarations declaration PV
+liste_declarations : liste_decl_types liste_decl_vars liste_decl_proc_fct
                    ;
 
-declaration : declaration_type 
-            | declaration_variable
-            | declaration_procedure 
-            | declaration_fonction 
-            ;
+liste_decl_types : 
+                 | liste_decl_types declaration_type PV
+                 ;
 
+liste_decl_vars : 
+                | liste_decl_vars declaration_variable PV
+                ;
+
+liste_decl_proc_fct : 
+                    | liste_decl_proc_fct declaration_proc_fct PV
+                    ;
+
+declaration_proc_fct : declaration_procedure 
+                     | declaration_fonction
+                     ;
 
 	/** Déclaration de types **/
 
@@ -162,7 +168,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type
+un_champ : IDF DEUX_POINTS nom_type PV
          ;
 
 		/* Déclaration de tableaux */
@@ -188,7 +194,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps { /* tr_ajout_reg(0, cmp_reg,0); */ }
+declaration_procedure : PROCEDURE IDF liste_parametres corps
                       
 
 liste_parametres : 
@@ -196,7 +202,7 @@ liste_parametres :
                  ;
 
 liste_param : un_param
-            | liste_param {cmp_reg++; } PV un_param
+            | liste_param PV un_param
             ;
 
 un_param : IDF DEUX_POINTS type_simple
@@ -206,7 +212,7 @@ un_param : IDF DEUX_POINTS type_simple
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps /* { tr_ajout_reg(0, cmp_reg,0); } */
+declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps 
                      ;
 
 

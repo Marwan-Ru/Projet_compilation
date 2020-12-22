@@ -5,7 +5,7 @@ type t1 : struct
 	    ch3 : t3 ;
 	  endstruct ;
 
-variable t1 : int ;
+
 
 type t2 : struct
         ch1 : int ;
@@ -16,6 +16,7 @@ type t3 : tab[bla..bla] of int ;
 
 variable v1 : int ;
 variable v2 : string[5] ;
+variable t1 : int ;
 
 proc p1 (toto : int; tata : char) 
 	type t1 : struct
@@ -50,24 +51,26 @@ begin
 end;
 
 funct f1 (toto : int) return int 
-	variable v1 : int ;
+	
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
 	endstruct ;
 	type t3 : tab[bla..bla] of int ;
+	variable v1 : int ;
 begin
 	toto(-1);
 end;
 
 funct f2 (toto : int; titi : int; tata : char) return int 
-	variable v1 : int ;
+	
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
 	endstruct ;
 	type t3 : tab[bla..bla] of int ;
-
+	variable v1 : int ;
+	
 	funct f3 (test : bool) return bool
 		variable v2 : float ;
 		proc p3 (toto : int; tata : char) 
