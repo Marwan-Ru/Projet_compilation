@@ -48,6 +48,9 @@ decl td_getdecl(int num);
  *Donne la derniere declaration de ce nom (ou -1 si elle n'existe pas)*/
 decl td_getlastdecl(char* nom);
 
+/*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
+decl declerr();
+
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
 int td_detruire();
 
