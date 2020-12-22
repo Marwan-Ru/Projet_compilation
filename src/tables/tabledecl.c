@@ -48,7 +48,10 @@ int td_ajout(decl* table, int nature, char * nom, int numregion){
     }
 }
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
-decl td_getdecl(int num);
+decl td_getdecl(int num){
+    if(num > T_TABLEDECL + T_TABLEPRINC) return NULL;
+    return tabledecl[num];
+}
 
 /*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique*/
 
@@ -69,4 +72,7 @@ decl td_getlastdecl(char* nom){
 }
 
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
-int td_detruire();
+int td_detruire(){
+    free(tabledecl);
+    return 0;
+}
