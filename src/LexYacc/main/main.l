@@ -7,6 +7,7 @@ int cmp_reg = 0;
 %option yylineno
 %option nounput
 %option noinput
+%option noyywrap
 
 %%
     /* Structure du programme */
