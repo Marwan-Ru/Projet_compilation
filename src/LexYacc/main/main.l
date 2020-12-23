@@ -1,7 +1,9 @@
 %{
 #include "main.tab.h"
 #include <string.h>
+int NIS = 0;
 int cmp_reg = 0;
+int taille = 0;
 %}
 
 %option yylineno

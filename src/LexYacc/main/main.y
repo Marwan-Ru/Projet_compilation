@@ -5,8 +5,9 @@
 
 	int yylex();
 	extern int yylineno;
+	extern int NIS;
 	extern int cmp_reg;
-	int numreg = 0;
+	extern int taille;
 %}
 
 %code requires { 
@@ -168,7 +169,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type PV
+un_champ : IDF DEUX_POINTS nom_type
          ;
 
 		/* Déclaration de tableaux */
@@ -194,8 +195,15 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps
-                      
+declaration_procedure : PROCEDURE 
+						{cmp_reg++; NIS++ ;}
+						IDF liste_parametres 
+						liste_decl_types 
+                        liste_decl_vars 
+                        liste_decl_proc_fct
+                        liste_instructions
+						{NIS-- ;}
+                      ;
 
 liste_parametres : 
                  | PO liste_param PF
@@ -212,7 +220,16 @@ un_param : IDF DEUX_POINTS type_simple
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps 
+declaration_fonction : FONCTION 
+					   {cmp_reg++; NIS++ ;
+					   taille=1+NIS; }
+					   IDF liste_parametres 
+					   RETOURNE type_simple 
+					   liste_decl_types 
+                       liste_decl_vars 
+                       liste_decl_proc_fct
+                       liste_instructions
+					   {NIS-- ;}
                      ;
 
 
@@ -412,8 +429,7 @@ int main(int argc, char *argv[]) {
 
 	tl_afficher();
 	/*tr_affiche();*/
-	//printf("compteur : %d \n", cmp_reg);
-	aa_afficher(arbreAbstrait);
+	//aa_afficher(arbreAbstrait);
 
 	tl_detruire();
 	aa_detruire_rec(arbreAbstrait);
