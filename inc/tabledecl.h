@@ -1,17 +1,19 @@
 #ifndef TABLEDECL
 #define TABLEDECL
 
+#include <stdlib.h>
+#include <stddef.h>
 #include "allocation.h"
+#include "tableLex.h"
 
-#define T_TABLEDECL 5000
-#define T_TABLEPRINC 500 //dois être de la meme taille que la table des lexicaux
+#define T_TABLEDEBORD 5000
 
 enum nature{TYPE_S, TYPE_T, VAR, PARAM, PROC, FUNCT};
 
 typedef struct s_decl{
-    int NATURE;     //Ce champs peut prendre les valeurs de l'enumeration nature (ou -1 si vide)
-    int suivant;    //Chainage vers la prochaine decl de meme nom (dans le debordement)
-    int numregion;  //Numero de region contenant la declaration     
+    int NATURE;     /*Ce champs peut prendre les valeurs de l'enumeration nature (ou -1 si vide)*/
+    int suivant;    /*Chainage vers la prochaine decl de meme nom (dans le debordement)*/
+    int numregion;  /*Numero de region contenant la declaration    */ 
     /*
     *si NATURE=1 ou NATURE=2 (déclaration d'un type structure ou tableau) : 
     *   index dans la table contenant la description du type (table de représentation des types et des entêtes de sous-programmes).
@@ -32,7 +34,7 @@ typedef struct s_decl{
 }decl;
 
 /*Initialise la table des declarations*/
-decl* td_init();
+int td_init();
 
 /*
  *Ajoute une declaration de type nature
@@ -46,8 +48,11 @@ int td_ajout(decl* table, int nature, char * nom, int numregion, int index);
 decl td_getdecl(int num);
 
 /*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique
- *Donne la derniere declaration de ce nom (ou -1 si elle n'existe pas)*/
+ *Donne la derniere declaration de ce nom (ou declerr si elle n'existe pas)*/
 decl td_getlastdecl(char* nom);
+
+/*Renvoie la position dans la table de la derniere declaration qui porte ce nom*/
+int td_getlastdeclnum(char * nom);
 
 /*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
 decl declerr();

@@ -1,20 +1,23 @@
-#include <stdlib.h>
 #include "tabledecl.h"
-#include "tableLex.h"
 
 decl* tabledecl;
 
 /*Initialise la table des declarations*/
-decl* td_init(){
-    tabledecl = allocation_mem(T_TABLEDECL + T_TABLEPRINC, sizeof(decl));
-    int i = 0;
-    for(i=0; i<T_TABLEDECL + T_TABLEPRINC; i++){
+int td_init(){
+    int i;
+
+    /*ON allout la place pour la tableprincipale et également la table de debordement*/
+    tabledecl = allocation_mem(T_TABLEDEBORD + T_TABLELEX, sizeof(decl));
+    
+    for(i=0; i<T_TABLEDEBORD + T_TABLELEX; i++){ 
         tabledecl[i].NATURE = -1;
         tabledecl[i].suivant = -1;
         tabledecl[i].index = -1;
         tabledecl[i].numregion = -1;
         tabledecl[i].exec = -1;
     }
+
+    return 0;
 }
 /*
  *Ajoute une declaration de type nature
@@ -24,27 +27,30 @@ decl* td_init(){
  *retourne 0 si tout s'est passé correctement
  */
 int td_ajout(decl* table, int nature, char * nom, int numregion, int index){
-    if(!lexemeExiste(nom)){
+    int pos = td_getlastdeclnum(nom);
+    
+    if(!tl_existe(nom)){
         fprintf(stderr, "Tentative de declaration avec un lexeme qui n'est pas dans la table des lexicaux\n");
         return -1;
     }
-    int pos = td_getlastdeclnum(nom);
     
     if(tabledecl[pos].NATURE != -1){ /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
         pos = T_TABLELEX + 1;
-        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDECL) pos++;
+        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDEBORD) pos++;
     }
+    tabledecl[td_getlastdeclnum(nom)].suivant = pos;
 
     tabledecl[pos].NATURE = nature;
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
+
     return 0;
 }
 
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
 decl td_getdecl(int num){
-    if(num > T_TABLEDECL + T_TABLEPRINC){
+    if(num > T_TABLEDEBORD + T_TABLELEX){
         return declerr();
     }
     return tabledecl[num];
@@ -68,17 +74,7 @@ decl td_getlastdecl(char* nom){
     }
 }
 
-/*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
-decl declerr(){
-    decl d;
-    d.exec = -1;
-    d.index = -1;
-    d.NATURE = -1;
-    d.numregion = -1;
-    d.suivant = -1;
-    return d;
-}
-
+/*Renvoie la position dans la table de la derniere declaration qui porte ce nom*/
 int td_getlastdeclnum(char * nom){
     int pos = tl_getLexNum(nom);
     decl rep = td_getdecl(pos);
@@ -92,6 +88,18 @@ int td_getlastdeclnum(char * nom){
         }
     }
     return pos;
+}
+
+
+/*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
+decl declerr(){
+    decl d;
+    d.exec = -1;
+    d.index = -1;
+    d.NATURE = -1;
+    d.numregion = -1;
+    d.suivant = -1;
+    return d;
 }
 
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
