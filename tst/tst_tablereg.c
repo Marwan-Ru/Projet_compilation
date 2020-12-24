@@ -18,6 +18,12 @@ int main () {
   printf("\n\n");
   tr_affiche ();
 
+  tr_ajout_taille(9, 3);
+  tr_affiche ();
+
+  tr_ajout_nis(9, 3);
+  tr_affiche ();
+
   /*reg_detruire ();*/
   exit(0);
 }

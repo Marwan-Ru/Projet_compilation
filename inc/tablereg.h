@@ -22,6 +22,12 @@ void tr_init();
 
 void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
 
+void tr_ajout_taille (int num, int taille);
+
+void tr_ajout_nis (int num, int nis);
+
+void tr_ajout_arbre (int num, int *tree);
+
 champ tr_get_reg (int num_reg);
 
 int tr_reg_existe (int num_reg);

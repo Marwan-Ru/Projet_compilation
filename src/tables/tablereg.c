@@ -20,8 +20,33 @@ void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur) { /*TO DO : ch
   tablereg[nreg].taille_zone = taillez;
   tablereg[nreg].niv_imbric = niv;
   tablereg[nreg].arbre = pointeur;
+}
 
-  nreg++;
+void tr_ajout_taille (int num, int taille) {
+  if (num > NB_REGIONS ){
+    printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
+    exit(-1);
+  }
+
+  tablereg[num].taille_zone = taille;
+}
+
+void tr_ajout_nis (int num, int nis) {
+  if (num > NB_REGIONS ){
+    printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
+    exit(-1);
+  }
+
+  tablereg[num].niv_imbric = nis;
+}
+
+void tr_ajout_arbre (int num, int *tree) {
+  if (num > NB_REGIONS ){
+    printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
+    exit(-1);
+  }
+
+  tablereg[num].arbre = tree;
 }
 
 champ tr_get_reg (int num_reg) {
@@ -41,12 +66,17 @@ int tr_reg_existe (int num_reg) { /*Si c'est implémenté ou pas encore dans la 
   else return 0;
 }
 
+
 void tr_affiche () {
   int i;
+  printf("Table des régions :\n");
+  printf("   │ num │ taille │  NIS │ arbre\n");
+  
   for (i = 0; i < NB_REGIONS-480; i++) {
     /*printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %p \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);*/
-    printf("%3d│%5d│%3d│%p│\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
+    printf("   │  %3d│  %5d │  %3d │%p\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
   }
+  printf("\n");
 }
 
 void tr_detruire () {
