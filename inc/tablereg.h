@@ -20,7 +20,7 @@ typedef struct {
 
 void tr_init();
 
-void tr_ajout_reg (int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
 
 champ tr_get_reg (int num_reg);
 

@@ -1,7 +1,6 @@
 #include "tablereg.h"
 
 champ tablereg[NB_REGIONS];
-int nreg = 0;
 
 void tr_init() {
   int i;
@@ -12,7 +11,7 @@ void tr_init() {
   }
 }
 
-void tr_ajout_reg (int taillez, int niv, int *pointeur) { /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur) { /*TO DO : changer en bon type*/
   if (nreg > NB_REGIONS ){
     printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
     exit(-1);
@@ -45,7 +44,8 @@ int tr_reg_existe (int num_reg) { /*Si c'est implémenté ou pas encore dans la 
 void tr_affiche () {
   int i;
   for (i = 0; i < NB_REGIONS-480; i++) {
-    printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %p \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
+    /*printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %p \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);*/
+    printf("%3d│%5d│%3d│%p│\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
   }
 }
 
