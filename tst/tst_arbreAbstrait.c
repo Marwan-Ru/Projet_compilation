@@ -2,7 +2,9 @@
 #include <stdio.h>
 
 int main () {
-    arbre a, b, c;
+    arbre a = aa_vide(), 
+          b = aa_vide(), 
+          c = aa_vide();
 
     a = aa_creerNoeud(A_OPAFF, -1);
     b = aa_creerNoeud(A_IDF, 6); /* numlex */
@@ -16,6 +18,8 @@ int main () {
     printf("c (%p): id=%2d val=%2d frere=%14p fils=%14p\n\n", (void *)c, c->id, c->valeur, (void *)c->frere, (void *)c->fils);
 
     aa_afficher(a);
+
+    aa_detruire_rec(a);
 
     exit(EXIT_SUCCESS);
 }

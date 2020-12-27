@@ -4,6 +4,9 @@
 %}
 
 %option yylineno
+%option nounput
+%option noinput
+%option noyywrap
 
 %%
 "program"\n	        	        { return(PROG); }

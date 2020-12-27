@@ -5,12 +5,9 @@
 
 	int yylex();
 	extern int yylineno;
+	extern int NIS;
 	extern int cmp_reg;
-	int numreg = 0;
-
-	void yyerror (char const *str) {
-		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
-	}
+	extern int taille;
 %}
 
 %code requires { 
@@ -20,7 +17,11 @@
 }
 
 %code {
-	arbre arbreAbstrait;
+	arbre arbreAbstrait = NULL;
+	void yyerror (char const *str) {
+		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
+		arbreAbstrait = aa_vide();
+	}
 }
 
 %union {
@@ -107,22 +108,22 @@
 /** Symboles non-terminaux **/
 %type <t_arbre> corps liste_instructions suite_liste_inst instruction
 	/* Affectations */
-%type <t_arbre> affectation variable liste_indices
+%type <t_arbre> affectation variable idf_variable liste_indices
 	/* Expression */
 %type <t_arbre> expression constante 
 %type <t_arbre> expr_pm expr_md expr_exp expr_base constante_maths
 %type <t_arbre> expr_comp
 %type <t_arbre> expr_bool_and expr_bool_or expr_bool_not expr_bool_base
 	/* Appels de fonctions & procédures */
-%type <t_arbre> fonction suite_args
+%type <t_arbre> appel_fonction suite_args 
 	/* Structures conditionnelles */
-%type <t_arbre> condition expr_cond tantque pour
+%type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
 %type <t_arbre> resultat_retourne afficher
 
 
 %%
-programme : PROG IDF corps { arbreAbstrait = $3; /* tr_ajout_reg(0, cmp_reg,0); */ } 
+programme : PROG IDF corps { arbreAbstrait = $3; } 
 		  | PROG corps { arbreAbstrait = $2; }
 		  ;
 
@@ -133,18 +134,24 @@ corps : liste_declarations liste_instructions { $$ = $2; }
 
 /*** DÉCLARATIONS ***/
 
-
-
-liste_declarations :
-                   | liste_declarations declaration PV
+liste_declarations : liste_decl_types liste_decl_vars liste_decl_proc_fct
                    ;
 
-declaration : declaration_type 
-            | declaration_variable
-            | declaration_procedure 
-            | declaration_fonction 
-            ;
+liste_decl_types : 
+                 | liste_decl_types declaration_type PV
+                 ;
 
+liste_decl_vars : 
+                | liste_decl_vars declaration_variable PV
+                ;
+
+liste_decl_proc_fct : 
+                    | liste_decl_proc_fct declaration_proc_fct PV
+                    ;
+
+declaration_proc_fct : declaration_procedure 
+                     | declaration_fonction
+                     ;
 
 	/** Déclaration de types **/
 
@@ -188,15 +195,22 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE /* {cmp_reg++; } */ IDF liste_parametres corps { /* tr_ajout_reg(0, cmp_reg,0); */ }
-                      
+declaration_procedure : PROCEDURE 
+						{cmp_reg++; NIS++ ;}
+						IDF liste_parametres 
+						liste_decl_types 
+                        liste_decl_vars 
+                        liste_decl_proc_fct
+                        liste_instructions
+						{NIS-- ;}
+                      ;
 
 liste_parametres : 
                  | PO liste_param PF
                  ;
 
 liste_param : un_param
-            | liste_param {cmp_reg++; } PV un_param
+            | liste_param PV un_param
             ;
 
 un_param : IDF DEUX_POINTS type_simple
@@ -206,7 +220,16 @@ un_param : IDF DEUX_POINTS type_simple
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION /* {cmp_reg++; } */ IDF liste_parametres RETOURNE type_simple corps /* { tr_ajout_reg(0, cmp_reg,0); } */
+declaration_fonction : FONCTION 
+					   {cmp_reg++; NIS++ ;
+					   taille=1+NIS; }
+					   IDF liste_parametres 
+					   RETOURNE type_simple 
+					   liste_decl_types 
+                       liste_decl_vars 
+                       liste_decl_proc_fct
+                       liste_instructions
+					   {NIS-- ;}
                      ;
 
 
@@ -233,18 +256,18 @@ type_simple : T_INT
 liste_instructions : DEBUT suite_liste_inst FIN { $$ = aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $2); }
 				   ; 
 
-suite_liste_inst : instruction PV
-		 		 | suite_liste_inst instruction PV { $$ = aa_concatPereFrere($2, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $1)); }
+suite_liste_inst : { $$ = NULL; }
+		 		 | instruction suite_liste_inst { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $2)); }
 		 		 ;
 
-instruction : affectation
-			| fonction
-			| condition
+instruction : affectation PV
+			| appel_fonction PV
+			| condition 
 			| tantque
 			| pour
-			| RETOURNE resultat_retourne 
+			| RETOURNE resultat_retourne PV
 				{ $$ = aa_concatPereFils(aa_creerNoeud(A_RETOURNER, -1), $2); }
-			| afficher
+			| afficher PV
 	    	;
 
 
@@ -255,17 +278,21 @@ affectation : variable OPAFF expression
 				{ $$ = aa_concatPereFils(aa_creerNoeud(A_OPAFF, -1), aa_concatPereFrere($1, $3)); }
 	    	;
 
- /* TODO: pas sûr, à tester */
-variable : IDF { $$ = aa_creerNoeud(A_IDF, $1); }
-		 | variable POINT IDF 
-		 	{ $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_CHAMP, -1), aa_creerNoeud(A_IDF, $3))); }
-		 | variable CO liste_indices CF 
-		 	{ $$ = aa_concatPereFils($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); }
+variable : idf_variable POINT variable { $$ = aa_concatPereFils(aa_creerNoeud(A_CHAMP, -1), aa_concatPereFrere($1, $3)); }
+		 | idf_variable
 	 	 ;
 
-liste_indices : expr_pm { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_INDICES, -1)); }
-              | liste_indices VIRG expr_pm
-			  		{ $$ = aa_concatPereFrere($3, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $1)); }
+idf_variable : idf_variable CO liste_indices CF { if ($1->fils != aa_vide() && $1->fils->id == A_LISTE_INDICES) {
+													  arbre tmp = $1->fils;
+													  while (tmp->frere != aa_vide()) tmp = tmp->frere;
+												      aa_concatPereFrere(tmp, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); 
+												  } else $$ = aa_concatPereFils($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); 
+												}
+			 | IDF { $$ = aa_creerNoeud(A_IDF, $1); }
+			 ;
+
+liste_indices : expr_pm VIRG liste_indices { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); }
+              | expr_pm
               ;
 
 
@@ -301,8 +328,8 @@ expr_exp : expr_exp EXP expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EX
 
 expr_base : constante_maths
 		  | variable
-	  	  | PO expr_pm PF { $$ = $2; } /* TODO: vérifier si la priorité est bien respecté dans l'arbre */
-		  | fonction
+	  	  | PO expr_pm PF { $$ = $2; }
+		  | appel_fonction
 	  	  ;
 
 constante_maths : INT { $$ = aa_creerNoeud(A_CSTE_ENT, $1); }
@@ -333,7 +360,7 @@ expr_bool_not : NOT expr_bool_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_N
 			  | expr_bool_base
 			  ;
 
-expr_bool_base : PO expr_bool_or PF { $$ = $2; } /* TODO: pareil qu'au dessus */
+expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 			   | expr_comp
 			   | BOOL { $$ = aa_creerNoeud(A_CSTE_BOOL, $1); }
 			   ;
@@ -342,13 +369,13 @@ expr_bool_base : PO expr_bool_or PF { $$ = $2; } /* TODO: pareil qu'au dessus */
 	/** Appels de fonctions & procédures **/
 
 
-fonction : IDF PO suite_args PF 
+appel_fonction : IDF PO suite_args PF 
 			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		 ;
 
 suite_args : { $$ = NULL; }
 		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
-		   | suite_args VIRG expression { $$ = aa_concatPereFrere($3, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $1)); }
+		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		   ;
 
 
@@ -370,10 +397,13 @@ tantque : TANTQUE expr_cond FAIRE liste_instructions { $$ = aa_concatPereFils(aa
 		;
 
 
-pour : POUR expression PV expr_cond PV instruction FAIRE liste_instructions
+pour : POUR expression PV expr_cond PV instruction_pour FAIRE liste_instructions
 		{ $$ = aa_concatPereFils(aa_creerNoeud(A_FOR, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, aa_concatPereFrere($6, $8)))); }
 	 ;
 
+instruction_pour: affectation
+				| appel_fonction
+				;
 
 	/** Entrées & sorties **/
 
@@ -399,9 +429,10 @@ int main(int argc, char *argv[]) {
 
 	tl_afficher();
 	/*tr_affiche();*/
-	//printf("compteur : %d \n", cmp_reg);
-	printf("\n");
-	aa_afficher(arbreAbstrait);
+	//aa_afficher(arbreAbstrait);
+
+	tl_detruire();
+	aa_detruire_rec(arbreAbstrait);
 
 	exit(EXIT_SUCCESS);
 }

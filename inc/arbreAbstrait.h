@@ -50,7 +50,7 @@ typedef struct struct_arbre {
 	struct struct_arbre *fils;
 } *arbre;
 
-arbre aa_arbreVide ();
+arbre aa_vide ();
 
 arbre aa_creerNoeud (Identifiant id, int valeur);
 
@@ -62,6 +62,10 @@ arbre aa_concatPereFils (arbre pere, arbre fils);
 
 void aa_afficher (arbre a);
 
-void aa_detruire_arbre (arbre a);
+/* Détruit seulement la racine de l'arbre a */
+void aa_detruire (arbre a);
+
+/* Détruit récursivement tous les noeuds de l'arbre a */
+void aa_detruire_rec (arbre a);
 
 #endif

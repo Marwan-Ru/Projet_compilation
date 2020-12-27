@@ -1,12 +1,15 @@
 %{
 #include "main.tab.h"
 #include <string.h>
+int NIS = 0;
 int cmp_reg = 0;
+int taille = 0;
 %}
 
 %option yylineno
 %option nounput
 %option noinput
+%option noyywrap
 
 %%
     /* Structure du programme */
@@ -34,7 +37,7 @@ int cmp_reg = 0;
     /* Types de données */
 ([0]|[1-9][0-9]*)		        { yylval.t_int = atoi(yytext); return(INT); }
 ([0]|[1-9][0-9]*)\.[0-9]+	    { yylval.t_int = tl_ajout(yytext); return(FLOAT); }
-('[^']')|'\\''                  { yylval.t_int = yytext[0]; return(CHAR); }
+('[^']')|'\\''                  { yylval.t_int = yytext[1]; return(CHAR); }
 \"((\\\")|[^(\")])*\"           { yylval.t_int = tl_ajout(yytext); return(STRING); }
 "true"|"false"                  { yylval.t_int = (yytext[0] == 't'); return(BOOL); }
 

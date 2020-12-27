@@ -157,6 +157,7 @@ void tl_afficher() {
         printf("%3d│   -1│                    │   -1│\n", T_TABLELEX-1);
     }
     afficherLigneTab(1);
+    printf("\n");
 }
 
 /* Libère la mémoire associé à la table lexicographique */
