@@ -1,6 +1,15 @@
 #include "tabledecl.h"
 
-decl* tabledecl;
+/*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
+decl declerr(){
+    decl d;
+    d.exec = -1;
+    d.index = -1;
+    d.NATURE = -1;
+    d.numregion = -1;
+    d.suivant = -1;
+    return d;
+}
 
 /*Initialise la table des declarations*/
 int td_init(){
@@ -10,11 +19,7 @@ int td_init(){
     tabledecl = allocation_mem(T_TABLEDEBORD + T_TABLELEX, sizeof(decl));
     
     for(i=0; i<T_TABLEDEBORD + T_TABLELEX; i++){ 
-        tabledecl[i].NATURE = -1;
-        tabledecl[i].suivant = -1;
-        tabledecl[i].index = -1;
-        tabledecl[i].numregion = -1;
-        tabledecl[i].exec = -1;
+        tabledecl[i] = declerr();
     }
 
     return 0;
@@ -26,7 +31,7 @@ int td_init(){
  *(recuperation du retour de la fonction d'ajout dans la table des types).
  *retourne 0 si tout s'est passé correctement
  */
-int td_ajout(decl* table, int nature, char * nom, int numregion, int index){
+int td_ajout(int nature, char * nom, int numregion, int index, int exec){
     int pos = td_getlastdeclnum(nom);
     
     if(!tl_existe(nom)){
@@ -44,6 +49,7 @@ int td_ajout(decl* table, int nature, char * nom, int numregion, int index){
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
+    tabledecl[pos].exec = exec;
 
     return 0;
 }
@@ -88,18 +94,6 @@ int td_getlastdeclnum(char * nom){
         }
     }
     return pos;
-}
-
-
-/*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
-decl declerr(){
-    decl d;
-    d.exec = -1;
-    d.index = -1;
-    d.NATURE = -1;
-    d.numregion = -1;
-    d.suivant = -1;
-    return d;
 }
 
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
