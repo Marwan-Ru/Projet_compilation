@@ -105,7 +105,8 @@
 	/* Misc */
 %token INNATENDU "expression"
 
-/** Symboles non-terminaux **/
+/** Symboles non-terminaux des instructions **/
+	/* Structure du programme */
 %type <t_arbre> corps liste_instructions suite_liste_inst instruction
 	/* Affectations */
 %type <t_arbre> affectation variable idf_variable liste_indices
