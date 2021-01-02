@@ -217,7 +217,7 @@ declaration_procedure : PROCEDURE
 						p = empiler(p, taille);
 						taille=1+NIS; 
 						tr_ajout_nis(cmp_reg, NIS); }
-						IDF liste_parametres 
+						IDF listerametres 
 						liste_decl_types 
                         liste_decl_vars 
 						{tr_ajout_taille(cmp_reg, taille); }
@@ -228,12 +228,12 @@ declaration_procedure : PROCEDURE
 						p = depiler(p);}
                       ;
 
-liste_parametres : 
-                 | PO liste_param PF
+listerametres : 
+                 | PO listeram PF
                  ;
 
-liste_param : un_param
-            | liste_param PV un_param
+listeram : un_param
+            | listeram PV un_param
             ;
 
 un_param : IDF DEUX_POINTS type_simple {taille++; }
@@ -248,7 +248,7 @@ declaration_fonction : FONCTION
 					   p = empiler(p, taille);
 					   taille=1+NIS;
 					   tr_ajout_nis(cmp_reg, NIS); }
-					   IDF liste_parametres 
+					   IDF listerametres 
 					   RETOURNE type_simple 
 					   liste_decl_types 
                        liste_decl_vars 
@@ -398,12 +398,12 @@ expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 
 
 appel_fonction : IDF PO suite_args PF 
-			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
+			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_listeRAMS, -1), $3)); }
 		 ;
 
 suite_args : { $$ = NULL; }
-		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
-		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
+		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_listeRAMS, -1)); }
+		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_listeRAMS, -1), $3)); }
 		   ;
 
 

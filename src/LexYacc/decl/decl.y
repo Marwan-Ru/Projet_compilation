@@ -97,21 +97,21 @@ type_simple : INT
 declaration_variable : VAR IDF DEUX_POINTS nom_type
                      ;
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps
+declaration_procedure : PROCEDURE IDF listerametres corps
                       ;
 
-liste_parametres : 
-                 | PO liste_param PF
+listerametres : 
+                 | PO listeram PF
                  ;
 
-liste_param : un_param
-            | liste_param PV un_param
+listeram : un_param
+            | listeram PV un_param
             ;
 
 un_param : IDF DEUX_POINTS type_simple
          ;
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps
+declaration_fonction : FONCTION IDF listerametres RETOURNE type_simple corps
                      ;
 
 

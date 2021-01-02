@@ -1,5 +1,7 @@
 #include "tabledecl.h"
 
+decl* tabledecl;
+
 /*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
 decl declerr(){
     decl d;

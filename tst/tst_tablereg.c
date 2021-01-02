@@ -1,7 +1,6 @@
 #include "tablereg.h"
 
 int main () {
-  int num = 0;
   int r1 = 25;
   int t1 = 50;
   int p1 = 58;
