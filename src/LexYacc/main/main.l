@@ -1,10 +1,15 @@
 %{
 #include "main.tab.h"
 #include <string.h>
+int NIS = 0;
 int cmp_reg = 0;
+int taille = 0;
 %}
 
 %option yylineno
+%option nounput
+%option noinput
+%option noyywrap
 
 %%
     /* Structure du programme */
@@ -16,11 +21,9 @@ int cmp_reg = 0;
 "type"                          { return(TYPE); }
 "variable"                      { return(VAR); }
 "struct"                        { return(STRUCT); }
-"fin"[[:blank:]]?"struct"       { return(FSTRUCT); }
+"end"[[:blank:]]?"struct"       { return(FSTRUCT); }
 "proc"                          { return(PROCEDURE); }
-"fin"[[:blank:]]?"proc"         { cmp_reg--; return(FPROCEDURE); }
 "funct"                         { return(FONCTION); }	
-"fin"[[:blank:]]?"funct"        { cmp_reg--; return(FFONCTION); }
 "tab"                           { return(TABLEAU); }
 "of"                            { return(DE); }
 
@@ -32,11 +35,11 @@ int cmp_reg = 0;
 "string"                        { return(T_STRING); }
 
     /* Types de données */
-([0]|[1-9][0-9]*)		        { yylval.intVal = atoi(yytext); return(INT); }
-([0]|[1-9][0-9]*)\.[0-9]+	    { yylval.floatVal = atof(yytext); return(FLOAT); }
-('[^']')|'\\''                  { yylval.charVal = yytext[0]; return(CHAR); }
-\"((\\\")|[^(\")])*\"           { yylval.stringVal = strdup(yytext); return(STRING); }
-"true"|"false"                  { yylval.boolVal = (yytext[0] == 't'); return(BOOL); }
+([0]|[1-9][0-9]*)		        { yylval.t_int = atoi(yytext); return(INT); }
+([0]|[1-9][0-9]*)\.[0-9]+	    { yylval.t_int = tl_ajout(yytext); return(FLOAT); }
+('[^']')|'\\''                  { yylval.t_int = yytext[1]; return(CHAR); }
+\"((\\\")|[^(\")])*\"           { yylval.t_int = tl_ajout(yytext); return(STRING); }
+"true"|"false"                  { yylval.t_int = (yytext[0] == 't'); return(BOOL); }
 
     /* Opérateurs arithmétique */
 \+			                    { return(PLUS); }
@@ -86,10 +89,10 @@ int cmp_reg = 0;
 "print"                         { return(AFFICHER); }
 
     /* Commentaires */
-\/\/.*                          
+\/\/.*
 
     /* Identifiants */
-[a-zA-Z][a-zA-Z0-9]* 	        { yylval.stringVal = strdup(yytext); return(IDF); }
+[a-zA-Z][a-zA-Z0-9]* 	        { yylval.t_int = tl_ajout(yytext); return(IDF); }
 
     /* Misc */
 [[:blank:]\r\n]

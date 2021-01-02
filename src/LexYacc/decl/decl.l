@@ -4,6 +4,10 @@
 int numligne=1 ;
 %}
 
+%option nounput
+%option noinput
+%option noyywrap
+
 %%
 program                   {return (PROG);}
 variable                  {return(VAR) ;}

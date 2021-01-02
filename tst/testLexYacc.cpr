@@ -3,28 +3,29 @@ type t1 : struct
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	  fin struct ;
+	  endstruct ;
 
-variable t1 : int ;
+
 
 type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	  finstruct ;
+	  endstruct ;
 
 type t3 : tab[bla..bla] of int ;
 
 variable v1 : int ;
 variable v2 : string[5] ;
+variable t1 : int ;
 
 proc p1 (toto : int; tata : char) 
 	type t1 : struct
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	  fin struct ;
+	  endstruct ;
 begin
-	asdfg <- 42;
+	asdfg <- 420;
 end;
 
 proc p2 (toto : int; tata : char) 
@@ -32,14 +33,14 @@ proc p2 (toto : int; tata : char)
         ch1 : int ;
 	    ch2 : float ;
 	    ch3 : t3 ;
-	fin struct ;
+	endstruct ;
 
 	proc p3 (toto : int; tata : char) 
 		type t5 : struct
 			ch7 : int ;
 			ch2 : float ;
 			ch3 : t3 ;
-		fin struct ;
+		endstruct ;
 	begin
 		test <- "hella lit";
 	end
@@ -50,24 +51,26 @@ begin
 end;
 
 funct f1 (toto : int) return int 
-	variable v1 : int ;
+	
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	finstruct ;
+	endstruct ;
 	type t3 : tab[bla..bla] of int ;
+	variable v1 : int ;
 begin
 	toto(-1);
 end;
 
 funct f2 (toto : int; titi : int; tata : char) return int 
-	variable v1 : int ;
+	
 	type t2 : struct
         ch1 : int ;
 	    ch3 : t1 ;
-	finstruct ;
+	endstruct ;
 	type t3 : tab[bla..bla] of int ;
-
+	variable v1 : int ;
+	
 	funct f3 (test : bool) return bool
 		variable v2 : float ;
 		proc p3 (toto : int; tata : char) 
@@ -75,12 +78,12 @@ funct f2 (toto : int; titi : int; tata : char) return int
 				ch1 : int ;
 			ch2 : float ;
 			ch3 : t3 ;
-			fin struct ;
+			endstruct ;
 		begin
 			t1.ch2 <- t2.ch1;
 		end;
 	begin
-		t2.ch3.launchNukes();
+		launchNukes(t2.ch3);
 	end;
 begin
 	v1 <- f2(8, 22, 6, 'c');
@@ -102,25 +105,25 @@ begin
 	z <- x.s1[test.truc[3 + x]].test.y[z * det.truc[3]];
 	z <- func(x.ch1.ch2, test , 8%7);
 
-	if x+5 > -8 then begin x <- y + -2; end;
-	if x+5 > -8 | !(i=0) then begin x <- y + -2; x <- 0; end;
-	if y then begin x <- 0; end else begin x <- 1; end;
+	if x+5 > -8 then begin x <- y + -2; end
+	if x+5 > -8 | !(i=0) then begin x <- y + -2; x <- 0; end
+	if y then begin x <- 0; end else begin x <- 1; end
 	if z then
 	begin
 		x <- -test + test / -3 * -(4 + 2);
 		x <- y-3;
 		x <- 0;
-	end;
+	end
 
-	while x+5 > -8 do begin x <- y + -2; end;
-	do begin x <- y + -2; x <- 0; end while x+5 > -8 | !(i=0);
-	while y do begin x <- 0; end;
+	while x+5 > -8 do begin x <- y + -2; end
+	do begin x <- y + -2; x <- 0; end while x+5 > -8 | !(i=0)
+	while y do begin x <- 0; end
 	while z do
 	begin
 		x <- -test + test / -3 * -(4 + 2);
 		x <- y-3;
 		x <- 0;
-	end;
+	end
 
 	return;
 	return x + a * test;
@@ -130,21 +133,20 @@ begin
 		x <- -test + test / -3 * -(4 + 2);
 		x <- y-3;
 		x <- 0;
-	end;
+	end
 
 	x <- 1;
 	x.ch1 <- 1;
 	x.ch1[3] <- 1;
 	x.ch1[3][5] <- 1;
 	x.ch1[5].ch2[10] <- 1;
-	x[3].ch1()[3].ch2[translate(x.coord.x, x.coord.y)] <- 1; // test
+	x[3].ch1[3].ch2[translate(x.coord.x, x.coord.y)] <- 1; // test
 
 	// test"*/'
 
 	print("*/");
-	print(func(z[x.ch1.ch2][2].name()));
+	print(func(z[x.ch1.ch2][2].name));
 	
-	a.b();
 	c <- -d();
 
 	c <- 22;
@@ -157,4 +159,5 @@ begin
 	c <- "\"";
 	c <- true;
 	c <- true | (false & 5 != 2.5);
+	c <- a.num[5,6,7][8][9];
 end

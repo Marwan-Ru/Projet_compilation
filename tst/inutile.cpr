@@ -3,7 +3,7 @@ program inutile
         jour : int ;
         mois : int ;
         annee : int ;
-    finstruct ;
+    endstruct ;
     type personne : struct
         numero : int ;
         age : int ;
