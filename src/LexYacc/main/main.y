@@ -2,12 +2,15 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include "pile.h"
 
 	int yylex();
 	extern int yylineno;
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
+	int taille_prog;
+	pile p; 
 %}
 
 %code requires { 
@@ -124,8 +127,19 @@
 
 
 %%
-programme : PROG IDF corps { arbreAbstrait = $3; } 
-		  | PROG corps { arbreAbstrait = $2; }
+programme : PROG {tr_ajout_nis(cmp_reg, NIS);
+			p = pile_vide();
+			p = empiler(p, taille);
+			taille=1+NIS;}
+        	IDF corps 
+			{ arbreAbstrait = $4;
+			taille = sommet_pile(p);
+			p = depiler(p);
+			tr_ajout_taille(0, taille);}
+		  | PROG {tr_ajout_nis(cmp_reg, NIS);} 
+		    corps { arbreAbstrait = $3; 
+			taille = sommet_pile(p);
+			p = depiler(p);}
 		  ;
 
 corps : liste_declarations liste_instructions { $$ = $2; }
@@ -160,9 +174,9 @@ declaration_proc_fct : declaration_procedure
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
                  ; 
 
-suite_declaration_type : STRUCT liste_champs FSTRUCT
-                       | TABLEAU dimension DE nom_type
-                       ;
+suite_declaration_type : STRUCT liste_champs FSTRUCT 
+                       | TABLEAU dimension DE nom_type 
+                       ; 
 
 		/* Déclaration de structures */
 		
@@ -189,7 +203,8 @@ une_dimension : expression POINTPOINT expression
 	/** Déclaration de variables **/
 
 
-declaration_variable : VAR IDF DEUX_POINTS nom_type
+declaration_variable : VAR IDF DEUX_POINTS nom_type 
+					{taille++; /*taille=taille+td_champ_exec($4); */}
                      ;
 
 
@@ -197,13 +212,19 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 
 
 declaration_procedure : PROCEDURE 
-						{cmp_reg++; NIS++ ;}
+						{cmp_reg++; NIS++ ;
+						p = empiler(p, taille);
+						taille=1+NIS; 
+						tr_ajout_nis(cmp_reg, NIS); }
 						IDF liste_parametres 
 						liste_decl_types 
                         liste_decl_vars 
+						{tr_ajout_taille(cmp_reg, taille); }
                         liste_decl_proc_fct
                         liste_instructions
-						{NIS-- ;}
+						{NIS-- ;
+						taille = sommet_pile(p);
+						p = depiler(p);}
                       ;
 
 liste_parametres : 
@@ -214,7 +235,7 @@ liste_param : un_param
             | liste_param PV un_param
             ;
 
-un_param : IDF DEUX_POINTS type_simple
+un_param : IDF DEUX_POINTS type_simple {taille++; }
          ;
 
 
@@ -223,14 +244,19 @@ un_param : IDF DEUX_POINTS type_simple
 
 declaration_fonction : FONCTION 
 					   {cmp_reg++; NIS++ ;
-					   taille=1+NIS; }
+					   p = empiler(p, taille);
+					   taille=1+NIS;
+					   tr_ajout_nis(cmp_reg, NIS); }
 					   IDF liste_parametres 
 					   RETOURNE type_simple 
 					   liste_decl_types 
                        liste_decl_vars 
+					   {tr_ajout_taille(cmp_reg, taille); }
                        liste_decl_proc_fct
                        liste_instructions
-					   {NIS-- ;}
+					   {NIS-- ;
+					   taille = sommet_pile(p);
+					   p = depiler(p);}
                      ;
 
 
@@ -424,12 +450,12 @@ int main(int argc, char *argv[]) {
 		yydebug = 1;
 
 	tl_init();
-	/*tr_init();*/
+	tr_init();
 
 	yyparse();
 
 	tl_afficher();
-	/*tr_affiche();*/
+	tr_affiche();
 	//aa_afficher(arbreAbstrait);
 
 	tl_detruire();
