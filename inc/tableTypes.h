@@ -21,6 +21,9 @@
 
 void tt_init ();
 
+/* Ajoute valeur à la suite de la table. Assez de place supposé */
+void tt_ajout (int valeur);
+
 
 /* Ajoute les informations concernant une structure à la table de représentation des types.
    Les derniers paramètres de la fonction correspondent à nbChamps fois trois entiers indiquants,

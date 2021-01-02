@@ -12,7 +12,10 @@ inst : lexyacc
 decl : CIBLELEXYACC=decl
 decl : lexyacc
 
-lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/pile.o obj/liste_pa.o obj/arbreAbstrait.o obj/allocation.o
+txtInt : CIBLELEXYACC=txtInt
+txtInt : lexyacc
+
+lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/pile.o obj/liste_pa.o obj/arbreAbstrait.o obj/allocation.o obj/tableTypes.o
 	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c $(wildcard obj/*.o) -lfl
 
 lex.yy.o : lex.yy.c
