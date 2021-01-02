@@ -15,7 +15,7 @@ int main(){
 
     /* On va tester l'ajout dans a table de declaration */
     td_ajout(TYPE_S, "test1", 1, 1, sizeof(int));
-    n = td_getlastdeclnum("pipi");
+    n = td_getlastdeclnum("test1");
     td_ajout(TYPE_S, "test1", 1, 1, sizeof(int) * 2);
 
     printf("nature %d, suivant %d, numregion %d, index %d, exec %d\n", tabledecl[n].NATURE, tabledecl[n].suivant, tabledecl[n].numregion, tabledecl[n].index, tabledecl[n].exec);
