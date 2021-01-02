@@ -13,7 +13,8 @@
 %code requires { 
 	#include "tableLex.h"
 	#include "tablereg.h"
-	#include "arbreAbstrait.h" 
+	#include "tabledecl.h"
+	#include "arbreAbstrait.h"
 }
 
 %code {
@@ -423,6 +424,7 @@ int main(int argc, char *argv[]) {
 		yydebug = 1;
 
 	tl_init();
+	/*td_init();*/
 	/*tr_init();*/
 
 	yyparse();

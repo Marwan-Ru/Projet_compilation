@@ -8,7 +8,7 @@
 
 #define T_TABLEDEBORD 5000
 
-enum nature{TYPE_S, TYPE_T, VAR, PARAM, PROC, FUNCT};
+enum nature{TYPE_S, TYPE_T, VARI, PARAM, PROC, FUNCT};
 
 typedef struct s_decl{
     int NATURE;     /*Ce champs peut prendre les valeurs de l'enumeration nature (ou -1 si vide)*/
@@ -17,7 +17,7 @@ typedef struct s_decl{
     /*
     *si NATURE = TYPE_S ou NATURE = TYPE_T (déclaration d'un type structure ou tableau) : 
     *   index dans la table contenant la description du type (table de représentation des types et des entêtes de sous-programmes).
-    *si NATURE = VAR ou NATURE = PARAM (déclaration d'une variable ou d'un paramètre) : 
+    *si NATURE = VARI ou NATURE = PARAM (déclaration d'une variable ou d'un paramètre) : 
     *   index, dans la table des déclarations, de l'enregistrement associé à la déclaration du type de la variable ou du paramètre 
     *   dont on mémorise la déclaration. Si cette valeur vaut 0, 1, 2, ou 3, il s'agit d'un type de base (entier, réel, booléen ou caractère).
     *si NATURE = PROC ou NATURE = FUNCT (déclaration d'une procédure ou d'une fonction) : 
@@ -27,7 +27,7 @@ typedef struct s_decl{
     int index; 
     /*
     *si NATURE = TYPE_S ou NATURE = TYPE_T : taille à l'exécution d'une valeur de ce type (en tenant compte qu'il s'agit d'une machine C, cf ci-dessous).
-    *si NATURE = VAR ou NATURE = PARAM : déplacement à l'exécution, de l'emplacement associé à la variable ou du paramètre dans la zone de données correspondante.
+    *si NATURE = VARI ou NATURE = PARAM : déplacement à l'exécution, de l'emplacement associé à la variable ou du paramètre dans la zone de données correspondante.
     *si NATURE = PROC ou NATURE = FUNCT : numéro de la région associée à la procédure ou à la fonction.
     */
     int exec;
