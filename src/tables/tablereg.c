@@ -79,6 +79,11 @@ void tr_affiche () {
   printf("\n");
 }
 
+/* Ecrit la table vers le fichier ouvert f */
+void tr_ecrireFichier (FILE *f) {
+
+}
+
 void tr_detruire () {
   int i;
   for (i = 0; i < NB_REGIONS; i++) {

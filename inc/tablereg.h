@@ -34,6 +34,9 @@ int tr_reg_existe (int num_reg);
 
 void tr_affiche ();
 
+/* Ecrit la table vers le fichier ouvert f */
+void tr_ecrireFichier (FILE *f);
+
 void tr_detruire ();
 
 #endif

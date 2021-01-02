@@ -47,6 +47,9 @@ int tl_longTabLex();
 /* Affiche tous les lexèmes avec le numéro lexicographique la longueur et le lexème suivant s'il y a */
 void tl_afficher();
 
+/* Ecrit la table vers f */
+void tl_ecrireFichier (FILE *f);
+
 /* Libère la mémoire associé à la table lexicographique */
 void tl_detruire ();
 

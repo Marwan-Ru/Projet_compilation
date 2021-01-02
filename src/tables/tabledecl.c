@@ -96,6 +96,11 @@ int td_getlastdeclnum(char * nom){
     return pos;
 }
 
+/* Ecrit la table vers le fichier ouvert f */
+void td_ecrireFichier (FILE *f) {
+
+}
+
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
 int td_detruire(){
     free(tabledecl);

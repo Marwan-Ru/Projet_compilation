@@ -11,9 +11,11 @@
 
 #include "tableTypes.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main () {
     int pos;
+    FILE *f;
 
     tt_init();
 
@@ -57,6 +59,10 @@ int main () {
     printf("Type param 2 proc: %d\n", tt_procTypeParam(pos, 1));
 
     tt_afficher();
+
+    f = fopen("obj/tabTypesInter.txt", "a+");
+    tt_ecrireFichier(f);
+    fclose(f);
 
     exit(EXIT_SUCCESS);
 }

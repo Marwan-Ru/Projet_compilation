@@ -115,4 +115,7 @@ int tt_procTypeParam (int posProc, int i);
 
 /* Affiche le tableau des types dans le terminal */
 void tt_afficher();
+
+/* Ecrit la table vers le fichier ouvert f */
+void tt_ecrireFichier (FILE *f);
 #endif

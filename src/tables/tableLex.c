@@ -160,10 +160,26 @@ void tl_afficher() {
     printf("\n");
 }
 
+/* Ecrit la table vers le fichier ouvert f */
+void tl_ecrireFichier (FILE *f) {
+    int i, l = tl_longTabLex();
+    char str[1024];
+
+    /* Nombre de lexemes */
+    sprintf(str, "%d\n", l-4);
+    fputs(str, f);
+
+    /* Lexemes */
+    for (i = 4; i < l; i++) {
+        fputs(tableLex[i].lexeme, f);
+        fputc('\n', f);
+    }
+}
+
 /* Libère la mémoire associé à la table lexicographique */
 void tl_detruire () {
     int i, l = tl_longTabLex();
-    for (i = 0; i < l; i++) {
+    for (i = 4; i < l; i++) {
         libere_mem(&(tableLex[i].lexeme));
     }
 }

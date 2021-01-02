@@ -2,6 +2,8 @@
 #include "stdio.h"
 
 int main () {
+    FILE *f;
+
     tl_init();
 
     tl_ajout("test1");
@@ -16,6 +18,10 @@ int main () {
     printf("'test5' existe?: %d\n", tl_existe("test5"));
 
     tl_afficher();
+
+    f = fopen("obj/tabLexInter.txt", "a+");
+    tl_ecrireFichier(f);
+    fclose(f);
 
     tl_detruire();
 
