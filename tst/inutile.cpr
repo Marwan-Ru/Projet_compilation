@@ -4,11 +4,13 @@ program inutile
         mois : int ;
         annee : int ;
     endstruct ;
+
     type personne : struct
         numero : int ;
         age : int ;
         naissance : date ;
-    finstruct ;
+    endstruct ;
+
     type equipe : tab[1..3,1..2] of personne ;
     variable p : personne ;
     variable te : equipe ;
@@ -22,8 +24,8 @@ program inutile
             proc c
             begin
                 j <- 2;
-            end
-            fin proc;
+            end ;
+
             proc saisie
                 variable i : int ;
             begin
@@ -36,49 +38,44 @@ program inutile
                         j <- j+1 ;
                         print("\nNumero de securite sociale :") ;
                         return(te[i,j].numero) ;
-                    end ;
+                    end 
                     T <- j ;
-                end ;
-            end 
-            fin proc ;
+                end 
+            end ;
         begin
             saisie() ;
-        end
-        fin proc ;
+        end ;
+
     begin
         b ();
-    end 
-    fin proc ;
+    end ;
 
     proc e
         proc f
             proc g
             begin
                 a() ;
-            end
-            fin proc ;
+            end ;
         begin
             g() ;
-        end
-        fin proc ;
+        end ;
+
         proc h
         begin
             f() ;
-        end
-        fin proc ;
+        end ;
+
     begin
         h ();
-    end 
-    fin proc;
+    end ;
 
     proc i 
         variable T : int ;
     begin
         e() ;
         T <- j ;
-    end 
-    fin proc;
+    end ;
+
 begin
 i() ;
 end 
-end inutile 

@@ -40,6 +40,12 @@ void tr_ajout_nis (int num, int nis) {
   tablereg[num].niv_imbric = nis;
 }
 
+void tr_ajout_taille_prog_princ (int nis, int taille) {
+  if (nis == 0 ){
+    tablereg[0].taille_zone += taille;
+  }
+}
+
 void tr_ajout_arbre (int num, int *tree) {
   if (num > NB_REGIONS ){
     printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
@@ -47,6 +53,16 @@ void tr_ajout_arbre (int num, int *tree) {
   }
 
   tablereg[num].arbre = tree;
+}
+
+int somme_taille () {
+  int i = 1, sum = 0;
+  while (tablereg[i].taille_zone != -1) {
+    sum += tablereg[i].taille_zone;
+    i++;
+  }
+
+  return sum;
 }
 
 champ tr_get_reg (int num_reg) {

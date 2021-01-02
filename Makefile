@@ -12,7 +12,7 @@ inst : lexyacc
 decl : CIBLELEXYACC=decl
 decl : lexyacc
 
-lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/arbreAbstrait.o obj/allocation.o
+lexyacc : cleanTarget $(CIBLELEXYACC).tab.c lex.yy.o obj/tableLex.o obj/tablereg.o obj/pile.o obj/liste_pa.o obj/arbreAbstrait.o obj/allocation.o
 	$(CC) -Wall -DYYDEBUG=1 -I "inc" -o bin/$(CIBLELEXYACC) obj/$(CIBLELEXYACC).tab.c $(wildcard obj/*.o) -lfl
 
 lex.yy.o : lex.yy.c
@@ -32,7 +32,7 @@ tst_arbreAbstrait: cleanTarget obj/arbreAbstrait.o obj/tst_arbreAbstrait.o obj/a
 tst_tabledecl : cleanTarget obj/tabledecl.o obj/tableLex.o obj/tst_tabledecl.o obj/allocation.o
 	$(CC) $(CFLAGS) -fsanitize=address -o bin/tst_tabledecl obj/tabledecl.o obj/tableLex.o obj/tst_tabledecl.o obj/allocation.o
 
-tst_% : cleanTarget obj/%.o obj/tst_%.o obj/allocation.o
+tst_% : cleanTarget obj/%.o obj/tst_%.o obj/liste_pa.o obj/allocation.o 
 	$(CC) $(CFLAGS) -fsanitize=address -o bin/$@ $(filter-out $<,$^)
 
 obj/tst_%.o: tst/tst_%.c

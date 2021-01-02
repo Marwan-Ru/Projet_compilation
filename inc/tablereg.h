@@ -28,6 +28,10 @@ void tr_ajout_nis (int num, int nis);
 
 void tr_ajout_arbre (int num, int *tree);
 
+int somme_taille();
+
+void tr_ajout_taille_prog_princ (int nis, int taille);
+
 champ tr_get_reg (int num_reg);
 
 int tr_reg_existe (int num_reg);
