@@ -30,8 +30,8 @@
 corps: valTabLex SEPARATEUR valTabType SEPARATEUR
 	 ;
 
-valTabLex: TEXTE { tl_ajout($1); } valTabLex 
-		 | TEXTE { tl_ajout($1); }
+valTabLex: TEXTE { tl_ajout($1); free($1); } valTabLex 
+		 | TEXTE { tl_ajout($1); free($1); }
 		 ;
 
 valTabType: ENTIER { tt_ajout($1); } valTabType 

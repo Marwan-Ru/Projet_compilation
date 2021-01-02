@@ -16,7 +16,7 @@ typedef enum enum_id {
     A_CSTE_CAR,
     A_CSTE_CHAINE,
     A_APPEL_FONC,
-    A_listeRAMS,
+    A_LISTEPARAMS,
     A_OPAFF,
     A_IF_THEN_ELSE,
     A_WHILE,

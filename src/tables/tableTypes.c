@@ -34,89 +34,75 @@ void tt_ajout (int valeur) {
 
 /* Fonction locale permettant l'ajout de nb valeurs à la table des types.
    Renvoie la position des données ajoutées */
-int ajoutsValTab (int nb, va_list vl) {
+int ajoutsValTab (int nb, int *valeurs) {
     int i, start = longTabType;
 
     verifTaille(longTabType + nb);
 
     for (i = 0; i < nb; i++) {
-        tt_ajout(va_arg(vl, int));
+        tt_ajout(valeurs[i]);
     }
-
-    va_end(vl);
 
     return start;
 }
 
 
 /* Ajoute les informations concernant une structure à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbChamps fois trois entiers indiquants,
+   Le tableau de valeurs correspond à nbChamps fois trois entiers indiquants,
    pour chaque champs :
     - l'index dans la table des déclarations de l'enregistrement associé au type du champs
     - le numéro lexicographique du nom du champ
     - le déplacement à l'intérieur de la structure
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutStruct(int nbChamps, ...) {
-    va_list vl;
-
+int tt_ajoutStruct(int nbChamps, int *valeurs) {
     verifTaille(longTabType+1);
     tt[longTabType++] = nbChamps;
 
-    va_start(vl, nbChamps);
-    return ajoutsValTab(nbChamps * 3, vl)-1;
+    return ajoutsValTab(nbChamps * 3, valeurs)-1;
 }
 
 /* Ajoute les informations concernant un tableau (type des éléments: typeElem, nombre de dimensions: 
    nbDimensions) à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbDimensions fois deux entiers indiquants,
+   Le tableau de valeurs correspond à nbDimensions fois deux entiers indiquants,
    pour chaque dimension la borne inférieure et la borne supérieure.
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutTab(int typeElem, int nbDimensions, ...) {
-    va_list vl;
-
+int tt_ajoutTab(int typeElem, int nbDimensions, int *valeurs) {
     verifTaille(longTabType + 2);
 
     tt[longTabType++] = typeElem;
     tt[longTabType++] = nbDimensions;
 
-    va_start(vl, nbDimensions);
-    return ajoutsValTab(nbDimensions*2, vl)-2;
+    return ajoutsValTab(nbDimensions*2, valeurs)-2;
 }
 
 /* Ajoute les informations concernant une fonction (type du résultat: typeRes, nombre de paramètres:
    nbParams) à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbParams fois deux entiers indiquants,
+   Le tableau de valeurs correspond à nbParams fois deux entiers indiquants,
    pour chaque paramètre :
     - Son numéro lexicographique
     - Son type 
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutFonction(int typeRes, int nbParams, ...) {
-    va_list vl;
-
+int tt_ajoutFonction(int typeRes, int nbParams, int *valeurs) {
     verifTaille(longTabType + 2);
 
     tt[longTabType++] = typeRes;
     tt[longTabType++] = nbParams;
 
-    va_start(vl, nbParams);
-    return ajoutsValTab(nbParams*2, vl)-2;
+    return ajoutsValTab(nbParams*2, valeurs)-2;
 }
 
 /* Ajoute les informations concernant une procédure (nombre de paramètres: nbParams) à la table de 
-   représentation des types. Les derniers paramètres de la procédure correspondent à nbParams fois 
+   représentation des types. Le tableau de valeurs correspond à nbParams fois 
    deux entiers indiquants, pour chaque paramètre :
     - Son numéro lexicographique
     - Son type 
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutProcedure(int nbParams, ...) {
-    va_list vl;
-
+int tt_ajoutProcedure(int nbParams, int *valeurs) {
     verifTaille(longTabType + 1);
 
     tt[longTabType++] = nbParams;
 
-    va_start(vl, nbParams);
-    return ajoutsValTab(nbParams*2, vl)-1;
+    return ajoutsValTab(nbParams*2, valeurs)-1;
 }
 
 

@@ -37,7 +37,7 @@ char *id_to_string (Identifiant id) {
 		case A_CSTE_CAR: return "A_CSTE_CAR";
 		case A_CSTE_CHAINE: return "A_CSTE_CHAINE";
 		case A_APPEL_FONC: return "A_APPEL_FONC";
-		case A_listeRAMS: return "A_listeRAMS";
+		case A_LISTEPARAMS: return "A_LISTEPARAMS";
 		case A_OPAFF: return "A_OPAFF";
 		case A_IF_THEN_ELSE: return "A_IF_THEN_ELSE";
 		case A_WHILE: return "A_WHILE";
