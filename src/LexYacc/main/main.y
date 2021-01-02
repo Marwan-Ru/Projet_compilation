@@ -16,7 +16,8 @@
 %code requires { 
 	#include "tableLex.h"
 	#include "tablereg.h"
-	#include "arbreAbstrait.h" 
+	#include "tabledecl.h"
+	#include "arbreAbstrait.h"
 }
 
 %code {
