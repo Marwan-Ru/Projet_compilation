@@ -27,6 +27,11 @@ void verifTaille (int t) {
     }
 }
 
+/* Ajoute valeur à la suite de la table. Assez de place supposé */
+void tt_ajout (int valeur) {
+    tt[longTabType++] = valeur;
+}
+
 /* Fonction locale permettant l'ajout de nb valeurs à la table des types.
    Renvoie la position des données ajoutées */
 int ajoutsValTab (int nb, va_list vl) {
@@ -35,7 +40,7 @@ int ajoutsValTab (int nb, va_list vl) {
     verifTaille(longTabType + nb);
 
     for (i = 0; i < nb; i++) {
-        tt[longTabType++] = va_arg(vl, int);
+        tt_ajout(va_arg(vl, int));
     }
 
     va_end(vl);
@@ -197,13 +202,11 @@ void tt_ecrireFichier (FILE *f) {
     int i;
     char str[1024];
 
-    /* Nombre de valeurs */
-    sprintf(str, "%d\n", longTabType);
-    fputs(str, f);
-
     /* Valeurs */
     for (i = 0; i < longTabType; i++) {
         sprintf(str, "%d\n", tt[i]);
         fputs(str, f);
     }
+    /* Séparateur */
+    fputs("---\n", f);
 }

@@ -33,8 +33,6 @@ typedef struct s_decl{
     int exec;
 }decl;
 
-decl* tabledecl;
-
 /*Initialise la table des declarations*/
 int td_init();
 

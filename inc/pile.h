@@ -1,7 +1,7 @@
 #ifndef _PILE_H_
 #define _PILE_H_
 
-#include "liste_pa.h"
+#include "liste.h"
 
 typedef liste pile;
 
