@@ -173,7 +173,7 @@ int tt_procTypeParam (int posProc, int i) { return getVal(posProc+2+i*2); }
 void tt_afficher() {
     int i;
 
-    printf("Table de représentation des types et des entêtes de sous-programmes :\n");
+    printf("Table de représentation des types et des entêtes de sous-programmes (%d valeurs):\n", longTabType);
     printf("[");
     for (i = 0; i < longTabType+2 && i < T_TABLETYPES-1; i++) {
         printf("%d, ", tt[i]);

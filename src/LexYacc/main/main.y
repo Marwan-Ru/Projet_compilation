@@ -145,11 +145,15 @@ programme : PROG {
 	}
 		  | PROG {
 	tr_ajout_nis(cmp_reg, NIS);
+	p = pile_vide();
+	p = empiler(p, taille);
+	taille=1+NIS;
 	} 
 		    corps { 
 	arbreAbstrait = $3; 
 	taille = sommet_pile(p);
 	p = depiler(p);
+	tr_ajout_taille(0, taille);
 	}
 		  ;
 
@@ -185,8 +189,8 @@ declaration_proc_fct : declaration_procedure
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
                  ; 
 
-suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { tmp = tt_ajoutStruct(cmptVal, val); }
-                       | TABLEAU dimension DE nom_type { tmp = tt_ajoutTab($4, cmptVal, val); }
+suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { tmp = tt_ajoutStruct(cmptVal/3, val); }
+                       | TABLEAU dimension DE nom_type { tmp = tt_ajoutTab($4, cmptVal/2, val); }
                        ; 
 
 		/* Déclaration de structures */
@@ -240,7 +244,7 @@ declaration_procedure : PROCEDURE {
 	NIS-- ;
 	taille = sommet_pile(p);
 	p = depiler(p);
-	tmp = tt_ajoutProcedure (cmptVal, val);
+	tmp = tt_ajoutProcedure (cmptVal/2, val);
 	}
                       ;
 
@@ -279,7 +283,7 @@ declaration_fonction : FONCTION {
 	NIS--; 
 	taille = sommet_pile(p);
 	p = depiler(p); 
-	tmp = tt_ajoutFonction($6, cmptVal, val);
+	tmp = tt_ajoutFonction($6, cmptVal/2, val);
 	}
                      ;
 

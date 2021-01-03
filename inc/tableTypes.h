@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include "allocation.h"
 
-#define T_TABLETYPES 70
+#define T_TABLETYPES 500
 
 void tt_init ();
 
