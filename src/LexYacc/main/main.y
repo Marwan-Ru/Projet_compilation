@@ -486,7 +486,7 @@ int main(int argc, char *argv[]) {
 	tl_afficher();
 	tr_affiche();
 	tt_afficher();
-	//aa_afficher(arbreAbstrait);
+	/*aa_afficher(arbreAbstrait);*/
 
 	tl_detruire();
 	aa_detruire_rec(arbreAbstrait);

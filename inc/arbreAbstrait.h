@@ -62,6 +62,14 @@ arbre aa_concatPereFils (arbre pere, arbre fils);
 
 void aa_afficher (arbre a);
 
+arbre aa_frere (arbre a);
+
+arbre aa_fils (arbre a);
+
+int aa_valeur (arbre a);
+
+Identifiant aa_id (arbre a);
+
 /* Détruit seulement la racine de l'arbre a */
 void aa_detruire (arbre a);
 
