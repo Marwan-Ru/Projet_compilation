@@ -1,7 +1,11 @@
 #include "arbreAbstrait.h"
 #include <stdio.h>
+#include <math.h>
+#include "allocation.h"
 
 int main () {
+    int **tabVal, hauteur, maxNoeud, i;
+
     arbre a = aa_vide(), 
           b = aa_vide(), 
           c = aa_vide();
@@ -19,7 +23,32 @@ int main () {
 
     aa_afficher(a);
 
+    hauteur = aa_hauteur(a);
+    maxNoeud = pow(2, hauteur) - 1;
+    tabVal = allocation_mem(maxNoeud, sizeof(int *));
+
+    for (i = 0; i < maxNoeud; i++) {
+        tabVal[i] = allocation_mem(2, sizeof(int));
+    }
+
+    aa_arbreVersTableau(a, tabVal, maxNoeud);
+
+    printf("\nArbre vers tableau : \n");
+    for (i = 0; i < maxNoeud; i++) {
+        printf("{%d, %d} ", tabVal[i][0], tabVal[i][1]);
+    }
+    printf("\n\nTableau vers arbre : \n");
+
     aa_detruire_rec(a);
+
+    a = aa_tableauVersArbre(tabVal, maxNoeud);
+    aa_afficher(a);
+    
+    aa_detruire_rec(a);
+    for (i = 0; i < maxNoeud; i++) {
+        libere_mem(&(tabVal[i]));
+    }
+    libere_mem(&tabVal);
 
     exit(EXIT_SUCCESS);
 }
