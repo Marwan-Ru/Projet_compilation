@@ -118,23 +118,23 @@ void aa_afficher (arbre a) {
 }
 
 arbre aa_frere (arbre a) {
-	if (a != aa_vide) return a->frere;
+	if (a != aa_vide()) return a->frere;
 	else return NULL;
 }
 
 arbre aa_fils (arbre a) {
-	if (a != aa_vide) return a->fils;
+	if (a != aa_vide()) return a->fils;
 	else return NULL;
 }
 
 int aa_valeur (arbre a) {
-	if (a != aa_vide) return a->valeur;
+	if (a != aa_vide()) return a->valeur;
 	else return -1;
 }
 
 Identifiant aa_id (arbre a) {
-	if (a != aa_vide) return a->id;
-	else return NULL;
+	if (a != aa_vide()) return a->id;
+	else return A_VIDE;
 }
 
 /* Détruit seulement la racine de l'arbre a */
