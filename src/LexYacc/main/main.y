@@ -35,7 +35,6 @@
 
 %define parse.error verbose
 %locations
-
 /** Symboles terminaux **/
     /* Structure du programme */
 %token PROG "program"
@@ -125,7 +124,11 @@
 %type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
 %type <t_arbre> resultat_retourne afficher
-
+	/* Déclarations */
+%type <t_int> type_simple nom_type 
+%type <t_int> declaration_fonction un_param 
+%type <t_int> declaration_variable 
+%type <t_int> suite_declaration_type declaration_type 
 
 %%
 programme : PROG {tr_ajout_nis(cmp_reg, NIS);
@@ -172,11 +175,11 @@ declaration_proc_fct : declaration_procedure
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type {td_ajout($4, tl_getLex($2), cmp_reg, 0, 0);}
                  ; 
 
-suite_declaration_type : STRUCT liste_champs FSTRUCT 
-                       | TABLEAU dimension DE nom_type 
+suite_declaration_type : STRUCT liste_champs FSTRUCT {$$ = TYPE_S;}
+                       | TABLEAU dimension DE nom_type {$$ = TYPE_T;}
                        ; 
 
 		/* Déclaration de structures */
@@ -205,7 +208,7 @@ une_dimension : expression POINTPOINT expression
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{taille++; /*taille=taille+td_champ_exec($4); */}
+					{taille++; td_ajout(VARI, tl_getLex($2), cmp_reg, tl_getLex($4), 0); /*taille=taille+td_champ_exec($4); */ }
                      ;
 
 
@@ -217,7 +220,7 @@ declaration_procedure : PROCEDURE
 						p = empiler(p, taille);
 						taille=1+NIS; 
 						tr_ajout_nis(cmp_reg, NIS); }
-						IDF listerametres 
+						IDF liste_parametres 
 						liste_decl_types 
                         liste_decl_vars 
 						{tr_ajout_taille(cmp_reg, taille); }
@@ -228,15 +231,15 @@ declaration_procedure : PROCEDURE
 						p = depiler(p);}
                       ;
 
-listerametres : 
-                 | PO listeram PF
+liste_parametres : 
+                 | PO liste_param PF
                  ;
 
-listeram : un_param
-            | listeram PV un_param
+liste_param : un_param
+            | liste_param PV un_param
             ;
 
-un_param : IDF DEUX_POINTS type_simple {taille++; }
+un_param : IDF DEUX_POINTS type_simple {taille++; td_ajout(PARAM, tl_getLex($1), cmp_reg, tl_getLex($3), 0);}
          ;
 
 
@@ -248,7 +251,7 @@ declaration_fonction : FONCTION
 					   p = empiler(p, taille);
 					   taille=1+NIS;
 					   tr_ajout_nis(cmp_reg, NIS); }
-					   IDF listerametres 
+					   IDF liste_parametres 
 					   RETOURNE type_simple 
 					   liste_decl_types 
                        liste_decl_vars 
@@ -257,7 +260,8 @@ declaration_fonction : FONCTION
                        liste_instructions
 					   {NIS-- ;
 					   taille = sommet_pile(p);
-					   p = depiler(p);}
+					   p = depiler(p);
+					   td_ajout(PARAM, tl_getLex($3), cmp_reg, tl_getLex($3), 0);}
                      ;
 
 
@@ -268,10 +272,10 @@ nom_type : type_simple
          | IDF
          ;
 
-type_simple : T_INT
-            | T_CHAR
-            | T_BOOL
-            | T_FLOAT
+type_simple : T_INT {$$ = 0;}
+            | T_CHAR {$$ = 3;}
+            | T_BOOL {$$ = 2;}
+            | T_FLOAT {$$ = 1;}
             | T_STRING CO INT CF
             ;
 
@@ -398,12 +402,12 @@ expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 
 
 appel_fonction : IDF PO suite_args PF 
-			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_listeRAMS, -1), $3)); }
+			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		 ;
 
 suite_args : { $$ = NULL; }
-		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_listeRAMS, -1)); }
-		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_listeRAMS, -1), $3)); }
+		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
+		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
 		   ;
 
 
@@ -452,6 +456,7 @@ int main(int argc, char *argv[]) {
 
 	tl_init();
 	tr_init();
+	td_init();
 
 	yyparse();
 
