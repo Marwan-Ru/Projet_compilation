@@ -112,8 +112,6 @@
 /** Symboles non-terminaux des instructions **/
 	/* Structure du programme */
 %type <t_arbre> corps liste_instructions suite_liste_inst instruction
-	/* Déclarations */
-%type <t_int> type_simple nom_type
 	/* Affectations */
 %type <t_arbre> affectation variable idf_variable liste_indices
 	/* Expression */
@@ -189,7 +187,7 @@ declaration_proc_fct : declaration_procedure
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type {td_ajout($4, tl_getLex($2), cmp_reg, 0, 0);}
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type {td_ajout($4, tl_getLex($2), cmp_reg, tmp, 0);}
                  ; 
 
 suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
@@ -222,7 +220,10 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{taille++; td_ajout(VARI, tl_getLex($2), cmp_reg, tl_getLex($4), 0); /*taille=taille+td_champ_exec($4); */ }
+					{taille++; 
+					td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); 
+					/*taille=taille+td_champ_exec($4); */ 
+					}
                      ;
 
 
@@ -263,7 +264,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	td_ajout(PARAM, tl_getLex($1), cmp_reg, tl_getLex($3), 0);}
+	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, 0);}
          ;
 
 
@@ -288,7 +289,7 @@ declaration_fonction : FONCTION {
 	taille = sommet_pile(p);
 	p = depiler(p); 
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	td_ajout(PARAM, tl_getLex($3), cmp_reg, tl_getLex($3), 0);
+	td_ajout(PARAM, tl_getLex($3), cmp_reg, $3, 0);
 	}
                      ;
 
@@ -492,6 +493,7 @@ int main(int argc, char *argv[]) {
 	tl_afficher();
 	tr_affiche();
 	tt_afficher();
+	td_afficher();
 	/*aa_afficher(arbreAbstrait);*/
 
 	tl_detruire();
