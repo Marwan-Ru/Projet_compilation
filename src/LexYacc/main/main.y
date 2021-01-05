@@ -264,7 +264,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, 0);}
+	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, td_getdecl($3).exec);}
          ;
 
 
