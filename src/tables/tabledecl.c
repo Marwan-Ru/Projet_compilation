@@ -1,7 +1,5 @@
 #include "tabledecl.h"
 
-decl* tabledecl;
-
 /*Fonction interne utilisée pour renvoyer une variable de type decl qui correspond a une erreur*/
 decl declerr(){
     decl d;
@@ -12,6 +10,8 @@ decl declerr(){
     d.suivant = -1;
     return d;
 }
+
+decl* tabledecl;
 
 /*Initialise la table des declarations*/
 int td_init(){
@@ -96,6 +96,22 @@ int td_getlastdeclnum(char * nom){
         }
     }
     return pos;
+}
+
+void td_affiche (){
+  int i;
+  printf("Table des déclarations :\n");
+  printf("   num │ nature │ numregion │ suivant │ desc | exec |\n");
+  
+  for (i = 0; i < 20; i++) {
+    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
+  }
+  printf("Table de débordement\n");
+
+  for (i = 501; i < 521; i++) {
+    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
+  }
+  printf("\n");
 }
 
 /* Ecrit la table vers le fichier ouvert f */

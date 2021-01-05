@@ -1,5 +1,5 @@
-#ifndef "VM"
-#define "VM"
+#ifndef VM
+#define VM
 
 #include <stdlib.h>
 #include <stdio.h>
