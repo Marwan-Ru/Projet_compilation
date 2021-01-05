@@ -16,7 +16,7 @@ typedef enum enum_id {
     A_CSTE_CAR,
     A_CSTE_CHAINE,
     A_APPEL_FONC,
-    A_listeRAMS,
+    A_LISTEPARAMS,
     A_OPAFF,
     A_IF_THEN_ELSE,
     A_WHILE,
@@ -61,6 +61,24 @@ arbre aa_concatPereFrere (arbre pere, arbre frere);
 arbre aa_concatPereFils (arbre pere, arbre fils);
 
 void aa_afficher (arbre a);
+
+arbre aa_frere (arbre a);
+
+arbre aa_fils (arbre a);
+
+int aa_valeur (arbre a);
+
+Identifiant aa_id (arbre a);
+
+/* Calcule la hauteur de l'arbre a */
+int aa_hauteur (arbre a);
+
+/* Traverse l'arbre a de façon infixe et place tous 
+   les noeuds dans le tableau valeurs */
+void aa_arbreVersTableau (arbre a, int *valeurs[2], int maxNoeuds);
+
+/* Utilise le tableau de valeurs de longueur n pour construire un arbre abstrait */
+arbre aa_tableauVersArbre (int *valeurs[2], int n);
 
 /* Détruit seulement la racine de l'arbre a */
 void aa_detruire (arbre a);

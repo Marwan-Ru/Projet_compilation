@@ -2,8 +2,6 @@
 #include <stdio.h>
 
 int main(){
-    int n;
-    decl d;
 
     td_init();
     tl_init();
@@ -15,11 +13,10 @@ int main(){
 
     /* On va tester l'ajout dans a table de declaration */
     td_ajout(TYPE_S, "test1", 1, 1, sizeof(int));
-    n = td_getlastdeclnum("test1");
+    
     td_ajout(TYPE_S, "test1", 1, 1, sizeof(int) * 2);
 
-    d = td_getdecl(n);
-    printf("nature %d, suivant %d, numregion %d, index %d, exec %d\n", d.NATURE, d.suivant, d.numregion, d.index, d.exec);
+    td_affiche();
 
     exit(0);
 }

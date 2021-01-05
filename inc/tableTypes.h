@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include "allocation.h"
 
-#define T_TABLETYPES 70
+#define T_TABLETYPES 500
 
 void tt_init ();
 
@@ -26,37 +26,37 @@ void tt_ajout (int valeur);
 
 
 /* Ajoute les informations concernant une structure à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbChamps fois trois entiers indiquants,
+   Le tableau de valeurs correspond à nbChamps fois trois entiers indiquants,
    pour chaque champs :
     - l'index dans la table des déclarations de l'enregistrement associé au type du champs
     - le numéro lexicographique du nom du champ
     - le déplacement à l'intérieur de la structure
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutStruct(int nbChamps, ...);
+int tt_ajoutStruct(int nbChamps, int *valeurs);
 
 /* Ajoute les informations concernant un tableau (type des éléments: typeElem, nombre de dimensions: 
    nbDimensions) à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbDimensions fois deux entiers indiquants,
-   pour chaque dimension la borne inférieure et la borne supérieure.
+   Le tableau de valeurs correspond à nbDimensions fois deux entiers indiquants,
+   pour chaque dimension, la borne inférieure et la borne supérieure.
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutTab(int typeElem, int nbDimensions, ...);
+int tt_ajoutTab(int typeElem, int nbDimensions, int *valeurs);
 
 /* Ajoute les informations concernant une fonction (type du résultat: typeRes, nombre de paramètres:
    nbParams) à la table de représentation des types.
-   Les derniers paramètres de la fonction correspondent à nbParams fois deux entiers indiquants,
+   Le tableau de valeurs correspond à nbParams fois deux entiers indiquants,
    pour chaque paramètre :
     - Son numéro lexicographique
     - Son type 
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutFonction(int typeRes, int nbParams, ...);
+int tt_ajoutFonction(int typeRes, int nbParams, int *valeurs);
 
 /* Ajoute les informations concernant une procédure (nombre de paramètres: nbParams) à la table de 
-   représentation des types. Les derniers paramètres de la procédure correspondent à nbParams fois 
+   représentation des types. Le tableau de valeurs correspond à nbParams fois 
    deux entiers indiquants, pour chaque paramètre :
     - Son numéro lexicographique
     - Son type 
    La fonction renvoit l'emplacement des données dans la table */
-int tt_ajoutProcedure(int nbParams, ...);
+int tt_ajoutProcedure(int nbParams, int *valeurs);
 
 
 

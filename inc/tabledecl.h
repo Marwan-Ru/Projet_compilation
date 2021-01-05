@@ -54,6 +54,9 @@ decl td_getlastdecl(char* nom);
 /*Renvoie la position dans la table de la derniere declaration qui porte ce nom*/
 int td_getlastdeclnum(char * nom);
 
+/*Affiche une partie de la table dans la console*/
+void td_affiche ();
+
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f);
 

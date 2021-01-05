@@ -9,7 +9,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog;
+	int taille_prog, tmp, val[500], cmptVal;
 	pile p; 
 %}
 
@@ -17,6 +17,7 @@
 	#include "tableLex.h"
 	#include "tablereg.h"
 	#include "tabledecl.h"
+	#include "tableTypes.h"
 	#include "arbreAbstrait.h"
 }
 
@@ -111,6 +112,8 @@
 /** Symboles non-terminaux des instructions **/
 	/* Structure du programme */
 %type <t_arbre> corps liste_instructions suite_liste_inst instruction
+	/* Déclarations */
+%type <t_int> type_simple nom_type
 	/* Affectations */
 %type <t_arbre> affectation variable idf_variable liste_indices
 	/* Expression */
@@ -131,19 +134,30 @@
 %type <t_int> suite_declaration_type declaration_type 
 
 %%
-programme : PROG {tr_ajout_nis(cmp_reg, NIS);
-			p = pile_vide();
-			p = empiler(p, taille);
-			taille=1+NIS;}
-        	IDF corps 
-			{ arbreAbstrait = $4;
-			taille = sommet_pile(p);
-			p = depiler(p);
-			tr_ajout_taille(0, taille);}
-		  | PROG {tr_ajout_nis(cmp_reg, NIS);} 
-		    corps { arbreAbstrait = $3; 
-			taille = sommet_pile(p);
-			p = depiler(p);}
+programme : PROG {
+	tr_ajout_nis(cmp_reg, NIS);
+	p = pile_vide();
+	p = empiler(p, taille);
+	taille=1+NIS;
+	}
+        	IDF corps {
+	arbreAbstrait = $4;
+	taille = sommet_pile(p);
+	p = depiler(p);
+	tr_ajout_taille(0, taille);
+	}
+		  | PROG {
+	tr_ajout_nis(cmp_reg, NIS);
+	p = pile_vide();
+	p = empiler(p, taille);
+	taille=1+NIS;
+	} 
+		    corps { 
+	arbreAbstrait = $3; 
+	taille = sommet_pile(p);
+	p = depiler(p);
+	tr_ajout_taille(0, taille);
+	}
 		  ;
 
 corps : liste_declarations liste_instructions { $$ = $2; }
@@ -178,8 +192,8 @@ declaration_proc_fct : declaration_procedure
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type {td_ajout($4, tl_getLex($2), cmp_reg, 0, 0);}
                  ; 
 
-suite_declaration_type : STRUCT liste_champs FSTRUCT {$$ = TYPE_S;}
-                       | TABLEAU dimension DE nom_type {$$ = TYPE_T;}
+suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
+                       | TABLEAU dimension DE nom_type {$$ = TYPE_T; tmp = tt_ajoutTab($4, cmptVal/2, val); }
                        ; 
 
 		/* Déclaration de structures */
@@ -188,19 +202,19 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type
+un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; /* val[cmptVal++] = champExec($3); */ }
          ;
 
 		/* Déclaration de tableaux */
 
-dimension : CO liste_dimensions CF
+dimension : CO { cmptVal = 0; } liste_dimensions CF
           ;
 
 liste_dimensions : une_dimension
                  | liste_dimensions VIRG une_dimension
                  ;
 
-une_dimension : expression POINTPOINT expression
+une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
               ;
 
 
@@ -215,53 +229,67 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 	/** Déclaration de procédures **/
 
 
-declaration_procedure : PROCEDURE 
-						{cmp_reg++; NIS++ ;
-						p = empiler(p, taille);
-						taille=1+NIS; 
-						tr_ajout_nis(cmp_reg, NIS); }
-						IDF liste_parametres 
+declaration_procedure : PROCEDURE {
+	cmp_reg++; 
+	NIS++ ;
+	p = empiler(p, taille);
+	taille=1+NIS; 
+	tr_ajout_nis(cmp_reg, NIS); 
+	}
+						IDF listeparametres 
 						liste_decl_types 
-                        liste_decl_vars 
-						{tr_ajout_taille(cmp_reg, taille); }
+                        liste_decl_vars {
+	tr_ajout_taille(cmp_reg, taille); 
+	}
                         liste_decl_proc_fct
                         liste_instructions
-						{NIS-- ;
-						taille = sommet_pile(p);
-						p = depiler(p);}
+						{
+	NIS-- ;
+	taille = sommet_pile(p);
+	p = depiler(p);
+	tmp = tt_ajoutProcedure (cmptVal/2, val);
+	}
                       ;
 
-liste_parametres : 
-                 | PO liste_param PF
-                 ;
+listeparametres : { cmptVal = 0; }
+			    | PO { cmptVal = 0; } listeparam PF
+			    ;
 
-liste_param : un_param
-            | liste_param PV un_param
-            ;
+listeparam : un_param
+           | listeparam PV un_param
+           ;
 
-un_param : IDF DEUX_POINTS type_simple {taille++; td_ajout(PARAM, tl_getLex($1), cmp_reg, tl_getLex($3), 0);}
+un_param : IDF DEUX_POINTS type_simple {
+	taille++; 
+	val[cmptVal++] = $1;
+	val[cmptVal++] = $3; 
+	td_ajout(PARAM, tl_getLex($1), cmp_reg, tl_getLex($3), 0);}
          ;
 
 
 	/** Déclaration de fonctions **/
 
 
-declaration_fonction : FONCTION 
-					   {cmp_reg++; NIS++ ;
-					   p = empiler(p, taille);
-					   taille=1+NIS;
-					   tr_ajout_nis(cmp_reg, NIS); }
-					   IDF liste_parametres 
+declaration_fonction : FONCTION { 	
+	cmp_reg++; 
+	NIS++;
+	p = empiler(p, taille);
+	taille=1+NIS;
+	tr_ajout_nis(cmp_reg, NIS); 
+	}
+					   IDF listeparametres 
 					   RETOURNE type_simple 
 					   liste_decl_types 
-                       liste_decl_vars 
-					   {tr_ajout_taille(cmp_reg, taille); }
-                       liste_decl_proc_fct
-                       liste_instructions
-					   {NIS-- ;
-					   taille = sommet_pile(p);
-					   p = depiler(p);
-					   td_ajout(PARAM, tl_getLex($3), cmp_reg, tl_getLex($3), 0);}
+					   liste_decl_vars {	
+	tr_ajout_taille(cmp_reg, taille); 
+	}
+                       liste_decl_proc_fct liste_instructions {	
+	NIS--; 
+	taille = sommet_pile(p);
+	p = depiler(p); 
+	tmp = tt_ajoutFonction($6, cmptVal/2, val);
+	td_ajout(PARAM, tl_getLex($3), cmp_reg, tl_getLex($3), 0);
+	}
                      ;
 
 
@@ -272,11 +300,11 @@ nom_type : type_simple
          | IDF
          ;
 
-type_simple : T_INT {$$ = 0;}
-            | T_CHAR {$$ = 3;}
-            | T_BOOL {$$ = 2;}
-            | T_FLOAT {$$ = 1;}
-            | T_STRING CO INT CF
+type_simple : T_INT { $$ = 0; }
+			| T_FLOAT { $$ = 1; }
+			| T_BOOL { $$ = 2; }
+			| T_CHAR { $$ = 3; }
+			| T_STRING CO INT CF { $$ = -1; }
             ;
 
 
@@ -402,12 +430,12 @@ expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 
 
 appel_fonction : IDF PO suite_args PF 
-			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
+			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1), $3)); }
 		 ;
 
 suite_args : { $$ = NULL; }
-		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTE_PARAMS, -1)); }
-		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_PARAMS, -1), $3)); }
+		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1)); }
+		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1), $3)); }
 		   ;
 
 
@@ -457,12 +485,14 @@ int main(int argc, char *argv[]) {
 	tl_init();
 	tr_init();
 	td_init();
+	tt_init();
 
 	yyparse();
 
 	tl_afficher();
 	tr_affiche();
-	//aa_afficher(arbreAbstrait);
+	tt_afficher();
+	/*aa_afficher(arbreAbstrait);*/
 
 	tl_detruire();
 	aa_detruire_rec(arbreAbstrait);
