@@ -23,6 +23,11 @@ int td_init(){
     for(i=0; i<T_TABLEDEBORD + T_TABLELEX; i++){ 
         tabledecl[i] = declerr();
     }
+    /*On remplis le champs exec des types de base*/
+    tabledecl[0].exec = sizeof(int);
+    tabledecl[1].exec = sizeof(float);
+    tabledecl[2].exec = sizeof(int); /*Un booleen est simplement un int*/
+    tabledecl[3].exec = sizeof(char);
 
     return 0;
 }
@@ -98,7 +103,7 @@ int td_getlastdeclnum(char * nom){
     return pos;
 }
 
-void td_affiche (){
+void td_afficher(){
   int i;
   printf("Table des déclarations :\n");
   printf("   num │ nature │ numregion │ suivant │ desc | exec |\n");
@@ -116,7 +121,12 @@ void td_affiche (){
 
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f) {
+    int i;
+    for (i = 0; i < T_TABLEDEBORD + T_TABLELEX ; i++) 
+        fprintf(f, "%d;%d;%d;%d;%d;%d\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
 
+    /* Séparateur */
+    fprintf(f, "---\n");
 }
 
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/

@@ -55,7 +55,7 @@ decl td_getlastdecl(char* nom);
 int td_getlastdeclnum(char * nom);
 
 /*Affiche une partie de la table dans la console*/
-void td_affiche ();
+void td_afficher();
 
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f);

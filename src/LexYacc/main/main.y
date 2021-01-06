@@ -12,7 +12,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog, tmp, val[500], cmptVal;
+	int taille_prog, tmp, val[500], cmptVal, taille_decl;
 	pile p, p2; 
 %}
 
@@ -39,7 +39,6 @@
 
 %define parse.error verbose
 %locations
-
 /** Symboles terminaux **/
     /* Structure du programme */
 %token PROG "program"
@@ -116,8 +115,6 @@
 /** Symboles non-terminaux des instructions **/
 	/* Structure du programme */
 %type <t_arbre> corps liste_instructions suite_liste_inst instruction
-	/* Déclarations */
-%type <t_int> type_simple nom_type
 	/* Affectations */
 %type <t_arbre> affectation variable idf_variable liste_indices
 	/* Expression */
@@ -131,7 +128,11 @@
 %type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
 %type <t_arbre> resultat_retourne afficher
-
+	/* Déclarations */
+%type <t_int> type_simple nom_type 
+%type <t_int> declaration_fonction un_param 
+%type <t_int> declaration_variable 
+%type <t_int> suite_declaration_type declaration_type 
 
 %%
 programme : PROG {
@@ -185,11 +186,27 @@ declaration_proc_fct : declaration_procedure
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type 
+	{if($4 == TYPE_T){
+		taille_decl = 0;
+		for(int i=0; i<tt_tabNbDimensions(tmp); i++) taille_decl += tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i) * tt_tabTypeElem(tmp);
+	}else{
+		taille_decl = 0;
+		for(int i=0; i<tt_structNbChamps(tmp); i++){
+			decl d = td_getlastdecl(tl_getLex(tt_structNumLexChamp(tmp, i)));
+			if(d.NATURE == TYPE_S || d.NATURE == TYPE_T){
+				taille_decl += d.exec;
+			}else{/*C'est forcement une variable*/
+				taille_decl += td_getlastdecl(tl_getLex(d.index)).exec;
+			}
+		}
+	}
+	td_ajout($4, tl_getLex($2), cmp_reg, tmp, taille_decl);
+	}
                  ; 
 
-suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { tmp = tt_ajoutStruct(cmptVal/3, val); }
-                       | TABLEAU dimension DE nom_type { tmp = tt_ajoutTab($4, cmptVal/2, val); }
+suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
+                       | TABLEAU dimension DE nom_type {$$ = TYPE_T; tmp = tt_ajoutTab($4, cmptVal/2, val); }
                        ; 
 
 		/* Déclaration de structures */
@@ -198,7 +215,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; /* val[cmptVal++] = champExec($3); */ }
+un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; val[cmptVal++] = td_getdecl($3).exec;  }
          ;
 
 		/* Déclaration de tableaux */
@@ -218,7 +235,10 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{taille++; /*taille=taille+td_champ_exec($4); */}
+					{taille++; 
+					td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); 
+					/*taille=taille+td_champ_exec($4); */ 
+					}
                      ;
 
 
@@ -247,6 +267,7 @@ declaration_procedure : PROCEDURE {
 	p = depiler(p);
 	p2 = depiler(p2);
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
+	td_ajout(PROC, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                       ;
 
@@ -261,7 +282,8 @@ listeparam : un_param
 un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
-	val[cmptVal++] = $3; }
+	val[cmptVal++] = $3; 
+	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, td_getdecl($3).exec);}
          ;
 
 
@@ -289,6 +311,7 @@ declaration_fonction : FONCTION {
 	p = depiler(p); 
 	p2 = depiler(p2);
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
+	td_ajout(FUNCT, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                      ;
 
@@ -486,6 +509,7 @@ int main(int argc, char *argv[]) {
 
 	tl_init();
 	tr_init();
+	td_init();
 	tt_init();
 
 	/* On vide le fichier avant de l'ouvrir en append */
