@@ -2,7 +2,10 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include <time.h>
 	#include "pile.h"
+
+	#define FICTEMP "tmp/intermediaire.txt"
 
 	int yylex();
 	extern int yylineno;
@@ -269,6 +272,7 @@ declaration_fonction : FONCTION {
 	cmp_reg++; 
 	NIS++;
 	p = empiler(p, taille);
+	p2 = empiler(p2, cmp_reg);
 	taille=1+NIS;
 	tr_ajout_nis(cmp_reg, NIS); 
 	}
@@ -279,9 +283,11 @@ declaration_fonction : FONCTION {
 	tr_ajout_taille(cmp_reg, taille); 
 	}
                        liste_decl_proc_fct liste_instructions {	
+	tr_ajout_arbre(sommet_pile(p2), $11);
 	NIS--; 
 	taille = sommet_pile(p);
 	p = depiler(p); 
+	p2 = depiler(p2);
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
 	}
                      ;
@@ -472,6 +478,8 @@ afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AF
 %%
 
 int main(int argc, char *argv[]) {
+	FILE *f;
+	
 	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 ||
 					 strcmp(argv[1], "-d") == 0))
 		yydebug = 1;
@@ -480,15 +488,21 @@ int main(int argc, char *argv[]) {
 	tr_init();
 	tt_init();
 
+	/* On vide le fichier avant de l'ouvrir en append */
+	f = fopen(FICTEMP, "w");
+	fclose(f);
+	f = fopen(FICTEMP, "a");
+
 	yyparse();
 
-	tl_afficher();
-	tr_affiche();
-	tt_afficher();
-	/*aa_afficher(arbreAbstrait);*/
+	tl_ecrireFichier(f);
+	tr_ecrireFichier(f);
+	tt_ecrireFichier(f);
+
+	tr_afficherArbres();
 
 	tl_detruire();
-	aa_detruire_rec(arbreAbstrait);
+	fclose(f);
 
 	exit(EXIT_SUCCESS);
 }

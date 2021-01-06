@@ -2,3 +2,4 @@ Makefile
 obj/*
 bin/*
 .vscode/*
+tmp/*

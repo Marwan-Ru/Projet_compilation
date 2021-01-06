@@ -186,12 +186,10 @@ void tt_afficher() {
 /* Ecrit la table vers le fichier ouvert f */
 void tt_ecrireFichier (FILE *f) {
     int i;
-    char str[1024];
 
     /* Valeurs */
     for (i = 0; i < longTabType; i++) {
-        sprintf(str, "%d\n", tt[i]);
-        fputs(str, f);
+        fprintf(f, "%d\n", tt[i]);
     }
     /* Séparateur */
     fputs("---\n", f);

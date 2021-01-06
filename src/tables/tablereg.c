@@ -7,11 +7,11 @@ void tr_init() {
   for (i = 0; i < NB_REGIONS; i++) {
     tablereg[i].taille_zone = -1;
     tablereg[i].niv_imbric = -1;
-    /* tablereg[i].arbre = allocation_mem(1, sizeof(int*)); */ /*TO DO : changer en bon type*/
+    tablereg[i].tree = NULL;
   }
 }
 
-void tr_ajout_reg (int nreg, int taillez, int niv, arbre a) { /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, arbre a) {
   if (nreg > NB_REGIONS ){
     printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
     exit(-1);
@@ -94,22 +94,40 @@ void tr_affiche () {
   printf("\n");
 }
 
+void tr_afficherArbres () {
+  int i, tot = tr_taille();
+  for (i = 0; i < tot; i++) {
+    printf("Région %d:\n", i);
+    aa_afficher(tablereg[i].tree);
+  }
+}
+
 /* Ecrit la table vers le fichier ouvert f */
 void tr_ecrireFichier (FILE *f) {
-  int i, tot = tr_taille();
+  int i, tot = tr_taille(), **tabVal, maxNoeud = 1, j;
 
   for (i = 0; i < tot; i++) {
-    fprintf(f, "%d;%d;%d;%p\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].tree);
+    /* arbre vers tabVal */
+    if (tablereg[i].tree != NULL) {
+      maxNoeud = (1 << aa_hauteur(tablereg[i].tree)) - 1; /* 2^hauteur(a) - 1 */
+      tabVal = allocation_mem(maxNoeud, sizeof(int *));
+      for (j = 0; j < maxNoeud; j++)
+        tabVal[j] = allocation_mem(2, sizeof(int));
+      aa_arbreVersTableau(tablereg[i].tree, tabVal, maxNoeud);
+    }
+
+    /* reste des champs */
+    fprintf(f, "%d;%d;%d;%d\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, maxNoeud);
+
+    /* arbre */
+    if (tablereg[i].tree != NULL) {
+      for (j = 0; j < maxNoeud; j++) {
+        fprintf(f, "{%d,%d};", tabVal[j][0], tabVal[j][1]);
+      }
+      fprintf(f, "\n");
+    } else fprintf(f, "{0,-1};\n"); /* arbre vide */
   }
 
   /* Séparateur */
     fputs("---\n", f);
-}
-
-
-void tr_detruire () {
-  int i;
-  for (i = 0; i < NB_REGIONS; i++) {
-    libere_mem(tablereg[i].tree);
-  }
 }

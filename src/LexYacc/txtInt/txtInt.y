@@ -4,7 +4,7 @@
 	#include <string.h>
 	#include "tableLex.h"
 	#include "tableTypes.h"
-	#include "tableReg.h"
+	#include "tablereg.h"
 	#include "arbreAbstrait.h"
 	#include "allocation.h"
 
@@ -44,21 +44,22 @@ corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType SEPARATEUR
 	 ;
 
 valTabLex: TEXTE { tl_ajout($1); free($1); } valTabLex 
-		 | TEXTE { tl_ajout($1); free($1); }
+		 |
 		 ;
 
 valTabType: ENTIER { tt_ajout($1); } valTabType 
-		  | ENTIER { tt_ajout($1); }
+		  |
 		  ;
 
 valTabReg: ENTIER PV ENTIER PV ENTIER PV ENTIER { allocTabVal($7); } 
 		   tabArbre { arbre a = aa_tableauVersArbre(tabVal, i-1); tr_ajout_reg($1, $3, $5, a); }
-		 | ENTIER PV ENTIER PV ENTIER PV ENTIER { allocTabVal($7); } 
-		   tabArbre { arbre a = aa_tableauVersArbre(tabVal, i-1); tr_ajout_reg($1, $3, $5, a); }
+		   valTabReg
+		 |
 		 ;
 
 tabArbre: PO ENTIER VIRG ENTIER PF PV { tabVal[i][0] = $2; tabVal[i++][1] = $4; } tabArbre
-		| PO ENTIER VIRG ENTIER PF { tabVal[i][0] = $2; tabVal[i++][1] = $4; }
+		| 
+		;
 %%
 
 int main(int argc, char *argv[]) {
@@ -75,8 +76,8 @@ int main(int argc, char *argv[]) {
 	tl_afficher();
 	tt_afficher();
 	tr_affiche();
+	tr_afficherArbres();
 
-	tr_detruire();
 	tl_detruire();
 
 	exit(EXIT_SUCCESS);

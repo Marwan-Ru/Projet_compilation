@@ -13,7 +13,7 @@
 typedef struct {
   int taille_zone; 
   int niv_imbric;
-  arbre tree; /*TO DO : changer en bon type*/
+  arbre tree;
 } champ;
 
 #define NB_REGIONS 500
@@ -21,7 +21,7 @@ typedef struct {
 
 void tr_init();
 
-void tr_ajout_reg (int nreg, int taillez, int niv, arbre a); /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, arbre a);
 
 void tr_ajout_taille (int num, int taille);
 
@@ -39,9 +39,9 @@ int tr_reg_existe (int num_reg);
 
 void tr_affiche ();
 
+void tr_afficherArbres ();
+
 /* Ecrit la table vers le fichier ouvert f */
 void tr_ecrireFichier (FILE *f);
-
-void tr_detruire ();
 
 #endif
