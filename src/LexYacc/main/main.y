@@ -9,7 +9,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog, tmp, val[500], cmptVal;
+	int taille_prog, tmp, val[500], cmptVal, taille_decl;
 	pile p; 
 %}
 
@@ -187,7 +187,23 @@ declaration_proc_fct : declaration_procedure
 	/** Déclaration de types **/
 
 
-declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type {td_ajout($4, tl_getLex($2), cmp_reg, tmp, 0);}
+declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type 
+	{if($4 == TYPE_T){
+		taille_decl = 0;
+		for(int i=0; i<tt_tabNbDimensions(tmp); i++) taille_decl += tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i) * tt_tabTypeElem(tmp);
+	}else{
+		taille_decl = 0;
+		for(int i=0; i<tt_structNbChamps(tmp); i++){
+			decl d = td_getlastdecl(tl_getLex(tt_structNumLexChamp(tmp, i)));
+			if(d.NATURE == TYPE_S || d.NATURE == TYPE_T){
+				taille_decl += d.exec;
+			}else{/*C'est forcement une variable*/
+				taille_decl += td_getlastdecl(tl_getLex(d.index)).exec;
+			}
+		}
+	}
+	td_ajout($4, tl_getLex($2), cmp_reg, tmp, taille_decl);
+	}
                  ; 
 
 suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
@@ -200,7 +216,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; /* val[cmptVal++] = champExec($3); */ }
+un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; val[cmptVal++] = td_getdecl($3).exec;  }
          ;
 
 		/* Déclaration de tableaux */
