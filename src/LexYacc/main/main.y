@@ -265,6 +265,7 @@ declaration_procedure : PROCEDURE {
 	taille = sommet_pile(p);
 	p = depiler(p);
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
+	td_ajout(PROC, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                       ;
 
@@ -305,7 +306,7 @@ declaration_fonction : FONCTION {
 	taille = sommet_pile(p);
 	p = depiler(p); 
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	td_ajout(PARAM, tl_getLex($3), cmp_reg, $3, 0);
+	td_ajout(FUNCT, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                      ;
 
