@@ -11,7 +11,7 @@ void tr_init() {
   }
 }
 
-void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur) { /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, arbre a) { /*TO DO : changer en bon type*/
   if (nreg > NB_REGIONS ){
     printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
     exit(-1);
@@ -19,7 +19,7 @@ void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur) { /*TO DO : ch
 
   tablereg[nreg].taille_zone = taillez;
   tablereg[nreg].niv_imbric = niv;
-  tablereg[nreg].arbre = pointeur;
+  tablereg[nreg].tree = a;
 }
 
 void tr_ajout_taille (int num, int taille) {
@@ -46,23 +46,22 @@ void tr_ajout_taille_prog_princ (int nis, int taille) {
   }
 }
 
-void tr_ajout_arbre (int num, int *tree) {
+void tr_ajout_arbre (int num, arbre a) {
   if (num > NB_REGIONS ){
     printf("erreur table region (tr_ajout_reg) : dépassement borne table \n");
     exit(-1);
   }
 
-  tablereg[num].arbre = tree;
+  tablereg[num].tree = a;
 }
 
-int somme_taille () {
-  int i = 1, sum = 0;
+int tr_taille () {
+  int i = 0;
   while (tablereg[i].taille_zone != -1) {
-    sum += tablereg[i].taille_zone;
     i++;
   }
 
-  return sum;
+  return i;
 }
 
 champ tr_get_reg (int num_reg) {
@@ -90,19 +89,27 @@ void tr_affiche () {
   
   for (i = 0; i < NB_REGIONS-480; i++) {
     /*printf("region[%d] : taille_zone : %d -- niv_imbric : %d -- pointeur arbre : %p \n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);*/
-    printf("   │  %3d│  %5d │  %3d │%p\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].arbre);
+    printf("   │  %3d│  %5d │  %3d │%p\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].tree);
   }
   printf("\n");
 }
 
 /* Ecrit la table vers le fichier ouvert f */
 void tr_ecrireFichier (FILE *f) {
+  int i, tot = tr_taille();
 
+  for (i = 0; i < tot; i++) {
+    fprintf(f, "%d;%d;%d;%p\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, (void *) tablereg[i].tree);
+  }
+
+  /* Séparateur */
+    fputs("---\n", f);
 }
+
 
 void tr_detruire () {
   int i;
   for (i = 0; i < NB_REGIONS; i++) {
-    libere_mem(tablereg[i].arbre);
+    libere_mem(tablereg[i].tree);
   }
 }

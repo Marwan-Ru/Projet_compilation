@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "allocation.h"
+#include "arbreAbstrait.h"
 
 /*Struct champ :
    - taille_zone : La taille de la zone de données associée dans la pile à l'exécution
@@ -12,7 +13,7 @@
 typedef struct {
   int taille_zone; 
   int niv_imbric;
-  int *arbre; /*TO DO : changer en bon type*/
+  arbre tree; /*TO DO : changer en bon type*/
 } champ;
 
 #define NB_REGIONS 500
@@ -20,15 +21,15 @@ typedef struct {
 
 void tr_init();
 
-void tr_ajout_reg (int nreg, int taillez, int niv, int *pointeur); /*TO DO : changer en bon type*/
+void tr_ajout_reg (int nreg, int taillez, int niv, arbre a); /*TO DO : changer en bon type*/
 
 void tr_ajout_taille (int num, int taille);
 
 void tr_ajout_nis (int num, int nis);
 
-void tr_ajout_arbre (int num, int *tree);
+void tr_ajout_arbre (int num, arbre a);
 
-int somme_taille();
+int tr_taille();
 
 void tr_ajout_taille_prog_princ (int nis, int taille);
 
