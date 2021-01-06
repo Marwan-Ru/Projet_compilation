@@ -121,7 +121,12 @@ void td_afficher(){
 
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f) {
+    int i;
+    for (i = 0; i < T_TABLEDEBORD + T_TABLELEX ; i++) 
+        fprintf(f, "%d;%d;%d;%d;%d;%d\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
 
+    /* Séparateur */
+    fprintf(f, "---\n");
 }
 
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/

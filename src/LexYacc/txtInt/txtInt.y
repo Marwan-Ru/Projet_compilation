@@ -40,7 +40,7 @@
 %token <t_chaine> CHAINE 
 
 %%
-corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType SEPARATEUR
+corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType SEPARATEUR valTabDecl SEPARATEUR
 	 ;
 
 valTabLex: TEXTE { tl_ajout($1); free($1); } valTabLex 
@@ -57,6 +57,10 @@ valTabReg: ENTIER PV ENTIER PV ENTIER PV ENTIER { allocTabVal($7); }
 		   tabArbre { arbre a = aa_tableauVersArbre(tabVal, i-1); tr_ajout_reg($1, $3, $5, a); }
 		 ;
 
+valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER 
+			 {td_ajout($3, tl_getLex($1), $5, $9, $11);}
+			 ;
+
 tabArbre: PO ENTIER VIRG ENTIER PF PV { tabVal[i][0] = $2; tabVal[i++][1] = $4; } tabArbre
 		| PO ENTIER VIRG ENTIER PF { tabVal[i][0] = $2; tabVal[i++][1] = $4; }
 %%
@@ -69,6 +73,7 @@ int main(int argc, char *argv[]) {
 	tl_init();
 	tt_init();
 	tr_init();
+	td_init();
 
 	yyparse();
 
