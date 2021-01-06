@@ -10,7 +10,7 @@
 	extern int cmp_reg;
 	extern int taille;
 	int taille_prog, tmp, val[500], cmptVal, taille_decl;
-	pile p; 
+	pile p, p2; 
 %}
 
 %code requires { 
@@ -135,25 +135,21 @@
 programme : PROG {
 	tr_ajout_nis(cmp_reg, NIS);
 	p = pile_vide();
-	p = empiler(p, taille);
-	taille=1+NIS;
+	p2 = pile_vide();
+	/* taille=1+NIS; */
 	}
         	IDF corps {
 	arbreAbstrait = $4;
-	taille = sommet_pile(p);
-	p = depiler(p);
 	tr_ajout_taille(0, taille);
 	}
 		  | PROG {
 	tr_ajout_nis(cmp_reg, NIS);
 	p = pile_vide();
-	p = empiler(p, taille);
-	taille=1+NIS;
+	p2 = pile_vide();
+	/* taille=1+NIS; */
 	} 
 		    corps { 
 	arbreAbstrait = $3; 
-	taille = sommet_pile(p);
-	p = depiler(p);
 	tr_ajout_taille(0, taille);
 	}
 		  ;
@@ -250,6 +246,7 @@ declaration_procedure : PROCEDURE {
 	cmp_reg++; 
 	NIS++ ;
 	p = empiler(p, taille);
+	p2 = empiler(p2, cmp_reg);
 	taille=1+NIS; 
 	tr_ajout_nis(cmp_reg, NIS); 
 	}
@@ -259,11 +256,13 @@ declaration_procedure : PROCEDURE {
 	tr_ajout_taille(cmp_reg, taille); 
 	}
                         liste_decl_proc_fct
-                        liste_instructions
+                        liste_instructions 
 						{
+	tr_ajout_arbre(sommet_pile(p2), $9);
 	NIS-- ;
 	taille = sommet_pile(p);
 	p = depiler(p);
+	p2 = depiler(p2);
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
 	td_ajout(PROC, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
