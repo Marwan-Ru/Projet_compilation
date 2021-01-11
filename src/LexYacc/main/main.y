@@ -240,11 +240,11 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 					{	indice = td_getdecl($2).index;
 						printf("idf : %d \n", $2);
 						printf("indice : %d \n", td_getdecl($2).index);
+						td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec);
+						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
 						if (indice < 4) taille += 1;
 						else {
 							taille = taille + (td_getdecl(indice).exec);
-							/* td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); */ 
-							/*taille=taille+(td_getlastdecl(char* nom)($2).exec); */ 
 						}
 					}
                      ;
@@ -265,6 +265,8 @@ declaration_procedure : PROCEDURE {
 						liste_decl_types 
                         liste_decl_vars {
 	tr_ajout_taille(cmp_reg, taille); 
+	tmp = tt_ajoutProcedure (cmptVal/2, val);
+	td_ajout(PROC, tl_getLex($3), cmp_reg-1, tmp, NIS);
 	}
                         liste_decl_proc_fct
                         liste_instructions 
@@ -274,8 +276,6 @@ declaration_procedure : PROCEDURE {
 	taille = sommet_pile(p);
 	p = depiler(p);
 	p2 = depiler(p2);
-	tmp = tt_ajoutProcedure (cmptVal/2, val);
-	td_ajout(PROC, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                       ;
 
@@ -311,6 +311,8 @@ declaration_fonction : FONCTION {
 					   liste_decl_types 
 					   liste_decl_vars {	
 	tr_ajout_taille(cmp_reg, taille); 
+	tmp = tt_ajoutFonction($6, cmptVal/2, val);
+	td_ajout(FUNCT, tl_getLex($3), cmp_reg-1, tmp, NIS);
 	}
                        liste_decl_proc_fct liste_instructions {	
 	tr_ajout_arbre(sommet_pile(p2), $11);
@@ -318,8 +320,6 @@ declaration_fonction : FONCTION {
 	taille = sommet_pile(p);
 	p = depiler(p); 
 	p2 = depiler(p2);
-	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	td_ajout(FUNCT, tl_getLex($3), cmp_reg, tmp, NIS);
 	}
                      ;
 
