@@ -61,6 +61,15 @@ int td_ajout(int nature, char * nom, int numregion, int index, int exec){
     return 0;
 }
 
+/* Permet de définir tous les champs de la ligne i */
+void td_set (int i, int nature, int numregion, int suivant, int index, int exec) {
+    tabledecl[i].NATURE = nature;
+    tabledecl[i].numregion = numregion;
+    tabledecl[i].suivant = suivant;
+    tabledecl[i].index = index;
+    tabledecl[i].exec = exec;
+}
+
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
 decl td_getdecl(int num){
     if(num > T_TABLEDEBORD + T_TABLELEX){
@@ -122,8 +131,10 @@ void td_afficher(){
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f) {
     int i;
-    for (i = 0; i < T_TABLEDEBORD + T_TABLELEX ; i++) 
-        fprintf(f, "%d;%d;%d;%d;%d;%d\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
+    for (i = 0; i < T_TABLEDEBORD + T_TABLELEX ; i++) {
+        if (tabledecl[i].NATURE != -1)
+            fprintf(f, "%d;%d;%d;%d;%d;%d\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].exec);
+    }
 
     /* Séparateur */
     fprintf(f, "---\n");

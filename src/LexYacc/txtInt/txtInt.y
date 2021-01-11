@@ -39,7 +39,7 @@
 %type <t_arbre> arbre
 
 %%
-corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType /*SEPARATEUR valTabDecl*/
+corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType SEPARATEUR valTabDecl SEPARATEUR
 	 ;
 
 valTabLex: TEXTE { tl_ajout($1); free($1); } valTabLex 
@@ -55,7 +55,8 @@ valTabReg: ENTIER PV ENTIER PV ENTIER { longTab = 0; } arbre valTabReg
 		 |
 		 ;
 
-arbre: PO ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4)); } suite_arbre { $$ = $<t_arbre>6; }
+arbre: PO ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4)); } suite_arbre 
+		{ $$ = $<t_arbre>6; }
 	 ;
 
 suite_arbre: BARREVERT ENTIER arbre { aa_concatPereFils(tab[$2], $3); }
@@ -63,9 +64,9 @@ suite_arbre: BARREVERT ENTIER arbre { aa_concatPereFils(tab[$2], $3); }
 		   |
 		   ;
 
-/*valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER 
-			 {td_ajout($3, tl_getLex($1), $5, $9, $11);}
-			 ;*/
+valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER valTabDecl { td_set($1, $3, $5, $7, $9, $11); }
+		   |
+		   ;
 %%
 
 int main(int argc, char *argv[]) {
@@ -84,6 +85,7 @@ int main(int argc, char *argv[]) {
 	tt_afficher();
 	tr_affiche();
 	tr_afficherArbres();
+	td_afficher();
 
 	tl_detruire();
 

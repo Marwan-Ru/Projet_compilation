@@ -44,6 +44,9 @@ int td_init();
  */
 int td_ajout(int nature, char * nom, int numregion, int index, int exec);
 
+/* Permet de définir tous les champs de la ligne i */
+void td_set (int i, int nature, int numregion, int suivant, int index, int exec);
+
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
 decl td_getdecl(int num);
 
