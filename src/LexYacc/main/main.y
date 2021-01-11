@@ -190,20 +190,18 @@ declaration_proc_fct : declaration_procedure
 
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type 
 	{if($4 == TYPE_T){
-		taille_decl = 0;
-		for(int i=0; i<tt_tabNbDimensions(tmp); i++) taille_decl += tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i) * tt_tabTypeElem(tmp);
+		taille_decl = 1;
+		for (int i = 0; i < tt_tabNbDimensions(tmp); i++) taille_decl *= (tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i))+1;
+		taille_decl *= td_getlastdecl(tt_tabTypeElem(tmp)).exec;
 	}else{
 		taille_decl = 0;
-		for(int i=0; i<tt_structNbChamps(tmp); i++){
-			decl d = td_getlastdecl(tl_getLex(tt_structNumLexChamp(tmp, i)));
-			if(d.NATURE == TYPE_S || d.NATURE == TYPE_T){
-				taille_decl += d.exec;
-			}else{/*C'est forcement une variable*/
-				taille_decl += td_getlastdecl(tl_getLex(d.index)).exec;
-			}
+		printf("nb champs: %d\n", tt_structNbChamps(tmp));
+		for (int i = 0; i < tt_structNbChamps(tmp); i++) {
+			printf("champs %d: %d (taille: %d)\n", i, td_getlastdeclnum(tt_structIndexChamp(tmp, i)), td_getlastdecl(tt_structIndexChamp(tmp, i)).exec);
+			taille_decl += td_getlastdecl(tt_structIndexChamp(tmp, i)).exec;
 		}
 	}
-	td_ajout($4, tl_getLex($2), cmp_reg, tmp, taille_decl);
+	td_ajout($2, $4, cmp_reg, tmp, taille_decl);
 	}
                  ; 
 
@@ -238,9 +236,7 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
 					{	indice = td_getdecl($2).index;
-						printf("idf : %d \n", $2);
-						printf("indice : %d \n", td_getdecl($2).index);
-						td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec);
+						td_ajout($2, VARI, cmp_reg, $4, td_getdecl($4).exec);
 						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
 						if (indice < 4) taille += 1;
 						else {
@@ -266,7 +262,7 @@ declaration_procedure : PROCEDURE {
                         liste_decl_vars {
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
-	td_ajout(PROC, tl_getLex($3), cmp_reg-1, tmp, NIS);
+	td_ajout($3, PROC, cmp_reg-1, tmp, NIS);
 	}
                         liste_decl_proc_fct
                         liste_instructions 
@@ -291,7 +287,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, td_getdecl($3).exec);}
+	td_ajout($1, PARAM, cmp_reg, $3, td_getdecl($3).exec);}
          ;
 
 
@@ -312,7 +308,7 @@ declaration_fonction : FONCTION {
 					   liste_decl_vars {	
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	td_ajout(FUNCT, tl_getLex($3), cmp_reg-1, tmp, NIS);
+	td_ajout($3, FUNCT, cmp_reg-1, tmp, NIS);
 	}
                        liste_decl_proc_fct liste_instructions {	
 	tr_ajout_arbre(sommet_pile(p2), $11);
@@ -533,6 +529,7 @@ int main(int argc, char *argv[]) {
 	td_ecrireFichier(f);
 
 	td_afficher();
+	tt_afficher();
 
 	tl_detruire();
 	fclose(f);
