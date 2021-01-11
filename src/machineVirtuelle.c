@@ -1,6 +1,8 @@
 #include "machineVirtuelle.h"
 
 types_pile pile[TAILLEPILE];
+int NIS_utilisation = 0;
+int BC = 0;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
@@ -94,9 +96,23 @@ int evaluer (arbre a) {
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
-types_piles association_nom (int numlex) {
+int association_nom (int numlex) {
+    int region_decl = td_getdecl(numlex).numregion;
+    int NIS_decl = tr_get_reg(region_decl).niv_imbric;
+    int cs = NIS_utilisation-NIS_decl;
+    int diff = 0;
 
+    return pile[pile[BC+cs]+diff];
 }
+
+/*Faut il faire une fonction pr trouver la diff (dy) dans le cours*/
+/* int diff (int numlex) {
+    int i = BC;
+    while (pile[i] != numlex) { //tant que l'on ne trouve pas le lexeme recherché
+        i++;                    //sauf que ici la pile ne contient des numéros de lexemes
+    }                           //donc voir comment faire ça
+    return i;
+} */
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void remplir_pile (int i, types_piles v) {
