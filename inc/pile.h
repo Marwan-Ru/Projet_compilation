@@ -17,4 +17,6 @@ pile depiler(pile p);
 
 int taille_pile(pile p);
 
+void liberer_pile (pile l);
+
 #endif
