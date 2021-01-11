@@ -2,45 +2,44 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
-	#include "tableLex.h"
-	#include "tableTypes.h"
-	#include "tablereg.h"
-	#include "arbreAbstrait.h"
-	#include "allocation.h"
 
 	int yylex();
 	extern int yylineno;
 	void yyerror (char const *str) {
 		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
 	}
-
-	int nbVal, **tabVal, i;
-
-	void allocTabVal (int n) {
-		nbVal = n;
-		tabVal = allocation_mem(n, sizeof(int *));
-		for (i = 0; i < n; i++) {
-			tabVal[i] = allocation_mem(2, sizeof(int));
-		}
-		i = 0;
-	}
 %}
+
+%code requires { 
+	#include "tableLex.h"
+	#include "tablereg.h"
+	#include "tabledecl.h"
+	#include "tableTypes.h"
+	#include "arbreAbstrait.h"
+}
+
+%code {
+	arbre tab[NB_REGIONS];
+	int longTab = 0;
+}
 
 %union {
 	int t_entier;
 	char *t_chaine;
+	arbre t_arbre;
 }
 
 %define parse.error verbose
 %locations
 
-%token PV PO PF VIRG SEPARATEUR
+%token PV PO PF VIRG SEPARATEUR BARREVERT BARREHORI
 %token <t_entier> ENTIER 
 %token <t_chaine> TEXTE 
 %token <t_chaine> CHAINE 
+%type <t_arbre> arbre
 
 %%
-corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType SEPARATEUR valTabDecl SEPARATEUR
+corps: valTabLex SEPARATEUR valTabReg SEPARATEUR valTabType /*SEPARATEUR valTabDecl*/
 	 ;
 
 valTabLex: TEXTE { tl_ajout($1); free($1); } valTabLex 
@@ -51,19 +50,22 @@ valTabType: ENTIER { tt_ajout($1); } valTabType
 		  |
 		  ;
 
-valTabReg: ENTIER PV ENTIER PV ENTIER PV ENTIER { allocTabVal($7); } 
-		   tabArbre { arbre a = aa_tableauVersArbre(tabVal, i-1); tr_ajout_reg($1, $3, $5, a); }
-		   valTabReg
+valTabReg: ENTIER PV ENTIER PV ENTIER { longTab = 0; } arbre valTabReg
+			{ tr_ajout_reg ($1, $3, $5, $7); }
 		 |
 		 ;
 
-valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER 
-			 {td_ajout($3, tl_getLex($1), $5, $9, $11);}
-			 ;
+arbre: PO ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4)); } suite_arbre { $$ = $<t_arbre>6; }
+	 ;
 
-tabArbre: PO ENTIER VIRG ENTIER PF PV { tabVal[i][0] = $2; tabVal[i++][1] = $4; } tabArbre
-		| 
-		;
+suite_arbre: BARREVERT ENTIER arbre { aa_concatPereFils(tab[$2], $3); }
+		   | BARREHORI ENTIER arbre { aa_concatPereFrere(tab[$2], $3); }
+		   |
+		   ;
+
+/*valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER 
+			 {td_ajout($3, tl_getLex($1), $5, $9, $11);}
+			 ;*/
 %%
 
 int main(int argc, char *argv[]) {

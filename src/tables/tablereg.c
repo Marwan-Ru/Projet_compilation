@@ -104,28 +104,13 @@ void tr_afficherArbres () {
 
 /* Ecrit la table vers le fichier ouvert f */
 void tr_ecrireFichier (FILE *f) {
-  int i, tot = tr_taille(), **tabVal, maxNoeud = 1, j;
+  int i, tot = tr_taille();
 
   for (i = 0; i < tot; i++) {
-    /* arbre vers tabVal */
-    if (tablereg[i].tree != NULL) {
-      maxNoeud = (1 << aa_hauteur(tablereg[i].tree)) - 1; /* 2^hauteur(a) - 1 */
-      tabVal = allocation_mem(maxNoeud, sizeof(int *));
-      for (j = 0; j < maxNoeud; j++)
-        tabVal[j] = allocation_mem(2, sizeof(int));
-      aa_arbreVersTableau(tablereg[i].tree, tabVal, maxNoeud);
-    }
-
-    /* reste des champs */
-    fprintf(f, "%d;%d;%d;%d\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric, maxNoeud);
+    fprintf(f, "%d;%d;%d\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric);
 
     /* arbre */
-    if (tablereg[i].tree != NULL) {
-      for (j = 0; j < maxNoeud; j++) {
-        fprintf(f, "{%d,%d};", tabVal[j][0], tabVal[j][1]);
-      }
-      fprintf(f, "\n");
-    } else fprintf(f, "{0,-1};\n"); /* arbre vide */
+    aa_ecrireFichier(f, tablereg[i].tree);
   }
 
   /* Séparateur */

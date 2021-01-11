@@ -16,6 +16,7 @@
 	pile p, p2; 
 %}
 
+/* Necessaire pour utiliser le type arbre dans l'union et inclure tableLex dans main.l */
 %code requires { 
 	#include "tableLex.h"
 	#include "tablereg.h"
@@ -24,6 +25,7 @@
 	#include "arbreAbstrait.h"
 }
 
+/* Necessaire pour faire des initialisations utilisant arbreAbstrait */
 %code {
 	arbre arbreAbstrait = NULL;
 	void yyerror (char const *str) {
@@ -522,8 +524,9 @@ int main(int argc, char *argv[]) {
 	tl_ecrireFichier(f);
 	tr_ecrireFichier(f);
 	tt_ecrireFichier(f);
+	td_ecrireFichier(f);
 
-	tr_afficherArbres();
+	td_afficher();
 
 	tl_detruire();
 	fclose(f);

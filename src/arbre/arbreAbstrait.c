@@ -1,5 +1,7 @@
 #include "arbreAbstrait.h"
 
+int indent;
+
 arbre aa_vide () {
 	return NULL;
 }
@@ -137,79 +139,32 @@ Identifiant aa_id (arbre a) {
 	else return A_VIDE;
 }
 
+void ecrireFichier_rec (FILE *f, arbre a) {
+	int localIndent = indent;
 
-/* Calcule la hauteur de l'arbre a */
-int aa_hauteur (arbre a) {
-	int tailleG, tailleD;
+	fprintf(f, "{%d,%d}", a->id, a->valeur);
 
-    if (a == aa_vide()) return 0;
-
-	tailleG = aa_hauteur(aa_frere(a));
-	tailleD = aa_hauteur(aa_fils(a));
-	if (tailleG > tailleD) return tailleG + 1;
-	else return tailleD + 1;
-}
-
-/* Fonction locale utilitaire utilisé par arbreVersTableau.
-   La valeur initial de pos est 0 */
-void arbreVersTableau_rec (arbre a, int *valeurs[2], int pos) {
-    if (a == aa_vide()) return;
-
-    valeurs[pos][0] = aa_id(a);
-	valeurs[pos][1] = aa_valeur(a);
-
-    if (aa_frere(a) != aa_vide()) {
-        arbreVersTableau_rec(aa_frere(a), valeurs, 2*pos + 1);
-    }
-    if (aa_fils(a) != aa_vide()) {
-        arbreVersTableau_rec(aa_fils(a), valeurs, 2*pos + 2);
-    }
-}
-
-/* Traverse l'arbre a de façon infixe et place tous 
-   les noeuds dans le tableau valeurs */
-void aa_arbreVersTableau (arbre a, int *valeurs[2], int maxNoeuds) {	
-	int i;
-
-    /* On initialise tous les noeuds */
-    for (i = 0; i < maxNoeuds; i++) {
-		valeurs[i][0] = A_VIDE;
-		valeurs[i][1] = -1;
+	if (a->fils != aa_vide()) {
+		fprintf(f, "|%d", localIndent);
+		indent++;
+		ecrireFichier_rec(f, a->fils);
+	} 
+	if (a->frere != aa_vide()) {
+		fprintf(f, "_%d", localIndent);
+		indent++;
+		ecrireFichier_rec(f, a->frere);
 	}
-    arbreVersTableau_rec(a, valeurs, 0);
 }
 
-/* Fonction locale utilitaire utilisé par tableauVersArbre.
-   pos est la position de a dans valeurs */
-void tableauVersArbre_rec (arbre a, int *valeurs[2], int n, int pos) {
-	int nPos;
-
-    if(a == aa_vide() || valeurs == NULL || n == 0) return;
-
-    /* Frère de a */
-    nPos = 2 * pos+1;
-    if (nPos < n && valeurs[nPos][0] != A_VIDE) {
-		aa_concatPereFrere(a, aa_creerNoeud(valeurs[nPos][0], valeurs[nPos][1]));
-        tableauVersArbre_rec (aa_frere(a), valeurs, n, nPos);
-    }
-
-	/* Fils de a */
-    nPos = 2 * pos+2;
-    if (nPos < n && valeurs[nPos][0] != A_VIDE) {
-		aa_concatPereFils(a, aa_creerNoeud(valeurs[nPos][0], valeurs[nPos][1]));
-        tableauVersArbre_rec (aa_fils(a), valeurs, n, nPos);
-    }
-}
-
-/* Utilise le tableau de valeurs de longueur n pour construire un arbre abstrait */
-arbre aa_tableauVersArbre (int *valeurs[2], int n) {
-	arbre a;
-
-    if(valeurs == NULL || valeurs[0][0] == A_VIDE) return A_VIDE;
-
-    a = aa_creerNoeud(valeurs[0][0], valeurs[0][1]);
-    tableauVersArbre_rec (a, valeurs, n, 0);
-    return a;
+/* Ecrit l'arbre vers le fichier ouver f */
+void aa_ecrireFichier (FILE *f, arbre a) {
+	if (a == aa_vide())
+		fprintf(f, "{0,-1}");
+	else {
+		indent = 0;
+		ecrireFichier_rec(f, a);
+	}
+	fprintf(f, "\n");
 }
 
 /* Détruit seulement la racine de l'arbre a */

@@ -70,15 +70,8 @@ int aa_valeur (arbre a);
 
 Identifiant aa_id (arbre a);
 
-/* Calcule la hauteur de l'arbre a */
-int aa_hauteur (arbre a);
-
-/* Traverse l'arbre a de façon infixe et place tous 
-   les noeuds dans le tableau valeurs */
-void aa_arbreVersTableau (arbre a, int *valeurs[2], int maxNoeuds);
-
-/* Utilise le tableau de valeurs de longueur n pour construire un arbre abstrait */
-arbre aa_tableauVersArbre (int *valeurs[2], int n);
+/* Ecrit l'arbre vers le fichier ouver f */
+void aa_ecrireFichier (FILE *f, arbre a);
 
 /* Détruit seulement la racine de l'arbre a */
 void aa_detruire (arbre a);

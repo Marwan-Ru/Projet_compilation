@@ -39,7 +39,7 @@ void execute (arbre a) {
 }
 
 /* Evalue l'expression se trouvant dans l'arbre a */
-int evaluer (arbre a) {
+union types_pile evaluer (arbre a) {
     if (a == aa_vide()) return;
     
     switch (a->id) {
@@ -94,12 +94,12 @@ int evaluer (arbre a) {
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
-types_piles association_nom (int numlex) {
+int association_nom (int numlex) {
 
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
-void remplir_pile (int i, types_piles v) {
+void remplir_pile (int i, union types_pile v) {
     if (i >= 0 && i < TAILLEPILE) pile[i] = v;
     else {
         fprintf(stderr, "Tentative d'accès en dehors de la pile (%d)\n", i);
