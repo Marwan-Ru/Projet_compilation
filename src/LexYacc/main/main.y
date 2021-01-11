@@ -240,10 +240,10 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 					{	indice = td_getdecl($2).index;
 						printf("idf : %d \n", $2);
 						printf("indice : %d \n", td_getdecl($2).index);
+						td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec);
 						if (indice < 4) taille += 1;
 						else {
 							taille = taille + (td_getdecl(indice).exec);
-							/* td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); */ 
 							/*taille=taille+(td_getlastdecl(char* nom)($2).exec); */ 
 						}
 					}
