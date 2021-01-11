@@ -118,12 +118,12 @@ void td_afficher(){
   printf("   num │ nature │ numregion │ suivant │ desc | exec |\n");
   
   for (i = 0; i < 20; i++) {
-    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
+    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("Table de débordement\n");
 
   for (i = 501; i < 521; i++) {
-    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].index);
+    printf("   %3d │  %6d│  %9d│  %7d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].numregion, tabledecl[i].suivant, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("\n");
 }
