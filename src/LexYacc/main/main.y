@@ -12,7 +12,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog, tmp, val[500], cmptVal, taille_decl;
+	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice;
 	pile p, p2; 
 %}
 
@@ -237,9 +237,15 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{taille++; 
-					td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); 
-					/*taille=taille+td_champ_exec($4); */ 
+					{	indice = td_getdecl($2).index;
+						printf("idf : %d \n", $2);
+						printf("indice : %d \n", td_getdecl($2).index);
+						if (indice < 4) taille += 1;
+						else {
+							taille = taille + (td_getdecl(indice).exec);
+							/* td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec); */ 
+							/*taille=taille+(td_getlastdecl(char* nom)($2).exec); */ 
+						}
 					}
                      ;
 
@@ -530,6 +536,9 @@ int main(int argc, char *argv[]) {
 
 	tl_detruire();
 	fclose(f);
+
+	liberer_pile(p);
+	liberer_pile(p2);
 
 	exit(EXIT_SUCCESS);
 }

@@ -37,3 +37,8 @@ int taille_pile(pile p)
     }
   return nb;
 }
+
+void liberer_pile (pile l) {
+  while (!est_pile_vide(l))
+    l = supprimer_premier_liste(l);
+}
