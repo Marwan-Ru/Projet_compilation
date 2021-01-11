@@ -528,5 +528,8 @@ int main(int argc, char *argv[]) {
 	tl_detruire();
 	fclose(f);
 
+	liberer_pile(p);
+	liberer_pile(p2);
+
 	exit(EXIT_SUCCESS);
 }
