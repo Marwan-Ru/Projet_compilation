@@ -15,6 +15,14 @@
 	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice, decalage;
 	pile p, p2; 
 	char *msgErr;
+
+	void yyerror (char const *str) {
+		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
+	}
+
+	void verifErreur () {
+		if (msgErr != NULL) yyerror(msgErr);
+	}
 %}
 
 /* Necessaire pour utiliser le type arbre dans l'union et inclure tableLex dans main.l */
@@ -24,19 +32,6 @@
 	#include "tabledecl.h"
 	#include "tableTypes.h"
 	#include "arbreAbstrait.h"
-}
-
-/* Necessaire pour faire des initialisations utilisant arbreAbstrait */
-%code {
-	arbre arbreAbstrait = NULL;
-	void yyerror (char const *str) {
-		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
-		arbreAbstrait = aa_vide();
-	}
-
-	void verifErreur () {
-		if (msgErr != NULL) yyerror(msgErr);
-	}
 }
 
 %union {
@@ -149,7 +144,7 @@ programme : PROG {
 	/* taille=1+NIS; */
 	}
         	IDF corps {
-	arbreAbstrait = $4;
+	tr_ajout_arbre(0, $4);
 	tr_ajout_taille(0, taille);
 	}
 		  | PROG {
@@ -159,7 +154,7 @@ programme : PROG {
 	/* taille=1+NIS; */
 	} 
 		    corps { 
-	arbreAbstrait = $3; 
+	tr_ajout_arbre(0, $3);
 	tr_ajout_taille(0, taille);
 	}
 		  ;
