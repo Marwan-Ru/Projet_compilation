@@ -97,10 +97,12 @@ union types_pile evaluer (arbre a) {
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
 int association_nom (int numlex) {
-    int region_decl = td_getdecl(numlex).numregion;
+    /*Récupérer num region avec la fonction de gustav*/
+    decl champ; /*on le récup grace à la fonction de gustav*/
+    int region_decl = champ.numregion;
     int NIS_decl = tr_get_reg(region_decl).niv_imbric;
     int cs = NIS_utilisation-NIS_decl;
-    int diff = 0;
+    int diff = champ.exec;
 
     return pile[pile[BC+cs]+diff];
 }
