@@ -21,6 +21,8 @@ void execute (arbre a) {
             remplir_pile(i, v);
             break;
         case A_APPEL_FONC:
+            execute(aa_fils(a)); /*pb : A_LISTEPARAMS pas dans execute*/
+            execute(aa_frere(a));
             break;
         case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a))).booleen == 't') execute(aa_frere(aa_fils(a)));
@@ -55,8 +57,11 @@ void execute (arbre a) {
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
+            return execute(aa_fils(a)); /*???*/
             break;
         case A_AFFICHER:
+            aa_afficher(aa_fils(a));
+            execute(aa_frere(a));
             break;
         case A_VIDE:
         default:
