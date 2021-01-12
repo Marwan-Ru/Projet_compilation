@@ -84,18 +84,30 @@ int td_getlastdeclnum(int numLex){
     return numLex;
 }
 
+char *natureVersTexte (int nature) {
+    switch (nature) {
+        case TYPE_S: return "TYPE_S";
+        case TYPE_T: return "TYPE_T";
+        case VARI: return "VAR";
+        case PARAM: return "PARAM";
+        case PROC: return "PROC";
+        case FUNCT: return "FONC";
+        default: return "-1";
+    }
+}
+
 void td_afficher(){
   int i;
   printf("Table des déclarations :\n");
   printf("   num │ nature │ suivant │ region │ desc | exec |\n");
   
   for (i = 0; i < 32; i++) {
-    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+    printf("   %3d │  %6s│  %7d│  %6d│  %4d|  %4d|\n", i, natureVersTexte(tabledecl[i].NATURE), tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("Table de débordement\n");
 
   for (i = 501; i < 521; i++) {
-    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+    printf("   %3d │  %6s│  %7d│  %6d│  %4d|  %4d|\n", i, natureVersTexte(tabledecl[i].NATURE), tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("\n");
 }

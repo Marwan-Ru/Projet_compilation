@@ -258,7 +258,7 @@ declaration_procedure : PROCEDURE {
                         liste_decl_vars {
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
-	td_ajout($3, PROC, cmp_reg-1, tmp, NIS);
+	td_ajout($3, PROC, NIS-1, tmp, NIS);
 	}
                         liste_decl_proc_fct
                         liste_instructions 
