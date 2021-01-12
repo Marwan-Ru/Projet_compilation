@@ -40,9 +40,9 @@ int td_init(){
  * Renvoie un message descriptif lors d'une erreur, NULL sinon
  */
 char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
-    int pos = numLex, newPos;
+    int pos = numLex, newPos, i, decal = 0;
 
-    /* On remonte dans les de©larations ayant le même num lex */
+    /* On remonte dans les délarations ayant le même num lex */
     /* On vérifie également qu'il n'y ai pas deux déclations de même types et noms */
     while (tabledecl[pos].suivant != -1) {
         if (tabledecl[pos].NATURE == nature)
@@ -66,7 +66,19 @@ char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
-    tabledecl[pos].exec = exec;
+    if(nature == PARAM || nature == VARI){
+        for(i=0;i<pos;i++){
+            if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+        }
+        if(pos<500){
+            i=500;
+            while(tabledecl[i].NATURE != -1 && i < T_TABLEDEBORD + T_TABLELEX){
+                if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+                i++;
+            }
+        }
+        tabledecl[pos].exec = decal;
+    }else tabledecl[pos].exec = exec;
     return NULL;
 }
 

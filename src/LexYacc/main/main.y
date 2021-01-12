@@ -238,7 +238,7 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
 					{	indice = td_getdecl($2).index;
-						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, td_getdecl($4).exec);
+						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, 0);;
 						verifErreur();
 						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
 						if (indice < 4) taille += 1;
@@ -267,7 +267,7 @@ declaration_procedure : PROCEDURE {
                         liste_decl_vars {
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
-	msgErr = td_ajout($3, PROC, $<t_int>2, tmp, NIS);
+	msgErr = td_ajout($3, PROC, $<t_int>2, tmp, cmp_reg);
 	verifErreur();
 	}
                         liste_decl_proc_fct
@@ -318,7 +318,7 @@ declaration_fonction : FONCTION {
 					   liste_decl_vars {	
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	msgErr = td_ajout($3, FUNCT, $<t_int>2, tmp, NIS);
+	msgErr = td_ajout($3, FUNCT, $<t_int>2, tmp, cmp_reg);
 	verifErreur();
 	}
                        liste_decl_proc_fct liste_instructions {	
