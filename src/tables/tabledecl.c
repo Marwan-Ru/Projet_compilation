@@ -39,8 +39,8 @@ int td_init(){
  *(recuperation du retour de la fonction d'ajout dans la table des types).
  * Renvoie un message descriptif lors d'une erreur, NULL sinon
  */
-char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
-    int pos = numLex, newPos, i, decal = 0;
+char * td_ajout(int numLex, int nature, int numregion, int index, int exec){
+    int pos = numLex, newPos, i, decal = exec;
 
     /* On remonte dans les délarations ayant le même num lex */
     /* On vérifie également qu'il n'y ai pas deux déclations de même types et noms */
@@ -66,14 +66,20 @@ char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
+    /* On regarde le numero de region pour le decalage si c'est un PARAM ou VARI*/
     if(nature == PARAM || nature == VARI){
+        /*Chainage dynamique = 1 sauf pour la region 0*/
+        if(numregion != 0) decal++;
+        
         for(i=0;i<pos;i++){
-            if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+            if((tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) && tabledecl[i].numregion == numregion) 
+                decal += td_getdecl(tabledecl[i].index).exec;
         }
         if(pos<T_TABLELEX){
             i=T_TABLELEX;
             while(tabledecl[i].NATURE != -1 && i < T_TABLEDEBORD + T_TABLELEX){
-                if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+                if((tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) && tabledecl[i].numregion == numregion) 
+                    decal += td_getdecl(tabledecl[i].index).exec;
                 i++;
             }
         }

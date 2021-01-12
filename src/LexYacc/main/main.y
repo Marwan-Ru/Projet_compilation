@@ -238,7 +238,7 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
 					{	indice = td_getdecl($2).index;
-						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, 0);;
+						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, NIS);
 						verifErreur();
 						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
 						if (indice < 4) taille += 1;
@@ -293,7 +293,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	msgErr = td_ajout($1, PARAM, cmp_reg, $3, td_getdecl($3).exec);
+	msgErr = td_ajout($1, PARAM, (est_pile_vide(p2)?0:sommet_pile(p2)), $3, NIS);
 	verifErreur();
 	}
          ;
