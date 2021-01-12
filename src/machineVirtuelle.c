@@ -22,6 +22,8 @@ void execute (arbre a) {
             remplir_pile(i, v);
             break;
         case A_APPEL_FONC:
+            execute(aa_fils(a)); /*pb : A_LISTEPARAMS pas dans execute*/
+            execute(aa_frere(a));
             break;
         case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a))).booleen == 't') execute(aa_frere(aa_fils(a)));
@@ -56,8 +58,11 @@ void execute (arbre a) {
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
+            return execute(aa_fils(a)); /*???*/
             break;
         case A_AFFICHER:
+            aa_afficher(aa_fils(a));
+            execute(aa_frere(a));
             break;
         case A_VIDE:
         default:
@@ -68,55 +73,67 @@ void execute (arbre a) {
 /* Evalue l'expression se trouvant dans l'arbre a */
 types_pile evaluer (arbre a) {
     if (a == aa_vide()) return;
-    
+    /*initialisation de la structure retournée*/
+    types_pile ret;
+    ret.entier = -1;
+    ret.reel = -1;
+    ret.booleen = -1;
+    ret.caractere = -1;
+
     switch (a->id) {
         case A_IDF:
-            return;
+            break;
         case A_CSTE_ENT:
-            return;
+            ret.entier = aa_valeur(a);
+            break;
         case A_CSTE_REELE:
-            return;
+            ret.entier = aa_valeur(a);
+            break;
         case A_CSTE_BOOL:
-            return;
+            ret.booleen = aa_valeur(a);
+            break;
         case A_CSTE_CAR:
-            return;
+            ret.caractere = aa_valeur(a);
+            break;
         case A_CSTE_CHAINE:
-            return;
+            break;
         case A_OP_PLUS:
-            return;
+            ret.entier = aa_fils(a)
+            break;
         case A_OP_MOINS:
-            return;
+            break;
         case A_OP_MULT:
-            return;
+            break;
         case A_OP_DIV:
-            return;
+            break;
         case A_OP_EXP:
-            return;
+            break;
         case A_OP_MODUL:
-            return;
+            break;
         case A_OP_INF:
-            return;
+            break;
         case A_OP_SUP:
-            return;
+            break;
         case A_OP_INFE:
-            return;
+            break;
         case A_OP_SUPE:
-            return;
+            break;
         case A_OP_EGAL:
-            return;
+            break;
         case A_OP_DIFF:
-            return;
+            break;
         case A_OP_OU:
-            return;
+            break;
         case A_OP_ET:
-            return;
+            break;
         case A_OP_NON:
-            return;
+            break;
         case A_VIDE:
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
             exit(EXIT_FAILURE);
     }
+    return ret;
 }
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
