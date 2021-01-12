@@ -22,13 +22,37 @@ void execute (arbre a) {
             break;
         case A_APPEL_FONC:
             break;
-        case A_IF_THEN_ELSE:
+        case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
+            if ((evaluer(aa_fils(a))).booleen == 't') execute(aa_frere(aa_fils(a)));
+            else execute(aa_frere(aa_frere(aa_fils(a))));
+            execute(aa_frere(a));
             break;
-        case A_WHILE:
+        case A_WHILE: /*rajouté par PA donc pas sur*/
+            if ((evaluer(aa_fils(a))).booleen == 't') {
+                execute(aa_frere(aa_fils(a)));
+                execute(a);
+            }
+            else execute(aa_frere(a)); /*necessaire de mettre le else ? (cause du rappel)*/
             break;
-        case A_DO_WHILE:
+        case A_DO_WHILE: /*rajouté par PA donc pas sur*/
+            execute(aa_fils(a));
+            if ((evaluer(aa_frere(aa_fils(a)))).boolen == 't') {
+                execute(a);
+            }
+            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
-        case FOR:
+        case A_FOR: /*rajouté par PA donc pas sur*/
+            int i = (evaluer(aa_fils(a))).entier;
+            int max = (evaluer(aa_frere(aa_fils(a)))).entier;
+            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
+
+            if (i < max) {
+                execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
+                evaluer(aa_fils(a)).entier += nb_pas; /*peut être que ça fonctionne (cause du rappel)*/
+                execute(a);
+            }
+
+            else execute(aa_frere(a));
             break;
         case A_RETOURNER:
             break;
@@ -97,22 +121,15 @@ union types_pile evaluer (arbre a) {
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
 int association_nom (int numlex) {
-    int region_decl = td_getdecl(numlex).numregion;
+    /*Récupérer num region avec la fonction de gustav*/
+    decl champ = tdgetDeclAssocNom(numlex); /*on le récup grace à la fonction de gustav*/
+    int region_decl = champ.numregion;
     int NIS_decl = tr_get_reg(region_decl).niv_imbric;
     int cs = NIS_utilisation-NIS_decl;
-    int diff = 0;
+    int diff = champ.exec;
 
     return pile[pile[BC+cs]+diff];
 }
-
-/*Faut il faire une fonction pr trouver la diff (dy) dans le cours*/
-/* int diff (int numlex) {
-    int i = BC;
-    while (pile[i] != numlex) { //tant que l'on ne trouve pas le lexeme recherché
-        i++;                    //sauf que ici la pile ne contient des numéros de lexemes
-    }                           //donc voir comment faire ça
-    return i;
-} */
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void remplir_pile (int i, union types_pile v) {
