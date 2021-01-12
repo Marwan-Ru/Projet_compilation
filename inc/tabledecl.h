@@ -8,7 +8,7 @@
 
 #define T_TABLEDEBORD 5000
 
-enum nature{TYPE_S, TYPE_T, VARI, PARAM, PROC, FUNCT};
+enum nature{TYPE_S, TYPE_T, VARI, PARAM, PROC, FUNCT, TYPE_B};
 
 typedef struct s_decl{
     int NATURE;     /*Ce champs peut prendre les valeurs de l'enumeration nature (ou -1 si vide)*/
@@ -41,8 +41,9 @@ int td_init();
  *a partir de son numéro lexicographique, 
  *sa nature (struct ou table) et la valeur adéquate du champs index
  *(recuperation du retour de la fonction d'ajout dans la table des types).
+ * Renvoie un message descriptif lors d'une erreur, NULL sinon
  */
-void td_ajout(int numLex, int nature, int numregion, int index, int exec);
+char *td_ajout(int numLex, int nature, int numregion, int index, int exec);
 
 /* Permet de définir tous les champs de la ligne i */
 void td_set (int i, int nature, int numregion, int suivant, int index, int exec);
@@ -52,9 +53,6 @@ decl td_getdecl(int num);
 
 /*Donne la derniere declaration ayant ce numéro (ou declerr si elle n'existe pas)*/
 decl td_getlastdecl(int numLex);
-
-/*Renvoie la position dans la table de la derniere declaration ayant ce numéro*/
-int td_getlastdeclnum(int numLex);
 
 /*Affiche une partie de la table dans la console*/
 void td_afficher();
