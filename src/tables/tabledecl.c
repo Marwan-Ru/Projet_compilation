@@ -24,7 +24,11 @@ int td_init(){
         tabledecl[i] = declerr();
     }
     /*On remplis le champs exec des types de base*/
-    for (i=0;i<4;i++) tabledecl[i].exec = 1;
+    for (i=0;i<4;i++) {
+        tabledecl[i].exec = 1;
+        tabledecl[i].numregion = 0;
+        tabledecl[i].NATURE = TYPE_B;
+    }
 
     return 0;
 }
@@ -33,12 +37,18 @@ int td_init(){
  *a partir de son numéro lexicographique, 
  *sa nature (struct ou table) et la valeur adéquate du champs index
  *(recuperation du retour de la fonction d'ajout dans la table des types).
+ * Renvoie un message descriptif lors d'une erreur, NULL sinon
  */
-void td_ajout(int numLex, int nature, int numregion, int index, int exec){
+char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
     int pos = numLex, newPos;
 
-    /* On remonte dans les suivant */
-    while (tabledecl[pos].suivant != -1) pos = tabledecl[pos].suivant;
+    /* On remonte dans les de©larations ayant le même num lex */
+    /* On vérifie également qu'il n'y ai pas deux déclations de même types et noms */
+    while (tabledecl[pos].suivant != -1) {
+        if (tabledecl[pos].NATURE == nature)
+            return "Une déclaration de ce type existe déjà!";
+        pos = tabledecl[pos].suivant;
+    }
 
     /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
     if (tabledecl[pos].NATURE != -1) {
@@ -48,11 +58,16 @@ void td_ajout(int numLex, int nature, int numregion, int index, int exec){
         pos = newPos;
     }
 
+    if (pos >= T_TABLELEX + T_TABLEDEBORD) {
+        return "La table des déclarations est remplie!";
+    }
+
     tabledecl[pos].NATURE = nature;
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
     tabledecl[pos].exec = exec;
+    return NULL;
 }
 
 /* Permet de définir tous les champs de la ligne i */
@@ -78,10 +93,11 @@ decl td_getlastdecl(int numLex){
     return tabledecl[numLex];
 }
 
-/*Renvoie la position dans la table de la derniere declaration ayant ce numéro*/
-int td_getlastdeclnum(int numLex){
-    while (tabledecl[numLex].suivant != -1) numLex = tabledecl[numLex].suivant;
-    return numLex;
+/* trouve la déclaration au numéro lex et le type donnée. Renvoie declerr si elle n'existe pas */
+decl td_getDeclAssocNom (int numLex) {
+    while (tabledecl[numLex].NATURE != VARI) numLex = tabledecl[numLex].suivant;
+    if (tabledecl[numLex].NATURE == VARI) return tabledecl[numLex];
+    else return declerr();
 }
 
 char *natureVersTexte (int nature) {
@@ -92,6 +108,7 @@ char *natureVersTexte (int nature) {
         case PARAM: return "PARAM";
         case PROC: return "PROC";
         case FUNCT: return "FONC";
+        case TYPE_B: return "TYPE_B"; 
         default: return "-1";
     }
 }
