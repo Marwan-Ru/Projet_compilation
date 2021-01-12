@@ -87,7 +87,7 @@ types_pile evaluer (arbre a) {
             ret.entier = aa_valeur(a);
             break;
         case A_CSTE_REELE:
-            ret.reel = association_nom(tl_getLex(aa_valeur(a)));
+            ret.reel = getpile(aa_valeur(a))); /*Comment recup apres ?*/
             break;
         case A_CSTE_BOOL:
             ret.booleen = aa_valeur(a);
@@ -115,35 +115,35 @@ types_pile evaluer (arbre a) {
         case A_OP_MODUL:
             ret.entier = evaluer(aa_fils(a)).entier % evaluer(aa_frere(aa_fils(a))).entier;
             break;
-        case A_OP_INF:
-            if(evaluer(aa_fils(a)) < evaluer(aa_frere(aa_fils(a)))){
+        case A_OP_INF: /*Il manque bcp*/
+            if(evaluer(aa_fils(a)).entier < evaluer(aa_frere(aa_fils(a))).entier){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_SUP:
-            if(evaluer(aa_fils(a)) > evaluer(aa_frere(aa_fils(a)))){
+            if(evaluer(aa_fils(a)).entier > evaluer(aa_frere(aa_fils(a))).entier){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_INFE:
-            if(evaluer(aa_fils(a)) <= evaluer(aa_frere(aa_fils(a)))){
+            if(evaluer(aa_fils(a)).entier <= evaluer(aa_frere(aa_fils(a))).entier){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_SUPE:
-            if(evaluer(aa_fils(a)) >= evaluer(aa_frere(aa_fils(a)))){
+            if(evaluer(aa_fils(a)).entier >= evaluer(aa_frere(aa_fils(a))).entier){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_EGAL:
-            if(evaluer(aa_fils(a)) == evaluer(aa_frere(aa_fils(a)))){
+            if(evaluer(aa_fils(a)).entier == evaluer(aa_frere(aa_fils(a))).entier){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_DIFF:
-            if(evaluer(aa_fils(a)) != evaluer(aa_frere(aa_fils(a)))){
+            if(evaluer(aa_fils(a)).entier != evaluer(aa_frere(aa_fils(a)))){
                 ret.booleen = 't';
-            }else ret.boolee = 'f';
+            }else ret.booleen = 'f';
             break;
         case A_OP_OU:
             break;
