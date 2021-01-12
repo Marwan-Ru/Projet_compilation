@@ -260,7 +260,7 @@ declaration_procedure : PROCEDURE {
                         liste_decl_vars {
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutProcedure (cmptVal/2, val);
-	td_ajout($3, PROC, $<t_int>2, tmp, NIS);
+	td_ajout($3, PROC, $<t_int>2, tmp, cmp_reg);
 	}
                         liste_decl_proc_fct
                         liste_instructions 
@@ -308,7 +308,7 @@ declaration_fonction : FONCTION {
 					   liste_decl_vars {	
 	tr_ajout_taille(cmp_reg, taille); 
 	tmp = tt_ajoutFonction($6, cmptVal/2, val);
-	td_ajout($3, FUNCT, $<t_int>2, tmp, NIS);
+	td_ajout($3, FUNCT, $<t_int>2, tmp, cmp_reg);
 	}
                        liste_decl_proc_fct liste_instructions {	
 	tr_ajout_arbre(sommet_pile(p2), $11);
