@@ -35,16 +35,26 @@ liste supprimer_premier_liste(liste l)
   return lsuivant;
 }
 
+int dans_liste (int x, liste l) {
+  liste tmp = l;
 
-void afficher_liste (liste l)
-{
- 
-  if (l == NULL) printf("vide \n");
+  while (!est_liste_vide(tmp)) {
+    if (x == renvoie_premier_liste(tmp)) return 1;
+    tmp = tmp->suivant;    
+  }
+  return 0;
+}
 
-  printf("liste : ");
-  while (l != liste_vide())
-    {
-      l = l->suivant;
-    }
+
+void afficher_liste (liste l) {
+  liste tmp = l;
+
+  if (tmp == NULL) printf("vide \n");
+
+  while (tmp != liste_vide()) {
+    printf("%d, ", tmp->objet);
+    tmp = tmp->suivant;
+  }
+
   printf("\n");
 }

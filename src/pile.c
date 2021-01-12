@@ -38,7 +38,15 @@ int taille_pile(pile p)
   return nb;
 }
 
+int dans_pile (int x, pile p) {
+  return dans_liste(x, p);
+}
+
 void liberer_pile (pile l) {
   while (!est_pile_vide(l))
     l = supprimer_premier_liste(l);
+}
+
+void afficher_pile (pile p) {
+  afficher_liste (p);
 }
