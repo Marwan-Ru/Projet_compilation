@@ -13,7 +13,7 @@
 union {
     int entier;
     float reel;
-    char booleen;
+    int booleen;
     char caractere;
 } types_pile;
 
@@ -23,11 +23,11 @@ union {
 void execute (arbre a);
 
 /* Evalue l'expression se trouvant dans l'arbre a */
-int evaluer (arbre a);
+types_pile evaluer (arbre a);
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
-types_piles association_nom (int numlex);
+int association_nom (int numlex);
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void remplir_pile (int i, types_piles v);
