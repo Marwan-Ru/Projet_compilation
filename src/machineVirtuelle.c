@@ -34,8 +34,7 @@ void execute (arbre a) {
             if ((evaluer(aa_fils(a))).booleen == 't') {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
-            }
-            else execute(aa_frere(a)); /*necessaire de mettre le else ? (cause du rappel)*/
+            } else execute(aa_frere(a));
             break;
         case A_DO_WHILE: /*rajouté par PA donc pas sur*/
             execute(aa_fils(a));
@@ -434,6 +433,8 @@ types_pile evaluer (arbre a) {
             ret.type = 'b';
             break;
         case A_VIDE:
+        case A_CHAMP:
+            break;
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
             exit(EXIT_FAILURE);

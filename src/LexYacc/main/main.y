@@ -15,6 +15,14 @@
 	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice, decalage;
 	pile p, p2; 
 	char *msgErr;
+
+	void yyerror (char const *str) {
+		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
+	}
+
+	void verifErreur () {
+		if (msgErr != NULL) yyerror(msgErr);
+	}
 %}
 
 /* Necessaire pour utiliser le type arbre dans l'union et inclure tableLex dans main.l */
@@ -24,19 +32,6 @@
 	#include "tabledecl.h"
 	#include "tableTypes.h"
 	#include "arbreAbstrait.h"
-}
-
-/* Necessaire pour faire des initialisations utilisant arbreAbstrait */
-%code {
-	arbre arbreAbstrait = NULL;
-	void yyerror (char const *str) {
-		fprintf(stderr,"Erreur de syntaxe en ligne %d\n%s\n", yylineno, str);
-		arbreAbstrait = aa_vide();
-	}
-
-	void verifErreur () {
-		if (msgErr != NULL) yyerror(msgErr);
-	}
 }
 
 %union {
@@ -149,7 +144,7 @@ programme : PROG {
 	/* taille=1+NIS; */
 	}
         	IDF corps {
-	arbreAbstrait = $4;
+	tr_ajout_arbre(0, $4);
 	tr_ajout_taille(0, taille);
 	}
 		  | PROG {
@@ -159,7 +154,7 @@ programme : PROG {
 	/* taille=1+NIS; */
 	} 
 		    corps { 
-	arbreAbstrait = $3; 
+	tr_ajout_arbre(0, $3);
 	tr_ajout_taille(0, taille);
 	}
 		  ;
@@ -237,10 +232,10 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{	indice = td_getdecl($2).index;
+					{	
 						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, NIS);
 						verifErreur();
-						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
+						indice = td_getdecl($2).index;
 						if (indice < 4) taille += 1;
 						else {
 							taille = taille + (td_getdecl(indice).exec);
