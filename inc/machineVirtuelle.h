@@ -10,7 +10,7 @@
 #include "arbreAbstrait.h"
 
 /* pile */
-union {
+typedef union {
     int entier;
     float reel;
     int booleen;
@@ -27,9 +27,9 @@ types_pile evaluer (arbre a);
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
-int association_nom (int numlex);
+int get_pile (int numlex);
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
-void remplir_pile (int i, types_piles v);
+void remplir_pile (int i, types_pile v);
 
 #endif

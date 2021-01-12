@@ -6,7 +6,8 @@ int BC = 0;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
-    int i, types_pile v;
+    int i;
+    types_pile v;
 
     if (a == aa_vide()) return;
     
@@ -16,7 +17,7 @@ void execute (arbre a) {
             execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
-            i = association_nom(aa_fils(a));
+            i = get_pile(aa_fils(a));
             v = evaluer(aa_frere(aa_fils(a)));
             remplir_pile(i, v);
             break;
@@ -65,7 +66,7 @@ void execute (arbre a) {
 }
 
 /* Evalue l'expression se trouvant dans l'arbre a */
-union types_pile evaluer (arbre a) {
+types_pile evaluer (arbre a) {
     if (a == aa_vide()) return;
     
     switch (a->id) {
@@ -120,9 +121,9 @@ union types_pile evaluer (arbre a) {
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro lexicographique */
-int association_nom (int numlex) {
+int get_pile (int numlex) {
     /*Récupérer num region avec la fonction de gustav*/
-    decl champ = tdgetDeclAssocNom(numlex); /*on le récup grace à la fonction de gustav*/
+    decl champ = td_getDeclAssocNom(numlex); /*on le récup grace à la fonction de gustav*/
     int region_decl = champ.numregion;
     int NIS_decl = tr_get_reg(region_decl).niv_imbric;
     int cs = NIS_utilisation-NIS_decl;
@@ -132,7 +133,7 @@ int association_nom (int numlex) {
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
-void remplir_pile (int i, union types_pile v) {
+void remplir_pile (int i, types_pile v) {
     if (i >= 0 && i < TAILLEPILE) pile[i] = v;
     else {
         fprintf(stderr, "Tentative d'accès en dehors de la pile (%d)\n", i);
