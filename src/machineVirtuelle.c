@@ -151,6 +151,8 @@ types_pile evaluer (arbre a) {
         case A_OP_NON:
             break;
         case A_VIDE:
+        case A_CHAMP:
+            break;
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
             exit(EXIT_FAILURE);
