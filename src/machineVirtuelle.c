@@ -32,14 +32,14 @@ void execute (arbre a) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             }
-            execute(aa_frere(a));
+            else execute(aa_frere(a)); /*necessaire de mettre le else ? (cause du rappel)*/
             break;
         case A_DO_WHILE: /*rajouté par PA donc pas sur*/
             execute(aa_fils(a));
             if ((evaluer(aa_frere(aa_fils(a)))).boolen == 't') {
                 execute(a);
             }
-            execute(aa_frere(a));
+            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
         case A_FOR: /*rajouté par PA donc pas sur*/
             int i = (evaluer(aa_fils(a))).entier;
@@ -48,9 +48,11 @@ void execute (arbre a) {
 
             if (i < max) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                i += nb_pas;
+                evaluer(aa_fils(a)).entier += nb_pas; /*peut être que ça fonctionne (cause du rappel)*/
+                execute(a);
             }
-            execute(aa_frere(a));
+
+            else execute(aa_frere(a));
             break;
         case A_RETOURNER:
             break;
