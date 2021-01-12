@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "tabledecl.h"
 #include "tableLex.h"
 #include "tablereg.h"
