@@ -70,8 +70,8 @@ char *td_ajout(int numLex, int nature, int numregion, int index, int exec){
         for(i=0;i<pos;i++){
             if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
         }
-        if(pos<500){
-            i=500;
+        if(pos<T_TABLELEX){
+            i=T_TABLELEX;
             while(tabledecl[i].NATURE != -1 && i < T_TABLEDEBORD + T_TABLELEX){
                 if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
                 i++;

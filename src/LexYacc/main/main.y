@@ -541,6 +541,7 @@ int main(int argc, char *argv[]) {
 
 	td_afficher();
 	tt_afficher();
+	tr_afficherArbres();
 
 	tl_detruire();
 	fclose(f);
