@@ -11,12 +11,15 @@
 #include "arbreAbstrait.h"
 
 /* pile */
-typedef union {
-    int entier;
-    float reel;
-    char booleen;
-    char caractere;
-} types_pile;
+typedef struct{
+    char type; /*e si c'est un entier, r pour un reel, b pour un booleen, c pour un caractere, x pour une erreur*/
+    union {
+        int entier;
+        float reel;
+        char booleen;
+        char caractere;
+    };
+}types_pile;
 
 #define TAILLEPILE 5000
 

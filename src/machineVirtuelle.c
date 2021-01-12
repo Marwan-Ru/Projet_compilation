@@ -72,83 +72,365 @@ void execute (arbre a) {
 /* Evalue l'expression se trouvant dans l'arbre a */
 types_pile evaluer (arbre a) {
     if (a == aa_vide()) return;
+    
+    types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
-    types_pile ret;
-    ret.entier = -1;
-    ret.reel = -1;
-    ret.booleen = -1;
-    ret.caractere = -1;
+    ret.type = 'x'; erreur;
 
     switch (a->id) {
         case A_IDF:
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
+            ret.type = 'e'; /*Permet de savoir qu'on a initialisée un entier et pas une autre variable*/
             break;
         case A_CSTE_REELE:
-            ret.reel = getpile(aa_valeur(a))); /*Comment recup apres ?*/
+            ret = pile[getpile(aa_valeur(a))];
+            ret.type = 'r'; /*idem*/
             break;
         case A_CSTE_BOOL:
             ret.booleen = aa_valeur(a);
+            ret.type = 'b';
             break;
         case A_CSTE_CAR:
             ret.caractere = aa_valeur(a);
+            ret.type = 'c';
             break;
         case A_CSTE_CHAINE:
             break;
         case A_OP_PLUS:
-            ret.entier = evaluer(aa_fils(a)).entier + evaluer(aa_frere(aa_fils(a))).entier;
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                ret.entier = tpa.entier + tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                ret.reel = tpa.reel + tpb.reel;
+                ret.type = 'r';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                ret.caractere = tpa.caractere + tpb.caractere;
+                ret.type = 'c';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                ret.entier = tpa.caractere + tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                ret.entier = tpa.entier + tpb.caractere;
+                ret.type = 'e';
+            }else{/*On a fait une addition entre deux types incompatibles*/
+                fprintf(stderr, "Erreur addition entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
             break;
         case A_OP_MOINS:
-            ret.entier = evaluer(aa_fils(a)).entier - evaluer(aa_frere(aa_fils(a))).entier;
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                ret.entier = tpa.entier - tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                ret.reel = tpa.reel - tpb.reel;
+                ret.type = 'r';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                ret.caractere = tpa.caractere - tpb.caractere;
+                ret.type = 'c';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                ret.entier = tpa.caractere - tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                ret.entier = tpa.entier - tpb.caractere;
+                ret.type = 'e';
+            }else{/*On a fait une soustraction entre deux types incompatibles*/
+                fprintf(stderr, "Erreur soustraction entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
             break;
         case A_OP_MULT:
-            ret.entier = evaluer(aa_fils(a)).entier * evaluer(aa_frere(aa_fils(a))).entier;
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                ret.entier = tpa.entier * tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                ret.reel = tpa.reel * tpb.reel;
+                ret.type = 'r';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                ret.caractere = tpa.caractere * tpb.caractere;
+                ret.type = 'c';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                ret.entier = tpa.caractere * tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                ret.entier = tpa.entier * tpb.caractere;
+                ret.type = 'e';
+            }else{/*On a fait une multiplication entre deux types incompatibles*/
+                fprintf(stderr, "Erreur multiplication entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
             break;
         case A_OP_DIV:
-            ret.entier = evaluer(aa_fils(a)).entier / evaluer(aa_frere(aa_fils(a))).entier;
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                ret.entier = tpa.entier / tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                ret.reel = tpa.reel / tpb.reel;
+                ret.type = 'r';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                ret.caractere = tpa.caractere / tpb.caractere;
+                ret.type = 'c';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                ret.entier = tpa.caractere / tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                ret.entier = tpa.entier / tpb.caractere;
+                ret.type = 'e';
+            }else{/*On a fait une division entre deux types incompatibles*/
+                fprintf(stderr, "Erreur division entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
             break;
         case A_OP_EXP:
-            ret.entier = pow(evaluer(aa_fils(a)).entier, evaluer(aa_frere(aa_fils(a))).entier);
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'r' && tpb.type == 'r'){
+                ret.reel = pow(tpa.reel, tpb.reel);
+                ret.type = 'r';
+            }else{/*On a fait une division entre deux types incompatibles*/
+                fprintf(stderr, "Erreur tentative d'exponentielle avec un autre type que reel\n");
+                exit(EXIT_FAILURE);
+            }
             break;
         case A_OP_MODUL:
-            ret.entier = evaluer(aa_fils(a)).entier % evaluer(aa_frere(aa_fils(a))).entier;
-            break;
-        case A_OP_INF: /*Il manque bcp*/
-            if(evaluer(aa_fils(a)).entier < evaluer(aa_frere(aa_fils(a))).entier){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                ret.entier = tpa.entier % tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                ret.caractere = tpa.caractere % tpb.caractere;
+                ret.type = 'c';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                ret.entier = tpa.caractere % tpb.entier;
+                ret.type = 'e';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                ret.entier = tpa.entier % tpb.caractere;
+                ret.type = 'e';
+            }else{/*On a fait une modulo entre deux types incompatibles*/
+                fprintf(stderr, "Erreur modulo entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+        case A_OP_INF: 
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier < tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel < tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere < tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere < tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier < tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_SUP:
-            if(evaluer(aa_fils(a)).entier > evaluer(aa_frere(aa_fils(a))).entier){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier > tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel > tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere > tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere > tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier > tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_INFE:
-            if(evaluer(aa_fils(a)).entier <= evaluer(aa_frere(aa_fils(a))).entier){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier <= tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel <= tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere <= tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere <= tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier <= tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_SUPE:
-            if(evaluer(aa_fils(a)).entier >= evaluer(aa_frere(aa_fils(a))).entier){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier >= tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel >= tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere >= tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere >= tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier >= tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_EGAL:
-            if(evaluer(aa_fils(a)).entier == evaluer(aa_frere(aa_fils(a))).entier){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier == tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel == tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere == tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere == tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier == tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_DIFF:
-            if(evaluer(aa_fils(a)).entier != evaluer(aa_frere(aa_fils(a)))){
-                ret.booleen = 't';
-            }else ret.booleen = 'f';
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'e' && tpb.type == 'e'){
+                if(tpa.entier != tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'r' && tpb.type == 'r'){
+                if(tpa.reel != tpb.reel){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'c'){
+                if(tpa.caractere != tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'c' && tpb.type == 'e'){
+                if(tpa.caractere != tpb.entier){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else if(tpa.type == 'e' && tpb.type == 'c'){
+                if(tpa.entier != tpb.caractere){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+            }else{/*On a fait une comparaison entre deux types incomparables*/
+                fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_OU:
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'b' && tpb.type == 'b'){
+                if(tpa.booleen == 't' || tpa.booleen == 't'){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+                
+            }else{/*On a fait une division entre deux types incompatibles*/
+                fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_ET:
+            tpa = evaluer(aa_fils(a));
+            tpb = evaluer(aa_frere(aa_fils(a)));
+            if(tpa.type == 'b' && tpb.type == 'b'){
+                if(tpa.booleen == 't' && tpa.booleen == 't'){
+                    ret.booleen = 't';
+                }else ret.booleen = 'f';
+                
+            }else{/*On a fait une division entre deux types incompatibles*/
+                fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_OP_NON:
+            tpa = evaluer(aa_fils(a));
+            if(tpa.type == 'b'){
+                if(tpa.booleen == 't'){
+                    ret.booleen = 'f';
+                }else ret.booleen = 't';
+            }else{/*On a fait une division entre deux types incompatibles*/
+                fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
+                exit(EXIT_FAILURE);
+            }
+            ret.type = 'b';
             break;
         case A_VIDE:
         case A_CHAMP:

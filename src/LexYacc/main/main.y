@@ -234,10 +234,10 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
-					{	indice = td_getdecl($2).index;
+					{	
 						msgErr = td_ajout($2, VARI, sommet_pile(p2), $4, NIS);
 						verifErreur();
-						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
+						indice = td_getdecl($2).index;
 						if (indice < 4) taille += 1;
 						else {
 							taille = taille + (td_getdecl(indice).exec);
