@@ -86,15 +86,18 @@ union types_pile evaluer (arbre a) {
             ret.entier = aa_valeur(a);
             break;
         case A_CSTE_REELE:
+            ret.entier = aa_valeur(a);
             break;
         case A_CSTE_BOOL:
-            ret.entier = aa_valeur(s)
+            ret.booleen = aa_valeur(a);
             break;
         case A_CSTE_CAR:
+            ret.caractere = aa_valeur(a);
             break;
         case A_CSTE_CHAINE:
             break;
         case A_OP_PLUS:
+            ret.entier = aa_fils(a)
             break;
         case A_OP_MOINS:
             break;

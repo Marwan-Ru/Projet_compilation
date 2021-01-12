@@ -13,7 +13,7 @@
 union {
     int entier;
     float reel;
-    int booleen;
+    char booleen;
     char caractere;
 } types_pile;
 
