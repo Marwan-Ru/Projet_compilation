@@ -45,6 +45,9 @@ int td_init();
  */
 char *td_ajout(int numLex, int nature, int numregion, int index, int exec);
 
+/* trouve la déclaration au numéro lex et le type donnée. Renvoie declerr si elle n'existe pas */
+decl td_getDeclAssocNom (int numLex);
+
 /* Permet de définir tous les champs de la ligne i */
 void td_set (int i, int nature, int numregion, int suivant, int index, int exec);
 
