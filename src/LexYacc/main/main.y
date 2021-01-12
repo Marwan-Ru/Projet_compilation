@@ -195,11 +195,7 @@ declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
 		taille_decl *= td_getlastdecl(tt_tabTypeElem(tmp)).exec;
 	}else{
 		taille_decl = 0;
-		printf("nb champs: %d\n", tt_structNbChamps(tmp));
-		for (int i = 0; i < tt_structNbChamps(tmp); i++) {
-			printf("champs %d: %d (taille: %d)\n", i, td_getlastdeclnum(tt_structIndexChamp(tmp, i)), td_getlastdecl(tt_structIndexChamp(tmp, i)).exec);
-			taille_decl += td_getlastdecl(tt_structIndexChamp(tmp, i)).exec;
-		}
+		for (int i = 0; i < tt_structNbChamps(tmp); i++) taille_decl += td_getlastdecl(tt_structIndexChamp(tmp, i)).exec;
 	}
 	td_ajout($2, $4, cmp_reg, tmp, taille_decl);
 	}
