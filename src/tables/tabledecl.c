@@ -35,7 +35,7 @@ int td_init(){
  *(recuperation du retour de la fonction d'ajout dans la table des types).
  */
 void td_ajout(int numLex, int nature, int numregion, int index, int exec){
-    int pos = numLex, newPos;
+    int pos = numLex, newPos, i, decal = 0;
 
     /* On remonte dans les suivant */
     while (tabledecl[pos].suivant != -1) pos = tabledecl[pos].suivant;
@@ -65,8 +65,6 @@ void td_ajout(int numLex, int nature, int numregion, int index, int exec){
         }
         tabledecl[pos].exec = decal;
     }else tabledecl[pos].exec = exec;
-
-    return 0;
 }
 
 /* Permet de définir tous les champs de la ligne i */

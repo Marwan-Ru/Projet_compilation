@@ -201,20 +201,6 @@ declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
 	}
                  ; 
 
-/* Renvoie le nombre de champs de la structure se trouvant à posStruct */
-int tt_structNbChamps (int posStruct);
-
-/* Renvoie l'index du champs i (indexé à 0) de la structure se trouvant à posStruct */
-int tt_structIndexChamp (int posStruct, int i);
-
-/* Renvoie le numéro lexicographique du nom du champs i (indexé à 0) de la structure 
-   se trouvant à posStruct */
-int tt_structNumLexChamp (int posStruct, int i);
-
-/* Renvoie le déplacement du champs i (indexé à 0) à l'intérieur de la structure se 
-   trouvant à posStruct */
-int tt_structDeplacementChamp (int posStruct, int i);
-
 suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
                        | TABLEAU dimension DE nom_type {$$ = TYPE_T; tmp = tt_ajoutTab($4, cmptVal/2, val); }
                        ; 
