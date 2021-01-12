@@ -24,32 +24,29 @@ int td_init(){
         tabledecl[i] = declerr();
     }
     /*On remplis le champs exec des types de base*/
-    for(i=0; i<4; i++){
-        tabledecl[i].exec = 1;
-    }
+    for (i=0;i<4;i++) tabledecl[i].exec = 1;
 
     return 0;
 }
 /*
  *Ajoute une declaration de type nature
- *a partir de son nom (utilisation de la table lexico), 
+ *a partir de son numéro lexicographique, 
  *sa nature (struct ou table) et la valeur adéquate du champs index
  *(recuperation du retour de la fonction d'ajout dans la table des types).
- *retourne 0 si tout s'est passé correctement
  */
-int td_ajout(int nature, char * nom, int numregion, int index, int exec){
-    int pos = td_getlastdeclnum(nom), i, decal = 0;
-    
-    if(!tl_existe(nom)){
-        fprintf(stderr, "Tentative de declaration avec un lexeme qui n'est pas dans la table des lexicaux\n");
-        return -1;
+void td_ajout(int numLex, int nature, int numregion, int index, int exec){
+    int pos = numLex, newPos;
+
+    /* On remonte dans les suivant */
+    while (tabledecl[pos].suivant != -1) pos = tabledecl[pos].suivant;
+
+    /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
+    if (tabledecl[pos].NATURE != -1) {
+        newPos = T_TABLELEX + 1;
+        while(tabledecl[newPos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDEBORD) newPos++;
+        tabledecl[pos].suivant = newPos;
+        pos = newPos;
     }
-    
-    if(tabledecl[pos].NATURE != -1){ /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
-        pos = T_TABLELEX;
-        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDEBORD - 1) pos++;
-    }
-    tabledecl[td_getlastdeclnum(nom)].suivant = pos;
 
     tabledecl[pos].NATURE = nature;
     tabledecl[pos].numregion = numregion;
@@ -89,38 +86,28 @@ decl td_getdecl(int num){
     return tabledecl[num];
 }
 
-/*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique*/
-
-/*Donne la derniere declaration de ce nom (ou declerr si elle n'existe pas)*/
-decl td_getlastdecl(char* nom){
-    int pos = tl_getLexNum(nom);
-    decl rep = td_getdecl(pos);
-    decl suivant;
-    if(rep.suivant == 0)
-        return rep;
-    else{
-        suivant = td_getdecl(rep.suivant);
-        while(suivant.suivant != 0){
-            suivant = td_getdecl(suivant.suivant);
-        }
-        return suivant;
-    }
+/*Donne la derniere declaration ayant ce numéro (ou declerr si elle n'existe pas)*/
+decl td_getlastdecl(int numLex){
+    while (tabledecl[numLex].suivant != -1) numLex = tabledecl[numLex].suivant;
+    return tabledecl[numLex];
 }
 
-/*Renvoie la position dans la table de la derniere declaration qui porte ce nom*/
-int td_getlastdeclnum(char * nom){
-    int pos = tl_getLexNum(nom);
-    decl rep = td_getdecl(pos);
-    decl suivant;
-    if(rep.suivant != -1){
-        suivant = td_getdecl(rep.suivant);
-        pos = rep.suivant;
-        while(suivant.suivant != -1){
-            pos = suivant.suivant;
-            suivant = td_getdecl(suivant.suivant);
-        }
+/*Renvoie la position dans la table de la derniere declaration ayant ce numéro*/
+int td_getlastdeclnum(int numLex){
+    while (tabledecl[numLex].suivant != -1) numLex = tabledecl[numLex].suivant;
+    return numLex;
+}
+
+char *natureVersTexte (int nature) {
+    switch (nature) {
+        case TYPE_S: return "TYPE_S";
+        case TYPE_T: return "TYPE_T";
+        case VARI: return "VAR";
+        case PARAM: return "PARAM";
+        case PROC: return "PROC";
+        case FUNCT: return "FONC";
+        default: return "-1";
     }
-    return pos;
 }
 
 void td_afficher(){
@@ -129,12 +116,12 @@ void td_afficher(){
   printf("   num │ nature │ suivant │ region │ desc | exec |\n");
   
   for (i = 0; i < 32; i++) {
-    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+    printf("   %3d │  %6s│  %7d│  %6d│  %4d|  %4d|\n", i, natureVersTexte(tabledecl[i].NATURE), tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("Table de débordement\n");
 
-  for (i = 500; i < 520; i++) {
-    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+  for (i = 501; i < 521; i++) {
+    printf("   %3d │  %6s│  %7d│  %6d│  %4d|  %4d|\n", i, natureVersTexte(tabledecl[i].NATURE), tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("\n");
 }

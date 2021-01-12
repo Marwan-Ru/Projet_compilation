@@ -38,11 +38,11 @@ int td_init();
 
 /*
  *Ajoute une declaration de type nature
- *a partir de son nom (utilisation de la table lexico), 
+ *a partir de son numéro lexicographique, 
  *sa nature (struct ou table) et la valeur adéquate du champs index
- *retourne 0 si tout s'est passé correctement
+ *(recuperation du retour de la fonction d'ajout dans la table des types).
  */
-int td_ajout(int nature, char * nom, int numregion, int index, int exec);
+void td_ajout(int numLex, int nature, int numregion, int index, int exec);
 
 /* Permet de définir tous les champs de la ligne i */
 void td_set (int i, int nature, int numregion, int suivant, int index, int exec);
@@ -50,12 +50,11 @@ void td_set (int i, int nature, int numregion, int suivant, int index, int exec)
 /*Renvoie la declaration stockée a la position num de la table des declarations*/
 decl td_getdecl(int num);
 
-/*Pour avoir la position a partir du nom il suffit d'utiliser la table lexicographique
- *Donne la derniere declaration de ce nom (ou declerr si elle n'existe pas)*/
-decl td_getlastdecl(char* nom);
+/*Donne la derniere declaration ayant ce numéro (ou declerr si elle n'existe pas)*/
+decl td_getlastdecl(int numLex);
 
-/*Renvoie la position dans la table de la derniere declaration qui porte ce nom*/
-int td_getlastdeclnum(char * nom);
+/*Renvoie la position dans la table de la derniere declaration ayant ce numéro*/
+int td_getlastdeclnum(int numLex);
 
 /*Affiche une partie de la table dans la console*/
 void td_afficher();
