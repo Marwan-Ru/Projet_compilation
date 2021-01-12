@@ -191,14 +191,14 @@ declaration_proc_fct : declaration_procedure
 declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type 
 	{if($4 == TYPE_T){
 		taille_decl = 0;
-		for(int i=0; i<tt_tabNbDimensions(tmp); i++) taille_decl += tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i) * tt_tabTypeElem(tmp);
+		for(int i=0; i<tt_tabNbDimensions(tmp); i++) taille_decl += (tt_tabDimBornSup(tmp, i) - tt_tabDimBornInf(tmp, i)) * td_getdecl(tt_tabTypeElem(tmp)).exec;
 	}else{
 		taille_decl = 0;
 		for(int i=0; i<tt_structNbChamps(tmp); i++){
 			decl d = td_getlastdecl(tl_getLex(tt_structNumLexChamp(tmp, i)));
 			if(d.NATURE == TYPE_S || d.NATURE == TYPE_T){
 				taille_decl += d.exec;
-			}else{/*C'est forcement une variable*/
+			}else{/*C'est forcement une variable ou un parametre*/
 				taille_decl += td_getlastdecl(tl_getLex(d.index)).exec;
 			}
 		}
@@ -206,6 +206,20 @@ declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
 	td_ajout($4, tl_getLex($2), cmp_reg, tmp, taille_decl);
 	}
                  ; 
+
+/* Renvoie le nombre de champs de la structure se trouvant à posStruct */
+int tt_structNbChamps (int posStruct);
+
+/* Renvoie l'index du champs i (indexé à 0) de la structure se trouvant à posStruct */
+int tt_structIndexChamp (int posStruct, int i);
+
+/* Renvoie le numéro lexicographique du nom du champs i (indexé à 0) de la structure 
+   se trouvant à posStruct */
+int tt_structNumLexChamp (int posStruct, int i);
+
+/* Renvoie le déplacement du champs i (indexé à 0) à l'intérieur de la structure se 
+   trouvant à posStruct */
+int tt_structDeplacementChamp (int posStruct, int i);
 
 suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
                        | TABLEAU dimension DE nom_type {$$ = TYPE_T; tmp = tt_ajoutTab($4, cmptVal/2, val); }
@@ -240,7 +254,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 					{	indice = td_getdecl($2).index;
 						printf("idf : %d \n", $2);
 						printf("indice : %d \n", td_getdecl($2).index);
-						td_ajout(VARI, tl_getLex($2), cmp_reg, $4, td_getdecl($4).exec);
+						td_ajout(VARI, tl_getLex($2), cmp_reg, $4, 0);
 						/*taille=taille+(td_getlastdecl(char* nom)($2).exec);*/
 						if (indice < 4) taille += 1;
 						else {
@@ -291,7 +305,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, td_getdecl($3).exec);}
+	td_ajout(PARAM, tl_getLex($1), cmp_reg, $3, 0);}
          ;
 
 

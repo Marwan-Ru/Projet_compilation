@@ -24,10 +24,9 @@ int td_init(){
         tabledecl[i] = declerr();
     }
     /*On remplis le champs exec des types de base*/
-    tabledecl[0].exec = sizeof(int);
-    tabledecl[1].exec = sizeof(float);
-    tabledecl[2].exec = sizeof(int); /*Un booleen est simplement un int*/
-    tabledecl[3].exec = sizeof(char);
+    for(i=0; i<4; i++){
+        tabledecl[i].exec = 1;
+    }
 
     return 0;
 }
@@ -39,7 +38,7 @@ int td_init(){
  *retourne 0 si tout s'est passé correctement
  */
 int td_ajout(int nature, char * nom, int numregion, int index, int exec){
-    int pos = td_getlastdeclnum(nom);
+    int pos = td_getlastdeclnum(nom), i, decal = 0;
     
     if(!tl_existe(nom)){
         fprintf(stderr, "Tentative de declaration avec un lexeme qui n'est pas dans la table des lexicaux\n");
@@ -47,8 +46,8 @@ int td_ajout(int nature, char * nom, int numregion, int index, int exec){
     }
     
     if(tabledecl[pos].NATURE != -1){ /*Si on a déja une entrée sur cette déclaration on va chercher une place de libre dans la table de debordement*/
-        pos = T_TABLELEX + 1;
-        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDEBORD) pos++;
+        pos = T_TABLELEX;
+        while(tabledecl[pos].NATURE != -1 && pos < T_TABLELEX + T_TABLEDEBORD - 1) pos++;
     }
     tabledecl[td_getlastdeclnum(nom)].suivant = pos;
 
@@ -56,7 +55,19 @@ int td_ajout(int nature, char * nom, int numregion, int index, int exec){
     tabledecl[pos].numregion = numregion;
     tabledecl[pos].suivant = -1;
     tabledecl[pos].index = index;
-    tabledecl[pos].exec = exec;
+    if(nature == PARAM || nature == VARI){
+        for(i=0;i<pos;i++){
+            if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+        }
+        if(pos<500){
+            i=500;
+            while(tabledecl[i].NATURE != -1 && i < T_TABLEDEBORD + T_TABLELEX){
+                if(tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) decal += td_getdecl(tabledecl[i].index).exec;
+                i++;
+            }
+        }
+        tabledecl[pos].exec = decal;
+    }else tabledecl[pos].exec = exec;
 
     return 0;
 }
@@ -118,12 +129,12 @@ void td_afficher(){
   printf("   num │ nature │ suivant │ region │ desc | exec |\n");
   
   for (i = 0; i < 32; i++) {
-    printf("   %3d │  %6d│  %7d│  %9d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("Table de débordement\n");
 
-  for (i = 501; i < 521; i++) {
-    printf("   %3d │  %6d│  %7d│  %9d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
+  for (i = 500; i < 520; i++) {
+    printf("   %3d │  %6d│  %7d│  %6d│  %4d|  %4d|\n", i, tabledecl[i].NATURE, tabledecl[i].suivant, tabledecl[i].numregion, tabledecl[i].index, tabledecl[i].exec);
   }
   printf("\n");
 }
