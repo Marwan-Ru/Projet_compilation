@@ -12,7 +12,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice;
+	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice, decalage;
 	pile p, p2; 
 	char *msgErr;
 %}
@@ -207,7 +207,7 @@ declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
 	}
                  ; 
 
-suite_declaration_type : STRUCT { cmptVal = 0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
+suite_declaration_type : STRUCT { cmptVal=0; decalage=0; } liste_champs FSTRUCT { $$ = TYPE_S; tmp = tt_ajoutStruct(cmptVal/3, val); }
                        | TABLEAU dimension DE nom_type {$$ = TYPE_T; tmp = tt_ajoutTab($4, cmptVal/2, val); }
                        ; 
 
@@ -217,7 +217,7 @@ liste_champs : un_champ PV
              | liste_champs un_champ PV
              ;
 
-un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; val[cmptVal++] = td_getdecl($3).exec;  }
+un_champ : IDF DEUX_POINTS nom_type { val[cmptVal++] = $3; val[cmptVal++] = $1; val[cmptVal++] = decalage; decalage += td_getdecl($3).exec; }
          ;
 
 		/* Déclaration de tableaux */
@@ -517,10 +517,11 @@ afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AF
 
 int main(int argc, char *argv[]) {
 	FILE *f;
+	int afficher_tables = 0;
 	
 	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 ||
 					 strcmp(argv[1], "-d") == 0))
-		yydebug = 1;
+		afficher_tables = 1;
 
 	tl_init();
 	tr_init();
@@ -539,9 +540,13 @@ int main(int argc, char *argv[]) {
 	tt_ecrireFichier(f);
 	td_ecrireFichier(f);
 
-	td_afficher();
-	tt_afficher();
-	tr_afficherArbres();
+	if (afficher_tables) {
+		tl_afficher();
+		td_afficher();
+		tt_afficher();
+		tr_affiche();
+		tr_afficherArbres();
+	}
 
 	tl_detruire();
 	fclose(f);
