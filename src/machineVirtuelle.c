@@ -111,32 +111,26 @@ void execute (arbre a) {
             else execute(aa_frere(aa_frere(aa_fils(a))));
             execute(aa_frere(a));
             break;
-        case A_WHILE: /*rajouté par PA donc pas sur*/
+        case A_WHILE: 
             if ((evaluer(aa_fils(a))).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             } else execute(aa_frere(a));
             break;
-        case A_DO_WHILE: /*rajouté par PA donc pas sur*/
+        case A_DO_WHILE:
             execute(aa_fils(a));
             if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
                 execute(a);
             }
             else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
-        case A_FOR: /*rajouté par PA donc pas sur*/
-            int i = (evaluer(aa_fils(a))).entier;
-            //int max = (evaluer(aa_frere(aa_fils(a)))).entier;
-            int indice = 0;
-            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
-
+        case A_FOR:
+            execute(aa_fils(a));
             if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                indice = get_pile (evaluer(aa_fils(a)).entier); /*dans l'idée : il faudrait recupérer le numlex*/
-                pile[indice] += nb_pas;
+                execute(aa_frere(aa_frere(aa_fils(a))));
                 execute(a);
             }
-
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
