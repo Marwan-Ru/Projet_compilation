@@ -541,12 +541,8 @@ types_pile evaluer(arbre a, int valeur) {
         case A_OP_OU:
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
-            if(tpa.type == T_BOOL && tpb.type == T_BOOL){
-                if(tpa.booleen == TRUE || tpa.booleen == TRUE){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
-                
-            }else{/*On a fait une division entre deux types incompatibles*/
+            if(tpa.type == T_BOOL && tpb.type == T_BOOL) ret.booleen = tpa.booleen || tpa.booleen;
+            else{/*On a fait une division entre deux types incompatibles*/
                 fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
                 exit(EXIT_FAILURE);
             }
@@ -555,12 +551,8 @@ types_pile evaluer(arbre a, int valeur) {
         case A_OP_ET:
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
-            if(tpa.type == T_BOOL && tpb.type == T_BOOL){
-                if(tpa.booleen == TRUE && tpa.booleen == TRUE){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
-                
-            }else{/*On a fait une division entre deux types incompatibles*/
+            if(tpa.type == T_BOOL && tpb.type == T_BOOL) ret.booleen = tpa.booleen && tpa.booleen;
+            else{/*On a fait une division entre deux types incompatibles*/
                 fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
                 exit(EXIT_FAILURE);
             }
@@ -568,11 +560,8 @@ types_pile evaluer(arbre a, int valeur) {
             break;
         case A_OP_NON:
             tpa = evaluer(aa_fils(a), 1);
-            if(tpa.type == T_BOOL){
-                if(tpa.booleen == TRUE){
-                    ret.booleen = FALSE;
-                }else ret.booleen = TRUE;
-            }else{/*On a fait une division entre deux types incompatibles*/
+            if(tpa.type == T_BOOL) ret.booleen = !tpa.booleen;
+            else{/*On a fait une division entre deux types incompatibles*/
                 fprintf(stderr, "Erreur tentative d'operation booleene avec un autre type que booleen\n");
                 exit(EXIT_FAILURE);
             }
