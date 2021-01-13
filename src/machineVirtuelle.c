@@ -30,7 +30,6 @@ void execute (arbre a) {
             i = get_pile(w.entier);
             v = evaluer(aa_frere(aa_fils(a)), 1);
             set_pile(i, v);
-            execute(aa_frere(a));
             break;
         case A_APPEL_FONC:
             declaration = td_getdecl(aa_num_decl(a));
@@ -107,10 +106,9 @@ void execute (arbre a) {
 
             /* Execution du corps */
             execute(reg.tree);
-            execute(aa_frere(a));
         case A_IF_THEN_ELSE: 
             x = evaluer(aa_fils(a), 1);
-            if(x.type != 'b'){
+            if(x.type != T_BOOL){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
@@ -125,11 +123,10 @@ void execute (arbre a) {
                     execute(aa_frere(aa_frere(aa_fils(a))));
                 }
             }
-            execute(aa_frere(a));
             break;
         case A_WHILE: 
             x = evaluer(aa_fils(a), 1);
-            if(x.type != 'b'){
+            if(x.type != T_BOOL){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
@@ -145,7 +142,7 @@ void execute (arbre a) {
             break;
         case A_DO_WHILE:
             x = evaluer(aa_frere(aa_fils(a)), 1);
-            if(x.type != 'b'){
+            if(x.type != T_BOOL){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
@@ -162,7 +159,7 @@ void execute (arbre a) {
             break;
         case A_FOR:
             x = evaluer(aa_frere(aa_fils(a)), 1);
-            if(x.type != 'b'){
+            if(x.type != T_BOOL){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
@@ -182,7 +179,7 @@ void execute (arbre a) {
             break;
         case A_RETOURNER:
             x = evaluer(aa_fils(a), 1);
-            if(x.type != 'b'){
+            if(x.type != T_BOOL){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
@@ -260,20 +257,35 @@ void execute (arbre a) {
                 i++;
                 escape = 0;
             }
+            execute(aa_frere(a));
             break;
         case A_LIRE:
             tmpArbre = aa_fils(a);
 
             while (aa_fils(tmpArbre) != aa_vide()) {
-                tmpStr = scanf()
-
-                /* On récupère le type de l'argument */
+                /* On récupère le type et l'emplacement de l'argument */
                 tmp = evaluer(aa_fils(tmpArbre), 0);
                 switch (tmp.type) {
-
+                    case T_INT:
+                        scanf("%d", pile[tmp.entier]);
+                        break;
+                    case T_FLOAT:
+                        scanf("%d", pile[tmp.entier]);
+                        break;
+                    case T_BOOLEAN:
+                        scanf("%d", pile[tmp.entier]);
+                        break;
+                    case T_CHAR:
+                        scanf("%d", pile[tmp.entier]);
+                        break;
+                    default:
+                        printf("Erreur dans un argument lors d'une lecture\n");
+                        exit(EXIT_FAILURE);
                 }
+                tmpArbre = aa_frere(aa_fils(tmpArbre));
             }
             break;
+            execute(aa_frere(a));
         case A_VIDE:
         default:
             break;
