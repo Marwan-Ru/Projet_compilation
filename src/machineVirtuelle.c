@@ -9,7 +9,7 @@ void execute (arbre a) {
     int i, newBC, newNIS, nbParam, escape;
     region newReg;
     decl declaration;
-    types_pile v, w, tmp;
+    types_pile v, w, x, tmp;
     arbre tmpArbre;
     char *template;
 
@@ -21,14 +21,13 @@ void execute (arbre a) {
             execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
-            w = evaluer(aa_fils(a));
+            w = evaluer(aa_fils(a), 0);
             if(w.type != 'e'){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
             i = get_pile(w.entier);
-            v = evaluer(aa_frere(aa_fils(a)));
-
+            v = evaluer(aa_frere(aa_fils(a)), 1);
             set_pile(i, v);
             execute(aa_frere(a));
             break;
@@ -75,7 +74,7 @@ void execute (arbre a) {
                 for (i = 0; i < tt_foncNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        tmp = evaluer(tmpArbre);
+                        tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_foncTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la fonction '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
@@ -91,7 +90,7 @@ void execute (arbre a) {
                 for (i = 0; i < tt_procNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        tmp = evaluer(tmpArbre);
+                        tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_procTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la procédure '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
@@ -108,35 +107,98 @@ void execute (arbre a) {
             /* Execution du corps */
             execute(reg.tree);
             execute(aa_frere(a));
-        case A_IF_THEN_ELSE:
-            if ((evaluer(aa_fils(a))).booleen == TRUE) execute(aa_frere(aa_fils(a)));
+        case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) execute(aa_frere(aa_fils(a)));
+            else execute(aa_frere(aa_frere(aa_fils(a))));
+            execute(aa_frere(a));
+            break;
+        case A_WHILE: /*rajouté par PA donc pas sur*/
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) {
+        case A_IF_THEN_ELSE: 
+            x = evaluer(aa_fils(a), 1);
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if ((aa_frere(aa_fils(a)) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))))) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) execute(aa_frere(aa_fils(a)));
             else execute(aa_frere(aa_frere(aa_fils(a))));
             execute(aa_frere(a));
             break;
         case A_WHILE: 
+            x = evaluer(aa_fils(a));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if (aa_frere(aa_fils(a)) == aa_vide()) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
             if ((evaluer(aa_fils(a))).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             } else execute(aa_frere(a));
             break;
+        case A_DO_WHILE: /*rajouté par PA donc pas sur*/
         case A_DO_WHILE:
+            x = evaluer(aa_frere(aa_fils(a)));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if (aa_fils(a) == aa_vide()) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
             execute(aa_fils(a));
-            if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
+            if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
                 execute(a);
             }
-            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
+            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)*/
             break;
+        case A_FOR: /*rajouté par PA donc pas sur*/
+            int i = (evaluer(aa_fils(a), 1)).entier;
+            //int max = (evaluer(aa_frere(aa_fils(a)), 1)).entier;
+            int indice = 0;
+            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))), 1)).entier;
+
+            if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
         case A_FOR:
+            x = evaluer(aa_frere(aa_fils(a)));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if ((aa_fils(a) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a)))) || (aa_frere(aa_frere(aa_frere(aa_fils(a)))) == aa_vide())) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
             execute(aa_fils(a));
             if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                execute(aa_frere(aa_frere(aa_fils(a))));
+                indice = get_pile (evaluer(aa_fils(a), 1).entier); /*dans l'idée : il faudrait recupérer le numlex*/
+                pile[indice] += nb_pas;
                 execute(a);
             }
+
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
-            return execute(aa_fils(a)); /*???*/
+            x = evaluer(aa_fils(a));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            evaluer(aa_fils(a));
             break;
         case A_AFFICHER:
             template = tl_getLex(aa_valeur(a));
@@ -204,8 +266,14 @@ void execute (arbre a) {
     }
 }
 
-/* Evalue l'expression se trouvant dans l'arbre a */
-types_pile evaluer (arbre a) {
+/*
+ *Evalue l'expression se trouvant dans l'arbre a 
+ *prend en paramètre l'arbre a evaluer et un int, 
+ *si valeur == 1 on retourne la valeur des idf et champs, 
+ *sinon on retourne le décalage a l'execution
+ *Auteur : Marwan Ait Addi
+ */
+types_pile evaluer(arbre a, int valeur) {
     if (a == aa_vide()) return;
     
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
@@ -214,8 +282,12 @@ types_pile evaluer (arbre a) {
 
     switch (a->id) {
         case A_IDF:
-            ret.entier = aa_valeur(a);
-            ret.type = 'e';
+            if(valeur == 1){
+                ret = pile[getpile(aa_valeur(a))];
+            }else{
+                ret.entier = getpile(aa_valeur(a));
+                ret.type = T_INT;
+            }
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
@@ -236,8 +308,8 @@ types_pile evaluer (arbre a) {
         case A_CSTE_CHAINE:
             break;
         case A_OP_PLUS:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier + tpb.entier;
                 ret.type = T_INT;
@@ -259,8 +331,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_MOINS:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier - tpb.entier;
                 ret.type = T_INT;
@@ -282,8 +354,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_MULT:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier * tpb.entier;
                 ret.type = T_INT;
@@ -305,8 +377,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_DIV:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier / tpb.entier;
                 ret.type = T_INT;
@@ -328,8 +400,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_EXP:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
                 ret.reel = pow(tpa.reel, tpb.reel);
                 ret.type = T_FLOAT;
@@ -356,8 +428,8 @@ types_pile evaluer (arbre a) {
                 exit(EXIT_FAILURE);
             }
         case A_OP_INF: 
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier < tpb.entier){
                     ret.booleen = TRUE;
@@ -385,8 +457,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUP:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier > tpb.entier){
                     ret.booleen = TRUE;
@@ -414,8 +486,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_INFE:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier <= tpb.entier){
                     ret.booleen = TRUE;
@@ -443,8 +515,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUPE:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier >= tpb.entier){
                     ret.booleen = TRUE;
@@ -472,8 +544,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_EGAL:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier == tpb.entier){
                     ret.booleen = TRUE;
@@ -501,8 +573,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_DIFF:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier != tpb.entier){
                     ret.booleen = TRUE;
@@ -530,8 +602,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_OU:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL){
                 if(tpa.booleen == TRUE || tpa.booleen == TRUE){
                     ret.booleen = TRUE;
@@ -544,8 +616,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_ET:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL){
                 if(tpa.booleen == TRUE && tpa.booleen == TRUE){
                     ret.booleen = TRUE;
@@ -558,7 +630,7 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_NON:
-            tpa = evaluer(aa_fils(a));
+            tpa = evaluer(aa_fils(a), 1);
             if(tpa.type == T_BOOL){
                 if(tpa.booleen == TRUE){
                     ret.booleen = FALSE;
@@ -569,10 +641,19 @@ types_pile evaluer (arbre a) {
             }
             ret.type = T_BOOL;
             break;
-        case A_VIDE:
         case A_CHAMP:
-            /*TODO*/
+            /*On dois déterminer a quel champs de la structure on souhaite acceder*/
+            /*Le premier idf c'est la structure d'ou on part*/
+            ret = evaluer(aa_fils(a), 0);
+            arbre tmp = aa_fils(a);
+            while(aa_frere(tmp) != aa_vide() && aa_frere(tmp)->id == A_CHAMP){
+                ret.entier++;
+                tmp = aa_fils(aa_frere(tmp));
+            }
+            /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
+            if(valeur = 1) ret = pile[ret.entier];
             break;
+        case A_VIDE:
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
             exit(EXIT_FAILURE);
