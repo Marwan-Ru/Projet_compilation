@@ -20,7 +20,7 @@ void execute (arbre a) {
             execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
-            w = evaluer(aa_fils(a));
+            w = evaluer(aa_fils(a), 0);
             if(w.type != 'e'){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
@@ -73,7 +73,7 @@ void execute (arbre a) {
                 for (i = 0; i < tt_foncNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        tmp = evaluer(tmpArbre);
+                        tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_foncTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la fonction '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
@@ -89,7 +89,7 @@ void execute (arbre a) {
                 for (i = 0; i < tt_procNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        tmp = evaluer(tmpArbre);
+                        tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_procTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la procédure '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
@@ -106,12 +106,12 @@ void execute (arbre a) {
             /* Execution du corps */
             return execute(reg.tree);
         case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
-            if ((evaluer(aa_fils(a))).booleen == TRUE) execute(aa_frere(aa_fils(a)));
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) execute(aa_frere(aa_fils(a)));
             else execute(aa_frere(aa_frere(aa_fils(a))));
             execute(aa_frere(a));
             break;
         case A_WHILE: /*rajouté par PA donc pas sur*/
-            if ((evaluer(aa_fils(a))).booleen == TRUE) {
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             } else execute(aa_frere(a));
@@ -124,14 +124,14 @@ void execute (arbre a) {
             else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
         case A_FOR: /*rajouté par PA donc pas sur*/
-            int i = (evaluer(aa_fils(a))).entier;
+            int i = (evaluer(aa_fils(a), 1)).entier;
             //int max = (evaluer(aa_frere(aa_fils(a)), 1)).entier;
             int indice = 0;
-            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
+            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))), 1)).entier;
 
             if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                indice = get_pile (evaluer(aa_fils(a)).entier); /*dans l'idée : il faudrait recupérer le numlex*/
+                indice = get_pile (evaluer(aa_fils(a), 1).entier); /*dans l'idée : il faudrait recupérer le numlex*/
                 pile[indice] += nb_pas;
                 execute(a);
             }
@@ -161,7 +161,7 @@ void execute (arbre a) {
  *Auteur : Marwan Ait Addi
  */
 types_pile evaluer(arbre a, int valeur) {
-\    if (a == aa_vide()) return;
+    if (a == aa_vide()) return;
     
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
