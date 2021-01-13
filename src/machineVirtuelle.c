@@ -7,8 +7,8 @@ region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
-    int i, newBC, newNIS, nbParam, escape;
-    region newReg;
+    int i, newBC, newNIS, oldNIS, nbParam, escape;
+    region newReg, oldReg;
     decl declaration;
     types_pile v, w, x, tmp;
     arbre tmpArbre;
@@ -34,8 +34,10 @@ void execute (arbre a) {
         case A_APPEL_FONC:
             declaration = td_getdecl(aa_num_decl(a));
             newReg = tr_get_reg(declaration.exec);
+            oldReg = reg;
             newBC = BC + reg.taille_zone;
             newNIS = newReg.niv_imbric;
+            oldNIS = NIS;
 
             /* Vérification */
             if (newNIS < 0 || newNIS > NIS+1) {
@@ -106,36 +108,30 @@ void execute (arbre a) {
 
             /* Execution du corps */
             execute(reg.tree);
+
+            /* Rétablissement du contexte auparavant */
+            BC = pile[BC].entier;
+            NIS = oldNIS;
+            reg = oldReg;
         case A_IF_THEN_ELSE: 
             x = evaluer(aa_fils(a), 1);
             if(x.type != T_BOOL){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
-                exit(EXIT_FAILURE);
-            }
-            if ((aa_frere(aa_fils(a)) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))) == aa_vide)) {
-                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                fprintf(stderr, "Erreur condition dans arbre\n");
                 exit(EXIT_FAILURE);
             }
 
-            if (evaluer(aa_fils(a), 1).booleen == TRUE) execute(aa_frere(aa_fils(a)));
-            else {
-                if (aa_frere(aa_frere(aa_fils(a))) != aa_vide) {
-                    execute(aa_frere(aa_frere(aa_fils(a))));
-                }
-            }
+            if (x.booleen == TRUE) execute(aa_frere(aa_fils(a)));
+            else if (aa_frere(aa_frere(aa_fils(a))) != aa_vide)
+                execute(aa_frere(aa_frere(aa_fils(a))));
             break;
         case A_WHILE: 
             x = evaluer(aa_fils(a), 1);
             if(x.type != T_BOOL){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
-                exit(EXIT_FAILURE);
-            }
-            if (aa_frere(aa_fils(a)) == aa_vide()) {
-                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                fprintf(stderr, "Erreur condition dans arbre\n");
                 exit(EXIT_FAILURE);
             }
 
-            if (evaluer(aa_fils(a), 1).booleen == TRUE) {
+            if (x.booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             }
@@ -143,44 +139,24 @@ void execute (arbre a) {
         case A_DO_WHILE:
             x = evaluer(aa_frere(aa_fils(a)), 1);
             if(x.type != T_BOOL){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
-                exit(EXIT_FAILURE);
-            }
-            if (aa_fils(a) == aa_vide()) {
-                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                fprintf(stderr, "Erreur condition dans arbre\n");
                 exit(EXIT_FAILURE);
             }
 
             execute(aa_fils(a));
-            if (evaluer(aa_frere(aa_fils(a)), 1).booleen == TRUE) {
-                execute(a);
-            }
+            if (x.booleen == TRUE) execute(a);
             break;
         case A_FOR:
             x = evaluer(aa_frere(aa_fils(a)), 1);
             if(x.type != T_BOOL){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
+                fprintf(stderr, "Erreur condition dans arbre\n");
                 exit(EXIT_FAILURE);
             }
 
-            if ((aa_fils(a) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))) == aa_vide) || (aa_frere(aa_frere(aa_frere(aa_fils(a)))) == aa_vide())) {
-                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
-                exit(EXIT_FAILURE);
-            }
-
-            execute(aa_fils(a));
-            if (evaluer(aa_frere(aa_fils(a)), 1).booleen == TRUE) {
+            for (execute(aa_fils(a)); evaluer(aa_frere(aa_fils(a)), 1).booleen; execute(aa_frere(aa_frere(aa_fils(a)))))
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                execute(aa_frere(aa_frere(aa_fils(a))));
-                execute(a);
-            }
             break;
         case A_RETOURNER:
-            x = evaluer(aa_fils(a), 1);
-            if(x.type != T_BOOL){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
-                exit(EXIT_FAILURE);
-            }
             buffer[current] = evaluer(aa_fils(a), 1);
             current++;
             break;

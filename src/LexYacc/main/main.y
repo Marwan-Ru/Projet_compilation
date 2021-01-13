@@ -488,7 +488,7 @@ expr_cond : expr_bool_or
 
 
 tantque : TANTQUE expr_cond FAIRE liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_WHILE, -1, -1), aa_concatPereFrere($2, $4)); }
-		| FAIRE liste_instructions TANTQUE expr_cond { $$ = aa_concatPereFils(aa_creerNoeud(A_DO_WHILE, -1, -1), aa_concatPereFrere($4, $2)); }
+		| FAIRE liste_instructions TANTQUE expr_cond { $$ = aa_concatPereFils(aa_creerNoeud(A_DO_WHILE, -1, -1), aa_concatPereFrere($2, $4)); }
 		;
 
 
