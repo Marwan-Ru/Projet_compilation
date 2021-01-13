@@ -1,3 +1,10 @@
+/*       Auteur: Paul-Antoine Bernard
+ *  Description: Module gérant la table des régions. 
+ *  Utilisation: tr_init() permet l'initialisation de la table
+ *       Résumé: Contient les fonctions d'ajout de régions,
+ *               d'affichage, de récupération de régions.
+ */
+
 #include "tablereg.h"
 
 region tablereg[NB_REGIONS];
