@@ -198,9 +198,21 @@ void execute (arbre a) {
                         printf("Il manque un ou des arguments pour l'affichage de %s\n", template);
                         exit(EXIT_FAILURE);
                     }
+
+                    i++;
+
+                    if (template[i] == 's') {
+                        if (aa_id(aa_fils(tmpArbre)) != A_CSTE_CHAINE) {
+                            printf("L'argument pour l'affichage d'une chaîne de caractères dans %s est incorrect\n", template);
+                            exit(EXIT_FAILURE);
+                        } 
+                        printf("%s", tl_getLex(aa_valeur(a)));
+                        continue;
+                    }
+                    
                     tmp = evaluer(aa_fils(tmpArbre), 1);
                     tmpArbre = aa_frere(aa_fils(tmpArbre));
-                    switch (template[i+1]) {
+                    switch (template[i]) {
                         case 'c':
                             if (tmp.type != T_CHAR) {
                                 printf("L'argument pour l'affichage d'un caractère dans %s est incorrect\n", template);
@@ -236,6 +248,7 @@ void execute (arbre a) {
                     }
                 }
                 i++;
+                escape = 0;
             }
             break;
         case A_LIRE:
