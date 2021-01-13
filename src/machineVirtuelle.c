@@ -128,7 +128,7 @@ void execute (arbre a) {
             execute(aa_frere(a));
             break;
         case A_WHILE: 
-            x = evaluer(aa_fils(a));
+            x = evaluer(aa_fils(a), 1);
             if(x.type != 'b'){
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
@@ -586,16 +586,20 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_CHAMP:
-            /*On dois déterminer a quel champs de la structure on souhaite acceder*/
-            /*Le premier idf c'est la structure d'ou on part*/
-            ret = evaluer(aa_fils(a), 0);
-            arbre tmp = aa_fils(a);
-            while(aa_frere(tmp) != aa_vide() && aa_frere(tmp)->id == A_CHAMP){
-                ret.entier++;
-                tmp = aa_fils(aa_frere(tmp));
+            if(aa_fils(a)->id != A_IDF){
+                fprintf(stderr, "Un A_CHAMP n'as pas pour fils un IDF dans l'arbre\n");
+                exit(EXIT_FAILURE);
             }
+            if(td_getdecl(aa_fils(a)->valeur).NATURE != TYPE_S){
+                fprintf(stderr, "Premier IDF d'un A_CHAMP n'es pas déclaré en tant que structure\n");
+                exit(EXIT_FAILURE);
+            }
+            /*On est sur que l'on accede a une structure maintenant, on peut utiliser la tables des types*/
+            /*On utilise le champs index de la table des declarations*/
+            ret.entier = get_pile(aa_fils(a)->valeur);
+            arbre tmp = aa_fils(a);
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
-            if(valeur = 1) ret = pile[ret.entier];
+            if(valeur == 1) ret = pile[ret.entier];
             break;
         case A_VIDE:
         default:
