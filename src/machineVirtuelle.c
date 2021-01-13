@@ -250,7 +250,6 @@ void execute (arbre a) {
                 i++;
                 escape = 0;
             }
-            execute(aa_frere(a));
             break;
         case A_LIRE:
             tmpArbre = aa_fils(a);
@@ -278,7 +277,6 @@ void execute (arbre a) {
                 tmpArbre = aa_frere(aa_fils(tmpArbre));
             }
             break;
-            execute(aa_frere(a));
         case A_VIDE:
         default:
             break;
