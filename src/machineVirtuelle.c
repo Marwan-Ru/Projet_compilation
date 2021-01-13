@@ -403,25 +403,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier < tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier < tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel < tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
-            }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere < tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel < tpb.reel;
+            }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){;
+                ret.booleen = tpa.caractere < tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere < tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere < tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier < tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier < tpb.entier;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
@@ -436,25 +426,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier > tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier > tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel > tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel > tpb.reel;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere > tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere > tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere > tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere > tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier > tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier > tpb.entier;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
@@ -469,25 +449,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier <= tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier <= tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel <= tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel <= tpb.reel;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere <= tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere <= tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere <= tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere <= tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier <= tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier <= tpb.caractere;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
@@ -502,25 +472,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier >= tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier >= tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel >= tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel >= tpb.reel;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere >= tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere >= tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere >= tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere >= tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier >= tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier >= tpb.caractere;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
@@ -535,25 +495,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier == tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier == tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel == tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel == tpb.reel;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere == tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere == tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere == tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere == tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier == tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier == tpb.caractere;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
@@ -568,25 +518,15 @@ types_pile evaluer(arbre a, int valeur) {
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
-                if(tpa.entier != tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier != tpb.entier;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
-                if(tpa.reel != tpb.reel){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.reel != tpb.reel;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
-                if(tpa.caractere != tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere != tpb.caractere;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
-                if(tpa.caractere != tpb.entier){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.caractere != tpb.entier;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
-                if(tpa.entier != tpb.caractere){
-                    ret.booleen = TRUE;
-                }else ret.booleen = FALSE;
+                ret.booleen = tpa.entier != tpb.caractere;
             }else{/*On a fait une comparaison entre deux types incomparables*/
                 fprintf(stderr, "Erreur comparaison entre deux types incompatibles\n");
                 exit(EXIT_FAILURE);
