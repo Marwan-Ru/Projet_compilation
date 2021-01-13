@@ -114,13 +114,17 @@ void execute (arbre a) {
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
-            if ((aa_frere(aa_fils(a)) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))))) {
+            if ((aa_frere(aa_fils(a)) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))) == aa_vide)) {
                 fprintf(stderr, "Erreur noeud absent de l'arbre\n");
                 exit(EXIT_FAILURE);
             }
 
             if (evaluer(aa_fils(a), 1).booleen == TRUE) execute(aa_frere(aa_fils(a)));
-            else execute(aa_frere(aa_frere(aa_fils(a))));
+            else {
+                if (aa_frere(aa_frere(aa_fils(a))) != aa_vide) {
+                    execute(aa_frere(aa_frere(aa_fils(a))));
+                }
+            }
             execute(aa_frere(a));
             break;
         case A_WHILE: 
@@ -163,7 +167,7 @@ void execute (arbre a) {
                 exit(EXIT_FAILURE);
             }
 
-            if ((aa_fils(a) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a)))) || (aa_frere(aa_frere(aa_frere(aa_fils(a)))) == aa_vide())) {
+            if ((aa_fils(a) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))) == aa_vide) || (aa_frere(aa_frere(aa_frere(aa_fils(a)))) == aa_vide())) {
                 fprintf(stderr, "Erreur noeud absent de l'arbre\n");
                 exit(EXIT_FAILURE);
             }
