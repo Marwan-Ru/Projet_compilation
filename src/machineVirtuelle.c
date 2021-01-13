@@ -11,7 +11,7 @@ void execute (arbre a) {
     decl declaration;
     types_pile v, w, x, tmp;
     arbre tmpArbre;
-    char *template;
+    char *tmpStr;
 
     if (a == aa_vide()) return;
     
@@ -181,29 +181,29 @@ void execute (arbre a) {
             evaluer(aa_fils(a), 1);
             break;
         case A_AFFICHER:
-            template = tl_getLex(aa_valeur(a));
+            tmpStr = tl_getLex(aa_valeur(a));
             tmpArbre = aa_fils(a);
 
             /* On traverse la chaîne */
             i = 1;
             escape = 0;
-            while (template[i] != '"' || (escape && template[i] == '"')) {
-                if (template[i] == '\\') escape = 1;
-                else if (escape && template[i] == '\\') printf("\\");
-                else if (escape && template[i] == '"') printf("\"");
-                else if (escape && template[i] == '%') printf("%");
-                else if (template[i] == '%') {
+            while (tmpStr[i] != '"' || (escape && tmpStr[i] == '"')) {
+                if (tmpStr[i] == '\\') escape = 1;
+                else if (escape && tmpStr[i] == '\\') printf("\\");
+                else if (escape && tmpStr[i] == '"') printf("\"");
+                else if (escape && tmpStr[i] == '%') printf("%");
+                else if (tmpStr[i] == '%') {
                     /* On récupère le prochain argument */
                     if (aa_fils(tmpArbre) == aa_vide()) {
-                        printf("Il manque un ou des arguments pour l'affichage de %s\n", template);
+                        printf("Il manque un ou des arguments pour l'affichage de %s\n", tmpStr);
                         exit(EXIT_FAILURE);
                     }
 
                     i++;
 
-                    if (template[i] == 's') {
+                    if (tmpStr[i] == 's') {
                         if (aa_id(aa_fils(tmpArbre)) != A_CSTE_CHAINE) {
-                            printf("L'argument pour l'affichage d'une chaîne de caractères dans %s est incorrect\n", template);
+                            printf("L'argument pour l'affichage d'une chaîne de caractères dans %s est incorrect\n", tmpStr);
                             exit(EXIT_FAILURE);
                         } 
                         printf("%s", tl_getLex(aa_valeur(a)));
@@ -212,31 +212,31 @@ void execute (arbre a) {
                     
                     tmp = evaluer(aa_fils(tmpArbre), 1);
                     tmpArbre = aa_frere(aa_fils(tmpArbre));
-                    switch (template[i]) {
+                    switch (tmpStr[i]) {
                         case 'c':
                             if (tmp.type != T_CHAR) {
-                                printf("L'argument pour l'affichage d'un caractère dans %s est incorrect\n", template);
+                                printf("L'argument pour l'affichage d'un caractère dans %s est incorrect\n", tmpStr);
                                 exit(EXIT_FAILURE);
                             }
                             printf("%c", tmp.caractere);
                             break;
                         case 'd':
                             if (tmp.type != T_INT) {
-                                printf("L'argument pour l'affichage d'un entier dans %s est incorrect\n", template);
+                                printf("L'argument pour l'affichage d'un entier dans %s est incorrect\n", tmpStr);
                                 exit(EXIT_FAILURE);
                             }
                             printf("%d", tmp.entier);
                             break;
                         case 'f':
                             if (tmp.type != T_FLOAT) {
-                                printf("L'argument pour l'affichage d'un réel dans %s est incorrect\n", template);
+                                printf("L'argument pour l'affichage d'un réel dans %s est incorrect\n", tmpStr);
                                 exit(EXIT_FAILURE);
                             }
                             printf("%f", tmp.reel);
                             break;
                         case 'b':
                             if (tmp.type != T_BOOL) {
-                                printf("L'argument pour l'affichage d'un booléen dans %s est incorrect\n", template);
+                                printf("L'argument pour l'affichage d'un booléen dans %s est incorrect\n", tmpStr);
                                 exit(EXIT_FAILURE);
                             }
                             if (tmp.booleen == TRUE) printf("true");
@@ -252,6 +252,17 @@ void execute (arbre a) {
             }
             break;
         case A_LIRE:
+            tmpArbre = aa_fils(a);
+
+            while (aa_fils(tmpArbre) != aa_vide()) {
+                tmpStr = scanf()
+
+                /* On récupère le type de l'argument */
+                tmp = evaluer(aa_fils(tmpArbre), 0);
+                switch (tmp.type) {
+
+                }
+            }
             break;
         case A_VIDE:
         default:
@@ -656,13 +667,13 @@ types_pile evaluer(arbre a, int valeur) {
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro de déclaration donné */
-int get_pile (int numdecl) {
+types_pile get_pile (int numdecl) {
     decl champ = td_getdecl(numdecl);
     int NIS_decl = tr_get_reg(champ.numregion).niv_imbric, 
         cs = NIS-NIS_decl, 
         deplacement = champ.exec;
 
-    return pile[pile[BC+cs]+deplacement];
+    return pile[pile[BC+cs].entier+deplacement];
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */

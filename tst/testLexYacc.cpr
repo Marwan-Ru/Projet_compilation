@@ -26,7 +26,7 @@ funct f1 (toto3 : int) return int
 	type t9 : tab[5..6] of int ;
 	variable v1 : int ;
 begin
-	print("\"%d\" %c %f", a.test, b[5], c);
+	read(a[4], b, c.r);
 end;
 
 proc p1 (toto : int; tata : char) 

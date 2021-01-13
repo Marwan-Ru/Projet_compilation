@@ -36,7 +36,7 @@ types_pile evaluer (arbre a, int i);
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro de déclaration donné */
-int get_pile (int numdecl);
+types_pile get_pile (int numdecl);
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void set_pile (int i, types_pile v);
