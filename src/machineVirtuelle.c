@@ -45,12 +45,14 @@ void execute (arbre a) {
             break;
         case A_FOR: /*rajouté par PA donc pas sur*/
             int i = (evaluer(aa_fils(a))).entier;
-            int max = (evaluer(aa_frere(aa_fils(a)))).entier;
+            //int max = (evaluer(aa_frere(aa_fils(a)))).entier;
+            int indice = 0;
             int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
 
-            if (i < max) {
+            if ((evaluer(aa_frere(aa_fils(a)))).booleen == 't') {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                evaluer(aa_fils(a)).entier += nb_pas; /*peut être que ça fonctionne (cause du rappel)*/
+                indice = get_pile (evaluer(aa_fils(a)).entier); /*dans l'idée : il faudrait recupérer le numlex*/
+                pile[indice] += nb_pas;
                 execute(a);
             }
 
