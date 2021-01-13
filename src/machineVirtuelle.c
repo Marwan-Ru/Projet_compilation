@@ -276,22 +276,17 @@ types_pile evaluer(arbre a, int valeur) {
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
     ret.type = T_ERR; /*erreur*/
+    int emplacement;
 
     switch (a->id) {
         case A_IDF:
-            if(valeur == 1){
-                ret = pile[getpile(aa_valeur(a))];
-            }else{
-                ret.entier = getpile(aa_valeur(a));
-                ret.type = T_INT;
-            }
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
             ret.type = T_INT; /*Permet de savoir qu'on a initialisée un entier et pas une autre variable*/
             break;
         case A_CSTE_REELE:
-            ret = pile[getpile(aa_valeur(a))];
+            ret.reele = atof(tl_getLex(aa_valeur(a)));
             ret.type = T_FLOAT; /*idem*/
             break;
         case A_CSTE_BOOL:
