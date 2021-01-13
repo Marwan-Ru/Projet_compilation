@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include "allocation.h"
 #include "tableLex.h"
+#include "pile.h"
 
 #define T_TABLEDEBORD 5000
 
@@ -45,8 +46,10 @@ int td_init();
  */
 char *td_ajout(int numLex, int nature, int numregion, int index, int exec);
 
-/* trouve la déclaration au numéro lex et le type donnée. Renvoie declerr si elle n'existe pas */
-decl td_getDeclAssocNom (int numLex);
+/* Renvoie le numéro de déclaration de l'objet de nature n et de numéro lexicographique numLex
+   ayant été déclaré dans la plus profonde région du contexte des régions englobante donné.
+   Renvoie -1 si rien a été trouvé */
+int td_assocNom (int numLex, enum nature n, pile contexte);
 
 /* Permet de définir tous les champs de la ligne i */
 void td_set (int i, int nature, int numregion, int suivant, int index, int exec);

@@ -28,6 +28,9 @@ element renvoie_premier_liste(liste l);
 /* supprime la premiere cellule de la liste l */
 liste supprimer_premier_liste(liste l);
 
+/* Renvoie 1 si x se trouve dans l, 0 sinon */
+int dans_liste (int x, liste l);
+
 void afficher_liste (liste l);
 
 #endif

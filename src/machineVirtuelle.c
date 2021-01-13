@@ -51,12 +51,14 @@ void execute (arbre a) {
             break;
         case A_FOR: /*rajouté par PA donc pas sur*/
             int i = (evaluer(aa_fils(a))).entier;
-            int max = (evaluer(aa_frere(aa_fils(a)))).entier;
+            //int max = (evaluer(aa_frere(aa_fils(a)))).entier;
+            int indice = 0;
             int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
 
-            if (i < max) {
+            if ((evaluer(aa_frere(aa_fils(a)))).booleen == 't') {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                evaluer(aa_fils(a)).entier += nb_pas; /*peut être que ça fonctionne (cause du rappel)*/
+                indice = get_pile (evaluer(aa_fils(a)).entier); /*dans l'idée : il faudrait recupérer le numlex*/
+                pile[indice] += nb_pas;
                 execute(a);
             }
 
@@ -68,6 +70,8 @@ void execute (arbre a) {
         case A_AFFICHER:
             aa_afficher(aa_fils(a));
             execute(aa_frere(a));
+            break;
+        case A_LIRE:
             break;
         case A_VIDE:
         default:
@@ -452,16 +456,14 @@ types_pile evaluer (arbre a) {
 }
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
-au numéro lexicographique */
-int get_pile (int numlex) {
-    /*Récupérer num region avec la fonction de gustav*/
-    decl champ = td_getDeclAssocNom(numlex); /*on le récup grace à la fonction de gustav*/
-    int region_decl = champ.numregion;
-    int NIS_decl = tr_get_reg(region_decl).niv_imbric;
-    int cs = NIS_utilisation-NIS_decl;
-    int diff = champ.exec;
+au numéro de déclaration donné */
+int get_pile (int numdecl) {
+    decl champ = td_getdecl(numdecl);
+    int NIS_decl = tr_get_reg(champ.numregion).niv_imbric, 
+        cs = NIS_utilisation-NIS_decl, 
+        deplacement = champ.exec;
 
-    return pile[pile[BC+cs]+diff];
+    return pile[pile[BC+cs]+deplacement];
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */

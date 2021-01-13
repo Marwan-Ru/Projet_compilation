@@ -19,4 +19,8 @@ int taille_pile(pile p);
 
 void liberer_pile (pile l);
 
+int dans_pile (int x, pile p);
+
+void afficher_pile (pile p);
+
 #endif

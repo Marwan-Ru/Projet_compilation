@@ -43,9 +43,9 @@ char * td_ajout(int numLex, int nature, int numregion, int index, int exec){
     int pos = numLex, newPos, i, decal = exec;
 
     /* On remonte dans les délarations ayant le même num lex */
-    /* On vérifie également qu'il n'y ai pas deux déclations de même types et noms */
+    /* On vérifie également qu'il n'y ai pas deux déclations de même types et noms dans cette région */
     while (tabledecl[pos].suivant != -1) {
-        if (tabledecl[pos].NATURE == nature)
+        if (tabledecl[pos].NATURE == nature && tabledecl[pos].numregion == numregion)
             return "Une déclaration de ce type existe déjà!";
         pos = tabledecl[pos].suivant;
     }
@@ -111,11 +111,23 @@ decl td_getlastdecl(int numLex){
     return tabledecl[numLex];
 }
 
-/* trouve la déclaration au numéro lex et le type donnée. Renvoie declerr si elle n'existe pas */
-decl td_getDeclAssocNom (int numLex) {
-    while (tabledecl[numLex].NATURE != VARI) numLex = tabledecl[numLex].suivant;
-    if (tabledecl[numLex].NATURE == VARI) return tabledecl[numLex];
-    else return declerr();
+/* Renvoie le numéro de déclaration de l'objet de nature n et de numéro lexicographique numLex
+   ayant été déclaré dans la plus profonde région du contexte des régions englobante donné.
+   Renvoie -1 si rien a été trouvé */
+int td_assocNom (int numLex, enum nature n, pile contexte) {
+    int regMax = 0, regionUtilisation = sommet_pile(contexte);
+    int declMax = -1;
+
+    do {   
+        if (tabledecl[numLex].numregion <= regionUtilisation && tabledecl[numLex].numregion >= regMax &&
+            (tabledecl[numLex].NATURE == n || tabledecl[numLex].NATURE == n+1) && dans_pile(tabledecl[numLex].numregion, contexte)) {
+            declMax = numLex;
+            regMax = tabledecl[numLex].numregion;
+        }
+        numLex = tabledecl[numLex].suivant;
+    } while (numLex != -1);
+
+    return declMax;
 }
 
 char *natureVersTexte (int nature) {

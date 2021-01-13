@@ -109,6 +109,7 @@
     /* Entrées & sorties */
 %token RETOURNE "return"
 %token AFFICHER "print"
+%token LIRE "read"
     /* Identifiants */
 %token <t_int> IDF "identifiant"
 	/* Misc */
@@ -129,11 +130,11 @@
 	/* Structures conditionnelles */
 %type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
-%type <t_arbre> resultat_retourne afficher
+%type <t_arbre> resultat_retourne afficher lire liste_variables suite_afficher
 	/* Déclarations */
 %type <t_int> type_simple nom_type 
 %type <t_int> declaration_fonction un_param 
-%type <t_int> declaration_variable 
+%type <t_int> declaration_variable
 %type <t_int> suite_declaration_type declaration_type 
 
 %%
@@ -141,6 +142,7 @@ programme : PROG {
 	tr_ajout_nis(cmp_reg, NIS);
 	p = pile_vide();
 	p2 = pile_vide();
+	p2 = empiler(p2, 0);
 	/* taille=1+NIS; */
 	}
         	IDF corps {
@@ -151,6 +153,7 @@ programme : PROG {
 	tr_ajout_nis(cmp_reg, NIS);
 	p = pile_vide();
 	p2 = pile_vide();
+	p2 = empiler(p2, 0);
 	/* taille=1+NIS; */
 	} 
 		    corps { 
@@ -197,7 +200,7 @@ declaration_type : TYPE IDF DEUX_POINTS suite_declaration_type
 		taille_decl = 0;
 		for (int i = 0; i < tt_structNbChamps(tmp); i++) taille_decl += td_getlastdecl(tt_structIndexChamp(tmp, i)).exec;
 	}
-	msgErr = td_ajout($2, $4, (est_pile_vide(p2)?0:sommet_pile(p2)), tmp, taille_decl);
+	msgErr = td_ajout($2, $4, sommet_pile(p2), tmp, taille_decl);
 	verifErreur();
 	}
                  ; 
@@ -233,7 +236,7 @@ une_dimension : INT POINTPOINT INT { val[cmptVal++] = $1; val[cmptVal++] = $3; }
 
 declaration_variable : VAR IDF DEUX_POINTS nom_type 
 					{	
-						msgErr = td_ajout($2, VARI, (est_pile_vide(p2)?0:sommet_pile(p2)), $4, NIS);
+						msgErr = td_ajout($2, VARI, sommet_pile(p2), $4, NIS);
 						verifErreur();
 						indice = td_getdecl($2).index;
 						if (indice < 4) taille += 1;
@@ -248,8 +251,7 @@ declaration_variable : VAR IDF DEUX_POINTS nom_type
 
 
 declaration_procedure : PROCEDURE {
-	if(!est_pile_vide(p2)) $<t_int>$ = sommet_pile(p2);
-	else $<t_int>$ = 0;
+	$<t_int>$ = sommet_pile(p2);
 	cmp_reg++; 
 	NIS++ ;
 	p = empiler(p, taille);
@@ -288,7 +290,7 @@ un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
 	val[cmptVal++] = $1;
 	val[cmptVal++] = $3; 
-	msgErr = td_ajout($1, PARAM, (est_pile_vide(p2)?0:sommet_pile(p2)), $3, NIS);
+	msgErr = td_ajout($1, PARAM, sommet_pile(p2), $3, NIS);
 	verifErreur();
 	}
          ;
@@ -298,8 +300,7 @@ un_param : IDF DEUX_POINTS type_simple {
 
 
 declaration_fonction : FONCTION { 
-	if(!est_pile_vide(p2)) $<t_int>$ = sommet_pile(p2);
-	else $<t_int>$ = 0;	
+	$<t_int>$ = sommet_pile(p2);
 	cmp_reg++; 
 	NIS++;
 	p = empiler(p, taille);
@@ -330,7 +331,7 @@ declaration_fonction : FONCTION {
 
 
 nom_type : type_simple
-         | IDF
+         | IDF { $$ = td_assocNom($1, TYPE_S, p2); }
          ;
 
 type_simple : T_INT { $$ = 0; }
@@ -346,11 +347,11 @@ type_simple : T_INT { $$ = 0; }
 
 
 
-liste_instructions : DEBUT suite_liste_inst FIN { $$ = aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $2); }
+liste_instructions : DEBUT suite_liste_inst FIN { $$ = aa_concatPereFils(aa_creerNoeud(A_LISTE, -1, -1), $2); }
 				   ; 
 
-suite_liste_inst : { $$ = NULL; }
-		 		 | instruction suite_liste_inst { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1), $2)); }
+suite_liste_inst : { $$ = aa_vide(); }
+		 		 | instruction suite_liste_inst { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1, -1), $2)); }
 		 		 ;
 
 instruction : affectation PV
@@ -359,8 +360,9 @@ instruction : affectation PV
 			| tantque
 			| pour
 			| RETOURNE resultat_retourne PV
-				{ $$ = aa_concatPereFils(aa_creerNoeud(A_RETOURNER, -1), $2); }
+				{ $$ = aa_concatPereFils(aa_creerNoeud(A_RETOURNER, -1, -1), $2); }
 			| afficher PV
+			| lire PV
 	    	;
 
 
@@ -368,23 +370,23 @@ instruction : affectation PV
 
 
 affectation : variable OPAFF expression 
-				{ $$ = aa_concatPereFils(aa_creerNoeud(A_OPAFF, -1), aa_concatPereFrere($1, $3)); }
+				{ $$ = aa_concatPereFils(aa_creerNoeud(A_OPAFF, -1, -1), aa_concatPereFrere($1, $3)); }
 	    	;
 
-variable : idf_variable POINT variable { $$ = aa_concatPereFils(aa_creerNoeud(A_CHAMP, -1), aa_concatPereFrere($1, $3)); }
+variable : idf_variable POINT variable { $$ = aa_concatPereFils(aa_creerNoeud(A_CHAMP, -1, -1), aa_concatPereFrere($1, $3)); }
 		 | idf_variable
 	 	 ;
 
 idf_variable : idf_variable CO liste_indices CF { if ($1->fils != aa_vide() && $1->fils->id == A_LISTE_INDICES) {
 													  arbre tmp = $1->fils;
 													  while (tmp->frere != aa_vide()) tmp = tmp->frere;
-												      aa_concatPereFrere(tmp, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); 
-												  } else $$ = aa_concatPereFils($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); 
+												      aa_concatPereFrere(tmp, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1, -1), $3)); 
+												  } else $$ = aa_concatPereFils($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1, -1), $3)); 
 												}
-			 | IDF { $$ = aa_creerNoeud(A_IDF, $1); }
+			 | IDF { $$ = aa_creerNoeud(A_IDF, $1, td_assocNom($1, VARI, p2)); }
 			 ;
 
-liste_indices : expr_pm VIRG liste_indices { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1), $3)); }
+liste_indices : expr_pm VIRG liste_indices { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE_INDICES, -1, -1), $3)); }
               | expr_pm
               ;
 
@@ -397,25 +399,25 @@ expression : expr_pm
 		   | constante
 		   ;
 
-constante : STRING { $$ = aa_creerNoeud(A_CSTE_CHAINE, $1); }
-		  | CHAR { $$ = aa_creerNoeud(A_CSTE_CAR, $1); }
+constante : STRING { $$ = aa_creerNoeud(A_CSTE_CHAINE, $1, -1); }
+		  | CHAR { $$ = aa_creerNoeud(A_CSTE_CAR, $1, -1); }
 		  ;
 
 		/* Expressions arithmétiques */
 
-expr_pm : expr_pm PLUS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_PLUS, -1), aa_concatPereFrere($1, $3)); }
-		| expr_pm MOINS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1), aa_concatPereFrere($1, $3)); }
+expr_pm : expr_pm PLUS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_PLUS, -1, -1), aa_concatPereFrere($1, $3)); }
+		| expr_pm MOINS expr_md { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1, -1), aa_concatPereFrere($1, $3)); }
 		| expr_md
 		;
 
-expr_md : expr_md MULT expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MULT, -1), aa_concatPereFrere($1, $3)); }
-		| expr_md DIV expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIV, -1), aa_concatPereFrere($1, $3)); }
-		| expr_md MOD expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MODUL, -1), aa_concatPereFrere($1, $3)); }
+expr_md : expr_md MULT expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MULT, -1, -1), aa_concatPereFrere($1, $3)); }
+		| expr_md DIV expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIV, -1, -1), aa_concatPereFrere($1, $3)); }
+		| expr_md MOD expr_exp { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MODUL, -1, -1), aa_concatPereFrere($1, $3)); }
 		| expr_exp
 		;
 
-expr_exp : expr_exp EXP expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EXP, -1), aa_concatPereFrere($1, $3)); }
-		 | MOINS expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1), $2); }
+expr_exp : expr_exp EXP expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EXP, -1, -1), aa_concatPereFrere($1, $3)); }
+		 | MOINS expr_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_MOINS, -1, -1), $2); }
 		 | expr_base
 		 ;
 
@@ -425,37 +427,37 @@ expr_base : constante_maths
 		  | appel_fonction
 	  	  ;
 
-constante_maths : INT { $$ = aa_creerNoeud(A_CSTE_ENT, $1); }
-		        | FLOAT { $$ = aa_creerNoeud(A_CSTE_REELE, $1); }
+constante_maths : INT { $$ = aa_creerNoeud(A_CSTE_ENT, $1, -1); }
+		        | FLOAT { $$ = aa_creerNoeud(A_CSTE_REELE, $1, -1); }
 			    ;
 
 		/* Expressions relationnels */
 
-expr_comp : expr_pm INF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INF, -1), aa_concatPereFrere($1, $3)); }
-		  | expr_pm SUP expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUP, -1), aa_concatPereFrere($1, $3)); }
-		  | expr_pm INFE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INFE, -1), aa_concatPereFrere($1, $3)); }
-		  | expr_pm SUPE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUPE, -1), aa_concatPereFrere($1, $3)); }
-		  | expr_pm EGAL expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EGAL, -1), aa_concatPereFrere($1, $3)); }
-		  | expr_pm DIF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIFF, -1), aa_concatPereFrere($1, $3)); }
+expr_comp : expr_pm INF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INF, -1, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm SUP expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUP, -1, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm INFE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_INFE, -1, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm SUPE expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_SUPE, -1, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm EGAL expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_EGAL, -1, -1), aa_concatPereFrere($1, $3)); }
+		  | expr_pm DIF expr_pm { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_DIFF, -1, -1), aa_concatPereFrere($1, $3)); }
 		  ;
 
 		/* Expressions logiques */
 
-expr_bool_or : expr_bool_or OR expr_bool_and { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_OU, -1), aa_concatPereFrere($1, $3)); }
+expr_bool_or : expr_bool_or OR expr_bool_and { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_OU, -1, -1), aa_concatPereFrere($1, $3)); }
 		     | expr_bool_and
 		     ;
 
-expr_bool_and : expr_bool_and AND expr_bool_not { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_ET, -1), aa_concatPereFrere($1, $3)); }
+expr_bool_and : expr_bool_and AND expr_bool_not { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_ET, -1, -1), aa_concatPereFrere($1, $3)); }
 			  | expr_bool_not
 			  ;
 
-expr_bool_not : NOT expr_bool_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_NON, -1), $2); }
+expr_bool_not : NOT expr_bool_base { $$ = aa_concatPereFils(aa_creerNoeud(A_OP_NON, -1, -1), $2); }
 			  | expr_bool_base
 			  ;
 
 expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 			   | expr_comp
-			   | BOOL { $$ = aa_creerNoeud(A_CSTE_BOOL, $1); }
+			   | BOOL { $$ = aa_creerNoeud(A_CSTE_BOOL, $1, -1); }
 			   ;
 
 
@@ -463,21 +465,21 @@ expr_bool_base : PO expr_bool_or PF { $$ = $2; }
 
 
 appel_fonction : IDF PO suite_args PF 
-			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1), $3)); }
+			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1, td_assocNom($1, PROC, p2)), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 		 ;
 
-suite_args : { $$ = NULL; }
-		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1)); }
-		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1), $3)); }
+suite_args : { $$ = aa_vide(); }
+		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1, -1)); }
+		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 		   ;
 
 
 	/** Structures conditionnelles **/
 
 
-condition : SI expr_cond ALORS liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1), aa_concatPereFrere($2, $4)); }
+condition : SI expr_cond ALORS liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1, -1), aa_concatPereFrere($2, $4)); }
 		  | SI expr_cond ALORS liste_instructions SINON liste_instructions
-		  		{ $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, $6))); }
+		  		{ $$ = aa_concatPereFils(aa_creerNoeud(A_IF_THEN_ELSE, -1, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, $6))); }
 		  ;
 
 expr_cond : expr_bool_or
@@ -485,13 +487,13 @@ expr_cond : expr_bool_or
 		  ;
 
 
-tantque : TANTQUE expr_cond FAIRE liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_WHILE, -1), aa_concatPereFrere($2, $4)); }
-		| FAIRE liste_instructions TANTQUE expr_cond { $$ = aa_concatPereFils(aa_creerNoeud(A_DO_WHILE, -1), aa_concatPereFrere($4, $2)); }
+tantque : TANTQUE expr_cond FAIRE liste_instructions { $$ = aa_concatPereFils(aa_creerNoeud(A_WHILE, -1, -1), aa_concatPereFrere($2, $4)); }
+		| FAIRE liste_instructions TANTQUE expr_cond { $$ = aa_concatPereFils(aa_creerNoeud(A_DO_WHILE, -1, -1), aa_concatPereFrere($4, $2)); }
 		;
 
 
 pour : POUR expression PV expr_cond PV instruction_pour FAIRE liste_instructions
-		{ $$ = aa_concatPereFils(aa_creerNoeud(A_FOR, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, aa_concatPereFrere($6, $8)))); }
+		{ $$ = aa_concatPereFils(aa_creerNoeud(A_FOR, -1, -1), aa_concatPereFrere($2, aa_concatPereFrere($4, aa_concatPereFrere($6, $8)))); }
 	 ;
 
 instruction_pour: affectation
@@ -501,12 +503,24 @@ instruction_pour: affectation
 	/** Entrées & sorties **/
 
 
-resultat_retourne : { $$ = NULL; }
+resultat_retourne : { $$ = aa_vide(); }
 				  | expression
 				  ;
 
-afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, -1), $3); }
+afficher : AFFICHER PO STRING suite_afficher PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, $3, -1), $4); }
 		 ;
+
+suite_afficher : VIRG suite_args { $$ = $2; }
+			   | { $$ = aa_vide(); }
+			   ;
+
+lire : LIRE PO liste_variables PF { $$ = aa_concatPereFils(aa_creerNoeud(A_LIRE, -1, -1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
+	 ;
+
+liste_variables : { $$ = aa_vide(); }
+		        | variable { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1, -1)); }
+		        | variable VIRG liste_variables { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
+		        ;
 
 %%
 

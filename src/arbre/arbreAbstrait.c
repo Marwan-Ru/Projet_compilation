@@ -6,10 +6,11 @@ arbre aa_vide () {
 	return NULL;
 }
 
-arbre aa_creerNoeud (Identifiant id, int valeur) {
+arbre aa_creerNoeud (Identifiant id, int valeur, int num_decl) {
 	arbre a = allocation_mem(1, sizeof(struct struct_arbre));
 	a->id = id;
 	a->valeur = valeur;
+	a->num_decl = num_decl;
     a->fils = aa_vide();
     a->frere = aa_vide();
     return a;
@@ -64,6 +65,7 @@ char *id_to_string (Identifiant id) {
 		case A_CHAMP: return "A_CHAMP";
 		case A_AFFICHER: return "A_AFFICHER";
 		case A_RETOURNER: return "A_RETOURNER";
+		case A_LIRE: return "A_LIRE";
 		default: return "la fonction id_to_string n'est pas à jour!";
 	}
 }
@@ -82,9 +84,9 @@ void afficher_rec (arbre a, char *indent) {
 	char *newIndent;
 	int i, l = strlen(indent);
 
-	printf("%s%s (%d", indent, id_to_string(a->id), a->valeur);
-	if (a->id == A_CSTE_CAR) printf(": '%c')\n", a->valeur);
-	else printf(")\n");
+	printf("%s%s (%d", indent, id_to_string(aa_id(a)), aa_valeur(a));
+	if (aa_id(a) == A_CSTE_CAR) printf(": '%c'", aa_valeur(a));
+	printf(", %d)\n", aa_num_decl(a));
 
 	/* └ = \342\224\224 
 	   ├ = \342\224\234 
@@ -134,6 +136,11 @@ int aa_valeur (arbre a) {
 	else return -1;
 }
 
+int aa_num_decl (arbre a) {
+	if (a != aa_vide()) return a->num_decl;
+	else return -1;
+}
+
 Identifiant aa_id (arbre a) {
 	if (a != aa_vide()) return a->id;
 	else return A_VIDE;
@@ -142,17 +149,17 @@ Identifiant aa_id (arbre a) {
 void ecrireFichier_rec (FILE *f, arbre a) {
 	int localIndent = indent;
 
-	fprintf(f, "{%d,%d}", a->id, a->valeur);
+	fprintf(f, "{%d,%d,%d}", aa_id(a), aa_valeur(a), aa_num_decl(a));
 
-	if (a->fils != aa_vide()) {
+	if (aa_fils(a) != aa_vide()) {
 		fprintf(f, "|%d", localIndent);
 		indent++;
-		ecrireFichier_rec(f, a->fils);
+		ecrireFichier_rec(f, aa_fils(a));
 	} 
-	if (a->frere != aa_vide()) {
+	if (aa_frere(a) != aa_vide()) {
 		fprintf(f, "_%d", localIndent);
 		indent++;
-		ecrireFichier_rec(f, a->frere);
+		ecrireFichier_rec(f, aa_frere(a));
 	}
 }
 

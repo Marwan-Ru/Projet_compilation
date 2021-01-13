@@ -87,6 +87,7 @@ int taille = 0;
     /* Entrées & sorties */
 "return"                        { return(RETOURNE); }
 "print"                         { return(AFFICHER); }
+"read"                          { return(LIRE); }
 
     /* Commentaires */
 \/\/.*

@@ -40,19 +40,21 @@ typedef enum enum_id {
     A_LISTE_INDICES,
     A_CHAMP,
     A_AFFICHER,
-    A_RETOURNER
+    A_RETOURNER,
+    A_LIRE
 } Identifiant;
 
 typedef struct struct_arbre {
     Identifiant id;
     int valeur;
+    int num_decl;
 	struct struct_arbre *frere;
 	struct struct_arbre *fils;
 } *arbre;
 
 arbre aa_vide ();
 
-arbre aa_creerNoeud (Identifiant id, int valeur);
+arbre aa_creerNoeud (Identifiant id, int valeur, int num_decl);
 
 /* Renvoie pere */
 arbre aa_concatPereFrere (arbre pere, arbre frere);
@@ -67,6 +69,8 @@ arbre aa_frere (arbre a);
 arbre aa_fils (arbre a);
 
 int aa_valeur (arbre a);
+
+int aa_num_decl (arbre a);
 
 Identifiant aa_id (arbre a);
 
