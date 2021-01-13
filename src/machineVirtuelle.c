@@ -168,8 +168,11 @@ void execute (arbre a) {
             }
 
             execute(aa_fils(a));
-            if (evaluer(aa_frere(aa_fils(a)), 1).booleen == TRUE)
+            if (evaluer(aa_frere(aa_fils(a)), 1).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
+                execute(aa_frere(aa_frere(aa_fils(a))));
+                execute(a);
+            }
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
