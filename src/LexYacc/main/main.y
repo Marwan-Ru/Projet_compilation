@@ -288,9 +288,9 @@ listeparam : un_param
 
 un_param : IDF DEUX_POINTS type_simple {
 	taille++; 
-	val[cmptVal++] = $1;
-	val[cmptVal++] = $3; 
 	msgErr = td_ajout($1, PARAM, sommet_pile(p2), $3, NIS);
+	val[cmptVal++] = td_assocNom($1, VARI, p2);
+	val[cmptVal++] = $3; 
 	verifErreur();
 	}
          ;
