@@ -94,7 +94,8 @@ void execute (arbre a) {
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
-            return execute(aa_fils(a)); /*???*/
+            evaluer(aa_fils(a));
+            /*return execute(aa_fils(a)); /*???*/
             break;
         case A_AFFICHER:
             aa_afficher(aa_fils(a));
