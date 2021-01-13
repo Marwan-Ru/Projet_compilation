@@ -300,6 +300,10 @@ types_pile evaluer(arbre a, int valeur) {
         case A_CSTE_CHAINE:
             break;
         case A_OP_PLUS:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -323,6 +327,10 @@ types_pile evaluer(arbre a, int valeur) {
             }
             break;
         case A_OP_MOINS:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -346,6 +354,10 @@ types_pile evaluer(arbre a, int valeur) {
             }
             break;
         case A_OP_MULT:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -369,21 +381,45 @@ types_pile evaluer(arbre a, int valeur) {
             }
             break;
         case A_OP_DIV:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
+                if (tpb.entier == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.entier / tpb.entier;
                 ret.type = T_INT;
             }else if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
+                if (tpb.reel == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.reel = tpa.reel / tpb.reel;
                 ret.type = T_FLOAT;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
+                if (tpb.caractere == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.caractere = tpa.caractere / tpb.caractere;
                 ret.type = T_CHAR;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
+                if (tpb.entier == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.caractere / tpb.entier;
                 ret.type = T_INT;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
+                if (tpb.caractere == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.entier / tpb.caractere;
                 ret.type = T_INT;
             }else{/*On a fait une division entre deux types incompatibles*/
@@ -392,6 +428,10 @@ types_pile evaluer(arbre a, int valeur) {
             }
             break;
         case A_OP_EXP:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
@@ -403,16 +443,36 @@ types_pile evaluer(arbre a, int valeur) {
             }
             break;
         case A_OP_MODUL:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             if(tpa.type == T_INT && tpb.type == T_INT){
+                if (tpb.entier == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.entier % tpb.entier;
                 ret.type = T_INT;
             }else if(tpa.type == T_CHAR && tpb.type == T_CHAR){
+                if (tpb.caractere == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.caractere = tpa.caractere % tpb.caractere;
                 ret.type = T_CHAR;
             }else if(tpa.type == T_CHAR && tpb.type == T_INT){
+                if (tpb.entier == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.caractere % tpb.entier;
                 ret.type = T_INT;
             }else if(tpa.type == T_INT && tpb.type == T_CHAR){
+                if (tpb.caractere == 0) {
+                    fprintf(stderr, "Erreur, division par 0 \n");
+                    exit(EXIT_FAILURE);
+                }
                 ret.entier = tpa.entier % tpb.caractere;
                 ret.type = T_INT;
             }else{/*On a fait une modulo entre deux types incompatibles*/
@@ -420,6 +480,10 @@ types_pile evaluer(arbre a, int valeur) {
                 exit(EXIT_FAILURE);
             }
         case A_OP_INF: 
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -439,6 +503,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUP:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -458,6 +526,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_INFE:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -477,6 +549,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUPE:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -496,6 +572,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_EGAL:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -515,6 +595,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_DIFF:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
@@ -534,6 +618,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_OU:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL) ret.booleen = tpa.booleen || tpa.booleen;
@@ -544,6 +632,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_ET:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL) ret.booleen = tpa.booleen && tpa.booleen;
@@ -554,6 +646,10 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_OP_NON:
+            if (valeur == 0) {
+                fprintf(stderr, "Erreur, expression dans variable \n");
+                exit(EXIT_FAILURE);
+            }
             tpa = evaluer(aa_fils(a), 1);
             if(tpa.type == T_BOOL) ret.booleen = !tpa.booleen;
             else{/*On a fait une division entre deux types incompatibles*/
