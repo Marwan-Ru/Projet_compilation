@@ -27,7 +27,7 @@ void execute (arbre a) {
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
-            i = get_pile(w.entier);
+            i = pile[get_pile(w.entier)];
             v = evaluer(aa_frere(aa_fils(a)), 1);
             set_pile(i, v);
             break;
