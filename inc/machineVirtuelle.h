@@ -32,7 +32,7 @@ typedef struct{
 void execute (arbre a);
 
 /* Evalue l'expression se trouvant dans l'arbre a */
-types_pile evaluer (arbre a);
+types_pile evaluer (arbre a, int i);
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro de déclaration donné */

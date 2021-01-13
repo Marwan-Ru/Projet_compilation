@@ -529,11 +529,16 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_CHAMP:
-            if(valeur = 1){
-
-            }else{
-
+            /*On dois déterminer a quel champs de la structure on souhaite acceder*/
+            /*Le premier idf c'est la structure d'ou on part*/
+            ret = evaluer(aa_fils(a), 0);
+            arbre tmp = aa_fils(a);
+            while(aa_frere(tmp) != aa_vide() && aa_frere(tmp)->id == A_CHAMP){
+                ret.entier++;
+                tmp = aa_fils(aa_frere(tmp));
             }
+            /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
+            if(valeur = 1) ret = pile[ret.entier];
             break;
         case A_VIDE:
         default:
