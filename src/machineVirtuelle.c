@@ -134,7 +134,7 @@ void execute (arbre a) {
             if (evaluer(aa_fils(a), 1).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
-            } else execute(aa_frere(a));
+            }
             break;
         case A_DO_WHILE:
             x = evaluer(aa_frere(aa_fils(a)), 1);
@@ -151,7 +151,6 @@ void execute (arbre a) {
             if (evaluer(aa_frere(aa_fils(a)), 1).booleen == TRUE) {
                 execute(a);
             }
-            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
         case A_FOR:
             x = evaluer(aa_frere(aa_fils(a)), 1);
@@ -171,7 +170,6 @@ void execute (arbre a) {
                 execute(aa_frere(aa_frere(aa_fils(a))));
                 execute(a);
             }
-            else execute(aa_frere(a));
             break;
         case A_RETOURNER:
             x = evaluer(aa_fils(a), 1);
@@ -181,7 +179,6 @@ void execute (arbre a) {
             }
             buffer[current] = evaluer(aa_fils(a), 1);
             current++;
-            execute(aa_frere(a));
             break;
         case A_AFFICHER:
             tmpStr = tl_getLex(aa_valeur(a));
