@@ -7,10 +7,10 @@ region reg;
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
     int i, newBC, newNIS;
-    types_pile v;
     region newReg;
     types_pile tmp;
     decl declaration;
+    types_pile v, w;
 
     if (a == aa_vide()) return;
     
@@ -20,9 +20,15 @@ void execute (arbre a) {
             execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
-            i = get_pile(aa_fils(a));
+            w = evaluer(aa_fils(a));
+            if(w.type != 'e'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            i = get_pile(w.entier);
             v = evaluer(aa_frere(aa_fils(a)));
             set_pile(i, v);
+            execute(aa_frere(a));
             break;
         case A_APPEL_FONC:
             declaration = td_getdecl(aa_valeur(a));
@@ -114,10 +120,12 @@ types_pile evaluer (arbre a) {
     
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
-    ret.type = T_ERR; erreur;
+    ret.type = T_ERR; /*erreur*/
 
     switch (a->id) {
         case A_IDF:
+            ret.entier = aa_valeur(a);
+            ret.type = 'e';
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
@@ -473,6 +481,7 @@ types_pile evaluer (arbre a) {
             break;
         case A_VIDE:
         case A_CHAMP:
+            /*TODO*/
             break;
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
