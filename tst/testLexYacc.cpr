@@ -17,6 +17,20 @@ variable v1 : int ;
 variable v2 : string[5] ;
 variable t1 : int ;
 
+funct f1 (toto3 : int) return int 
+	
+	type t8 : struct
+        ch1 : int ;
+	    ch3 : t1 ;
+	endstruct ;
+	type t9 : tab[5..6] of int ;
+	variable v1 : int ;
+begin
+	f1(-1);
+	asdfg <- 420;
+	return test;
+end;
+
 proc p1 (toto : int; tata : char) 
 	type t4 : struct
         ch1 : int ;
@@ -47,18 +61,6 @@ proc p2 (toto : int; tata : char)
 begin
 	p3();
 	t5.ch2 <- 22.6;
-end;
-
-funct f1 (toto3 : int) return int 
-	
-	type t8 : struct
-        ch1 : int ;
-	    ch3 : t1 ;
-	endstruct ;
-	type t9 : tab[5..6] of int ;
-	variable v1 : int ;
-begin
-	toto(-1);
 end;
 
 funct f2 (toto4 : int; titi : int; tata3 : char) return int 
@@ -158,5 +160,5 @@ begin
 	c <- true | (false & 5 != 2.5);
 	read(a.test, b[5], c);
 	print("%d %c %f", a.test, b[5], c);
-	print("*/");
+	sdfg();
 end

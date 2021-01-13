@@ -6,11 +6,11 @@ region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
-    int i, newBC, newNIS;
+    int i, newBC, newNIS, nbParam;
     region newReg;
-    types_pile tmp;
     decl declaration;
-    types_pile v, w;
+    types_pile v, w, tmp;
+    arbre tmpArbre;
 
     if (a == aa_vide()) return;
     
@@ -27,31 +27,33 @@ void execute (arbre a) {
             }
             i = get_pile(w.entier);
             v = evaluer(aa_frere(aa_fils(a)));
+
             set_pile(i, v);
             execute(aa_frere(a));
             break;
         case A_APPEL_FONC:
-            declaration = td_getdecl(aa_valeur(a));
+            declaration = td_getdecl(aa_num_decl(a));
             newReg = tr_get_reg(declaration.exec);
             newBC = BC + reg.taille_zone;
             newNIS = newReg.niv_imbric;
 
             /* Vérification */
             if (newNIS < 0 || newNIS > NIS+1) {
-                printf("La région '%s' est innacessible\n", td_getNumLex(aa_valeur(a)));
-                System.exit(EXIT_FAILURE);
+                printf("La région '%s' est innacessible\n", tl_getLex(aa_valeur(a)));
+                exit(EXIT_FAILURE);
             }
 
             /* Chaînage dynamique */
-            set_pile(newBC, BC);
+            tmp.entier = BC;
+            tmp.type = T_INT;
+            set_pile(newBC, tmp);
 
             /* Chaînage statique */
             if (newNIS == NIS+1) {
                 /* On ajoute la BC puis on copie le chainage statique de la région d'avant */
-                set_pile(newBC+1, BC);
+                set_pile(newBC+1, tmp);
                 for (i = 0; i < NIS; i++) {
                     tmp.entier = BC+1+i;
-                    tmp.type = ''
                     set_pile(newBC+2+i, tmp);
                 }
             } else {
@@ -62,10 +64,48 @@ void execute (arbre a) {
                 } 
             }
 
+            BC = newBC;
+            NIS = newNIS;
+            reg = newReg;
+
             /* Arguments */
+            tmpArbre = aa_fils(a);
+            if (declaration.NATURE == FUNCT) {
+                for (i = 0; i < tt_foncNbParam(declaration.index); i++) {
+                    if (aa_fils(tmpArbre) != aa_vide()) {
+                        tmpArbre = aa_fils(tmpArbre);
+                        tmp = evaluer(tmpArbre);
+                        if (tmp.type != tt_foncTypeParam(declaration.index, i)) {
+                            printf("L'argument %d d'un appel à la fonction '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
+                            exit(EXIT_FAILURE);
+                        }
+                        set_pile(BC+NIS+i, tmp);
+                        tmpArbre = aa_frere(tmpArbre);
+                    } else {
+                        printf("Il manque des arguments dans un appel à la fonction '%s'!\n", tl_getLex(aa_valeur(a)));
+                        exit(EXIT_FAILURE);
+                    }
+                }
+            } else { /* Procédure */
+                for (i = 0; i < tt_procNbParam(declaration.index); i++) {
+                    if (aa_fils(tmpArbre) != aa_vide()) {
+                        tmpArbre = aa_fils(tmpArbre);
+                        tmp = evaluer(tmpArbre);
+                        if (tmp.type != tt_procTypeParam(declaration.index, i)) {
+                            printf("L'argument %d d'un appel à la procédure '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
+                            exit(EXIT_FAILURE);
+                        }
+                        set_pile(BC+NIS+i, tmp);
+                        tmpArbre = aa_frere(tmpArbre);
+                    } else {
+                        printf("Il manque des arguments dans un appel à la procédure '%s'!\n", tl_getLex(aa_valeur(a)));
+                        exit(EXIT_FAILURE);
+                    }
+                }
+            }
 
-
-            break;
+            /* Execution du corps */
+            return execute(reg.tree);
         case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a))).booleen == TRUE) execute(aa_frere(aa_fils(a)));
             else execute(aa_frere(aa_frere(aa_fils(a))));
