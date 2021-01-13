@@ -6,11 +6,12 @@ region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
-    int i, newBC, newNIS, nbParam;
+    int i, newBC, newNIS, nbParam, escape;
     region newReg;
     decl declaration;
     types_pile v, w, tmp;
     arbre tmpArbre;
+    char *template;
 
     if (a == aa_vide()) return;
     
@@ -105,8 +106,9 @@ void execute (arbre a) {
             }
 
             /* Execution du corps */
-            return execute(reg.tree);
-        case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
+            execute(reg.tree);
+            execute(aa_frere(a));
+        case A_IF_THEN_ELSE:
             if ((evaluer(aa_fils(a))).booleen == TRUE) execute(aa_frere(aa_fils(a)));
             else execute(aa_frere(aa_frere(aa_fils(a))));
             execute(aa_frere(a));
@@ -137,8 +139,62 @@ void execute (arbre a) {
             return execute(aa_fils(a)); /*???*/
             break;
         case A_AFFICHER:
-            aa_afficher(aa_fils(a));
-            execute(aa_frere(a));
+            template = tl_getLex(aa_valeur(a));
+            tmpArbre = aa_fils(a);
+
+            /* On traverse la chaîne */
+            i = 1;
+            escape = 0;
+            while (template[i] != '"' || (escape && template[i] == '"')) {
+                if (template[i] == '\\') escape = 1;
+                else if (escape && template[i] == '\\') printf("\\");
+                else if (escape && template[i] == '"') printf("\"");
+                else if (escape && template[i] == '%') printf("%");
+                else if (template[i] == '%') {
+                    /* On récupère le prochain argument */
+                    if (aa_fils(tmpArbre) == aa_vide()) {
+                        printf("Il manque un ou des arguments pour l'affichage de %s\n", template);
+                        exit(EXIT_FAILURE);
+                    }
+                    tmp = evaluer(aa_fils(tmpArbre));
+                    tmpArbre = aa_frere(aa_fils(tmpArbre));
+                    switch (template[i+1]) {
+                        case 'c':
+                            if (tmp.type != T_CHAR) {
+                                printf("L'argument pour l'affichage d'un caractère dans %s est incorrect\n", template);
+                                exit(EXIT_FAILURE);
+                            }
+                            printf("%c", tmp.caractere);
+                            break;
+                        case 'd':
+                            if (tmp.type != T_INT) {
+                                printf("L'argument pour l'affichage d'un entier dans %s est incorrect\n", template);
+                                exit(EXIT_FAILURE);
+                            }
+                            printf("%d", tmp.entier);
+                            break;
+                        case 'f':
+                            if (tmp.type != T_FLOAT) {
+                                printf("L'argument pour l'affichage d'un réel dans %s est incorrect\n", template);
+                                exit(EXIT_FAILURE);
+                            }
+                            printf("%f", tmp.reel);
+                            break;
+                        case 'b':
+                            if (tmp.type != T_BOOL) {
+                                printf("L'argument pour l'affichage d'un booléen dans %s est incorrect\n", template);
+                                exit(EXIT_FAILURE);
+                            }
+                            if (tmp.booleen == TRUE) printf("true");
+                            else printf("false");
+                            break;
+                        default:
+                            printf("'\%%c' n'est pas un spécificateur de format correct");
+                            exit(EXIT_FAILURE);
+                    }
+                }
+                i++;
+            }
             break;
         case A_LIRE:
             break;

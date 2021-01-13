@@ -26,9 +26,7 @@ funct f1 (toto3 : int) return int
 	type t9 : tab[5..6] of int ;
 	variable v1 : int ;
 begin
-	f1(-1);
-	asdfg <- 420;
-	return test;
+	print("\"%d\" %c %f", a.test, b[5], c);
 end;
 
 proc p1 (toto : int; tata : char) 

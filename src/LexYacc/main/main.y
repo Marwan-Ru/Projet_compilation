@@ -507,7 +507,7 @@ resultat_retourne : { $$ = aa_vide(); }
 				  | expression
 				  ;
 
-afficher : AFFICHER PO STRING suite_afficher PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, $3, -1), $4); }
+afficher : AFFICHER PO STRING suite_afficher PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, $3, -1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $4)); }
 		 ;
 
 suite_afficher : VIRG suite_args { $$ = $2; }
