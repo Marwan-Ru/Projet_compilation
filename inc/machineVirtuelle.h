@@ -10,8 +10,8 @@
 #include "tableTypes.h"
 #include "arbreAbstrait.h"
 
-#define TRUE 't'
-#define FALSE 'f'
+#define TRUE 1
+#define FALSE 0
 
 typedef enum { T_INT, T_FLOAT, T_BOOL, T_CHAR, T_ERR } Type;
 
@@ -21,7 +21,7 @@ typedef struct{
     union {
         int entier;
         float reel;
-        char booleen;
+        int booleen;
         char caractere;
     };
 }types_pile;
