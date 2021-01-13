@@ -1,6 +1,6 @@
 #include "tablereg.h"
 
-champ tablereg[NB_REGIONS];
+region tablereg[NB_REGIONS];
 
 void tr_init() {
   int i;
@@ -64,7 +64,7 @@ int tr_taille () {
   return i;
 }
 
-champ tr_get_reg (int num_reg) {
+region tr_get_reg (int num_reg) {
   if (num_reg > NB_REGIONS){
     printf("erreur table region (tr_get_reg) : dépassement borne table \n");
     exit(-1);

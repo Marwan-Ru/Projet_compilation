@@ -66,6 +66,9 @@ void td_afficher();
 /* Ecrit la table vers le fichier ouvert f */
 void td_ecrireFichier (FILE *f);
 
+/* Renvoie le numéro lexicographique d'une déclaration */
+int td_getNumLex (int numDecl);
+
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
 int td_detruire();
 

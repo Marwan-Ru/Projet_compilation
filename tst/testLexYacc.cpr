@@ -89,6 +89,7 @@ begin
 end;
 
 begin
+	test(a.i, 6, c[4]+5);
 	x 	<- 	-3;
 	x <- y + -2.34567;
 	x <- -test + test / -3 * -(4 + 2);

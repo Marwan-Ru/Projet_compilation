@@ -6,7 +6,7 @@
 #include "allocation.h"
 #include "arbreAbstrait.h"
 
-/*Struct champ :
+/*Struct region :
    - taille_zone : La taille de la zone de données associée dans la pile à l'exécution
    - niv_imbric : Le niveau d'imbrication statique de la région
    - arbre : Le pointeur vers l'arbre abstrait des instructions de cette région*/
@@ -14,7 +14,7 @@ typedef struct {
   int taille_zone; 
   int niv_imbric;
   arbre tree;
-} champ;
+} region;
 
 #define NB_REGIONS 500
 
@@ -33,7 +33,7 @@ int tr_taille();
 
 void tr_ajout_taille_prog_princ (int nis, int taille);
 
-champ tr_get_reg (int num_reg);
+region tr_get_reg (int num_reg);
 
 int tr_reg_existe (int num_reg);
 

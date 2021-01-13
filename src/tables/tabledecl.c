@@ -171,6 +171,22 @@ void td_ecrireFichier (FILE *f) {
     fprintf(f, "---\n");
 }
 
+/* Renvoie le numéro lexicographique d'une déclaration */
+int td_getNumLex (int numDecl) {
+    int i = 0;
+
+    while (numDecl > 0 && numDecl < T_TABLELEX + T_TABLEDEBORD-1 && numDecl > T_TABLELEX) {
+        for (i = 0; i < T_TABLELEX + T_TABLEDEBORD; i++) {
+            if (tabledecl[i].suivant == numDecl) {
+                numDecl = i;
+                break;
+            }
+        }
+    }
+
+    return numDecl;
+}
+
 /*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
 int td_detruire(){
     free(tabledecl);
