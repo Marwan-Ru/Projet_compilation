@@ -586,6 +586,8 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_CHAMP:
+            int i;
+
             if(aa_fils(a)->id != A_IDF){
                 fprintf(stderr, "Un A_CHAMP n'as pas pour fils un IDF dans l'arbre\n");
                 exit(EXIT_FAILURE);
@@ -598,7 +600,29 @@ types_pile evaluer(arbre a, int valeur) {
             /*On utilise le champs index de la table des declarations*/
             ret.entier = get_pile(aa_fils(a)->valeur);
             arbre tmp = aa_fils(a);
-            
+            /*On regarde ensuite le frère pour savoir a quel champ on accede*/
+            if(aa_frere(tmp) == aa_vide()){
+                fprintf(stderr, "Erreur aucun champs scpécifié lors de l'acces au champs d'une structure\n");
+                exit(EXIT_FAILURE);
+            }
+            if(aa_frere(tmp)->id == A_IDF){
+                /*On cherche l'index du champs en le comparant avec le numero elx de l'idf*/
+                /*On utilise un for qui parcoure tout les champs de la structure, on utilise le champs
+                index de l'idf qui nomme la variable qui contient la structure*/
+                int posStruct = td_getdecl(tmp->valeur).index;
+                for(i=0;i<tt_structNbChamps(posStruct);i++){
+                    if(tt_structNumLexChamp(posStruct, i)) break;
+                    if(i == tt_structNbChamps(posStruct)-1){
+                        fprintf(stderr, "Erreur le champs spécifié lors de l'acces au champs d'une structure n'est pas correct\n");
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                /*On connais maintenant le numero du champs et on peut recup le deplacement a l'interieur de la structure pour ce champs*/
+                ret.entier += tt_structDeplacementChamp(posStruct, i);
+            }else if(aa_frere(tmp)->id == A_CHAMP){
+                /*On devrais recup le decalage suplementaire que produit ce champs de facon recursive mais comment faire bruh*/
+            }
+
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
             if(valeur == 1) ret = pile[ret.entier];
             break;
