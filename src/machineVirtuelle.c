@@ -447,16 +447,14 @@ types_pile evaluer (arbre a) {
 }
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
-au numéro lexicographique */
-int get_pile (int numlex) {
-    /*Récupérer num region avec la fonction de gustav*/
-    decl champ = td_getDeclAssocNom(numlex); /*on le récup grace à la fonction de gustav*/
-    int region_decl = champ.numregion;
-    int NIS_decl = tr_get_reg(region_decl).niv_imbric;
-    int cs = NIS_utilisation-NIS_decl;
-    int diff = champ.exec;
+au numéro de déclaration donné */
+int get_pile (int numdecl) {
+    decl champ = td_getdecl(numdecl);
+    int NIS_decl = tr_get_reg(champ.numregion).niv_imbric, 
+        cs = NIS_utilisation-NIS_decl, 
+        deplacement = champ.exec;
 
-    return pile[pile[BC+cs]+diff];
+    return pile[pile[BC+cs]+deplacement];
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
