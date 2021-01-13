@@ -26,7 +26,7 @@ void execute (arbre a) {
                 exit(EXIT_FAILURE);
             }
             i = get_pile(w.entier);
-            v = evaluer(aa_frere(aa_fils(a)));
+            v = evaluer(aa_frere(aa_fils(a)), 1);
             set_pile(i, v);
             execute(aa_frere(a));
             break;
@@ -66,31 +66,37 @@ void execute (arbre a) {
 
 
             break;
-        case A_IF_THEN_ELSE: 
+        case A_IF_THEN_ELSE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a))).booleen == TRUE) execute(aa_frere(aa_fils(a)));
             else execute(aa_frere(aa_frere(aa_fils(a))));
             execute(aa_frere(a));
             break;
-        case A_WHILE: 
+        case A_WHILE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a))).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             } else execute(aa_frere(a));
             break;
-        case A_DO_WHILE:
+        case A_DO_WHILE: /*rajouté par PA donc pas sur*/
             execute(aa_fils(a));
-            if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
+            if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
                 execute(a);
             }
             else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
             break;
-        case A_FOR:
-            execute(aa_fils(a));
-            if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
+        case A_FOR: /*rajouté par PA donc pas sur*/
+            int i = (evaluer(aa_fils(a))).entier;
+            //int max = (evaluer(aa_frere(aa_fils(a)), 1)).entier;
+            int indice = 0;
+            int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))))).entier;
+
+            if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
-                execute(aa_frere(aa_frere(aa_fils(a))));
+                indice = get_pile (evaluer(aa_fils(a)).entier); /*dans l'idée : il faudrait recupérer le numlex*/
+                pile[indice] += nb_pas;
                 execute(a);
             }
+
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
@@ -108,9 +114,15 @@ void execute (arbre a) {
     }
 }
 
-/* Evalue l'expression se trouvant dans l'arbre a */
-types_pile evaluer (arbre a) {
-    if (a == aa_vide()) return;
+/*
+ *Evalue l'expression se trouvant dans l'arbre a 
+ *prend en paramètre l'arbre a evaluer et un int, 
+ *si valeur == 1 on retourne la valeur des idf et champs, 
+ *sinon on retourne le décalage a l'execution
+ *Auteur : Marwan Ait Addi
+ */
+types_pile evaluer(arbre a, int valeur) {
+\    if (a == aa_vide()) return;
     
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
@@ -118,8 +130,12 @@ types_pile evaluer (arbre a) {
 
     switch (a->id) {
         case A_IDF:
-            ret.entier = aa_valeur(a);
-            ret.type = 'e';
+            if(valeur == 1){
+                ret = pile[getpile(aa_valeur(a))];
+            }else{
+                ret.entier = getpile(aa_valeur(a));
+                ret.type = T_INT;
+            }
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
@@ -140,8 +156,8 @@ types_pile evaluer (arbre a) {
         case A_CSTE_CHAINE:
             break;
         case A_OP_PLUS:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier + tpb.entier;
                 ret.type = T_INT;
@@ -163,8 +179,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_MOINS:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier - tpb.entier;
                 ret.type = T_INT;
@@ -186,8 +202,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_MULT:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier * tpb.entier;
                 ret.type = T_INT;
@@ -209,8 +225,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_DIV:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 ret.entier = tpa.entier / tpb.entier;
                 ret.type = T_INT;
@@ -232,8 +248,8 @@ types_pile evaluer (arbre a) {
             }
             break;
         case A_OP_EXP:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_FLOAT && tpb.type == T_FLOAT){
                 ret.reel = pow(tpa.reel, tpb.reel);
                 ret.type = T_FLOAT;
@@ -260,8 +276,8 @@ types_pile evaluer (arbre a) {
                 exit(EXIT_FAILURE);
             }
         case A_OP_INF: 
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier < tpb.entier){
                     ret.booleen = TRUE;
@@ -289,8 +305,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUP:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier > tpb.entier){
                     ret.booleen = TRUE;
@@ -318,8 +334,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_INFE:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier <= tpb.entier){
                     ret.booleen = TRUE;
@@ -347,8 +363,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_SUPE:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier >= tpb.entier){
                     ret.booleen = TRUE;
@@ -376,8 +392,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_EGAL:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier == tpb.entier){
                     ret.booleen = TRUE;
@@ -405,8 +421,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_DIFF:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if(tpa.entier != tpb.entier){
                     ret.booleen = TRUE;
@@ -434,8 +450,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_OU:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL){
                 if(tpa.booleen == TRUE || tpa.booleen == TRUE){
                     ret.booleen = TRUE;
@@ -448,8 +464,8 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_ET:
-            tpa = evaluer(aa_fils(a));
-            tpb = evaluer(aa_frere(aa_fils(a)));
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_BOOL && tpb.type == T_BOOL){
                 if(tpa.booleen == TRUE && tpa.booleen == TRUE){
                     ret.booleen = TRUE;
@@ -462,7 +478,7 @@ types_pile evaluer (arbre a) {
             ret.type = T_BOOL;
             break;
         case A_OP_NON:
-            tpa = evaluer(aa_fils(a));
+            tpa = evaluer(aa_fils(a), 1);
             if(tpa.type == T_BOOL){
                 if(tpa.booleen == TRUE){
                     ret.booleen = FALSE;
@@ -473,10 +489,14 @@ types_pile evaluer (arbre a) {
             }
             ret.type = T_BOOL;
             break;
-        case A_VIDE:
         case A_CHAMP:
-            /*TODO*/
+            if(valeur = 1){
+
+            }else{
+                
+            }
             break;
+        case A_VIDE:
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
             exit(EXIT_FAILURE);
