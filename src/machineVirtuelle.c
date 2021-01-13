@@ -9,7 +9,7 @@ void execute (arbre a) {
     int i, newBC, newNIS, nbParam;
     region newReg;
     decl declaration;
-    types_pile v, w, tmp;
+    types_pile v, w, x, tmp;
     arbre tmpArbre;
 
     if (a == aa_vide()) return;
@@ -112,16 +112,54 @@ void execute (arbre a) {
             break;
         case A_WHILE: /*rajouté par PA donc pas sur*/
             if ((evaluer(aa_fils(a), 1)).booleen == TRUE) {
+        case A_IF_THEN_ELSE: 
+            x = evaluer(aa_fils(a), 1);
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if ((aa_frere(aa_fils(a)) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a))))) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if ((evaluer(aa_fils(a), 1)).booleen == TRUE) execute(aa_frere(aa_fils(a)));
+            else execute(aa_frere(aa_frere(aa_fils(a))));
+            execute(aa_frere(a));
+            break;
+        case A_WHILE: 
+            x = evaluer(aa_fils(a));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if (aa_frere(aa_fils(a)) == aa_vide()) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if ((evaluer(aa_fils(a))).booleen == TRUE) {
                 execute(aa_frere(aa_fils(a)));
                 execute(a);
             } else execute(aa_frere(a));
             break;
         case A_DO_WHILE: /*rajouté par PA donc pas sur*/
+        case A_DO_WHILE:
+            x = evaluer(aa_frere(aa_fils(a)));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            if (aa_fils(a) == aa_vide()) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
             execute(aa_fils(a));
             if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
                 execute(a);
             }
-            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)?*/
+            else execute(aa_frere(a)); /*necessaire de mettre le else (cause du rappel)*/
             break;
         case A_FOR: /*rajouté par PA donc pas sur*/
             int i = (evaluer(aa_fils(a), 1)).entier;
@@ -130,6 +168,20 @@ void execute (arbre a) {
             int nb_pas = (evaluer(aa_frere(aa_frere(aa_fils(a))), 1)).entier;
 
             if ((evaluer(aa_frere(aa_fils(a)), 1)).booleen == TRUE) {
+        case A_FOR:
+            x = evaluer(aa_frere(aa_fils(a)));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if ((aa_fils(a) == aa_vide()) || (aa_frere(aa_frere(aa_fils(a)))) || (aa_frere(aa_frere(aa_frere(aa_fils(a)))) == aa_vide())) {
+                fprintf(stderr, "Erreur noeud absent de l'arbre\n");
+                exit(EXIT_FAILURE);
+            }
+
+            execute(aa_fils(a));
+            if ((evaluer(aa_frere(aa_fils(a)))).booleen == TRUE) {
                 execute(aa_frere(aa_frere(aa_frere(aa_fils(a)))));
                 indice = get_pile (evaluer(aa_fils(a), 1).entier); /*dans l'idée : il faudrait recupérer le numlex*/
                 pile[indice] += nb_pas;
@@ -139,7 +191,12 @@ void execute (arbre a) {
             else execute(aa_frere(a));
             break;
         case A_RETOURNER:
-            return execute(aa_fils(a)); /*???*/
+            x = evaluer(aa_fils(a));
+            if(x.type != 'b'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            evaluer(aa_fils(a));
             break;
         case A_AFFICHER:
             aa_afficher(aa_fils(a));
