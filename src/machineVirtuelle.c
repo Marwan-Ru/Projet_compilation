@@ -63,6 +63,8 @@ void execute (arbre a) {
             aa_afficher(aa_fils(a));
             execute(aa_frere(a));
             break;
+        case A_LIRE:
+            break;
         case A_VIDE:
         default:
             break;

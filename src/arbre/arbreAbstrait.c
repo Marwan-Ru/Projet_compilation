@@ -65,6 +65,7 @@ char *id_to_string (Identifiant id) {
 		case A_CHAMP: return "A_CHAMP";
 		case A_AFFICHER: return "A_AFFICHER";
 		case A_RETOURNER: return "A_RETOURNER";
+		case A_LIRE: return "A_LIRE";
 		default: return "la fonction id_to_string n'est pas à jour!";
 	}
 }

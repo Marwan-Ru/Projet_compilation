@@ -158,5 +158,5 @@ begin
 	c <- "\"";
 	c <- true;
 	c <- true | (false & 5 != 2.5);
-	c <- a.num[5,6,7][8][9];
+	read(a.test, b[5], c);
 end

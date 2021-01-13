@@ -109,6 +109,7 @@
     /* Entrées & sorties */
 %token RETOURNE "return"
 %token AFFICHER "print"
+%token LIRE "read"
     /* Identifiants */
 %token <t_int> IDF "identifiant"
 	/* Misc */
@@ -129,11 +130,11 @@
 	/* Structures conditionnelles */
 %type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
-%type <t_arbre> resultat_retourne afficher
+%type <t_arbre> resultat_retourne afficher lire liste_variables
 	/* Déclarations */
 %type <t_int> type_simple nom_type 
 %type <t_int> declaration_fonction un_param 
-%type <t_int> declaration_variable 
+%type <t_int> declaration_variable
 %type <t_int> suite_declaration_type declaration_type 
 
 %%
@@ -361,6 +362,7 @@ instruction : affectation PV
 			| RETOURNE resultat_retourne PV
 				{ $$ = aa_concatPereFils(aa_creerNoeud(A_RETOURNER, -1, -1), $2); }
 			| afficher PV
+			| lire PV
 	    	;
 
 
@@ -507,6 +509,14 @@ resultat_retourne : { $$ = NULL; }
 
 afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, -1, -1), $3); }
 		 ;
+
+lire : LIRE PO liste_variables PF { $$ = aa_concatPereFils(aa_creerNoeud(A_LIRE, -1, -1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
+	 ;
+
+liste_variables : { $$ = NULL; }
+		        | variable { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1, -1)); }
+		        | variable VIRG liste_variables { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
+		        ;
 
 %%
 

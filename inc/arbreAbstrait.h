@@ -40,7 +40,8 @@ typedef enum enum_id {
     A_LISTE_INDICES,
     A_CHAMP,
     A_AFFICHER,
-    A_RETOURNER
+    A_RETOURNER,
+    A_LIRE
 } Identifiant;
 
 typedef struct struct_arbre {
