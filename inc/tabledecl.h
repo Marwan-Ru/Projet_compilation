@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include "allocation.h"
-#include "tableLex.h"
 #include "pile.h"
 
 #define T_TABLEDEBORD 5000
