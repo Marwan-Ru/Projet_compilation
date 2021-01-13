@@ -1,7 +1,8 @@
 #include "machineVirtuelle.h"
 
 types_pile pile[TAILLEPILE];
-int NIS = 0, BC = 0;
+types_pile buffer[TAILLEPILE];
+int NIS = 0, BC = 0, current = 0;
 region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
@@ -181,7 +182,9 @@ void execute (arbre a) {
                 fprintf(stderr, "Erreur affectation dans arbre\n");
                 exit(EXIT_FAILURE);
             }
-            evaluer(aa_fils(a), 1);
+            buffer[current] = evaluer(aa_fils(a), 1);
+            current++;
+            execute(aa_frere(a));
             break;
         case A_AFFICHER:
             tmpStr = tl_getLex(aa_valeur(a));
@@ -659,6 +662,11 @@ types_pile evaluer(arbre a, int valeur) {
             }
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
             if(valeur = 1) ret = pile[ret.entier];
+            break;
+        case A_APPEL_FONC:
+            current--;
+            ret = buffer[current];
+            ret.type = buffer[current].type;          
             break;
         case A_VIDE:
         default:
