@@ -7,7 +7,7 @@ int BC = 0;
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
     int i;
-    types_pile v;
+    types_pile v, w;
 
     if (a == aa_vide()) return;
     
@@ -17,9 +17,15 @@ void execute (arbre a) {
             execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
-            i = get_pile(aa_fils(a));
+            w = evaluer(aa_fils(a));
+            if(w.type != 'e'){
+                fprintf(stderr, "Erreur affectation dans arbre\n");
+                exit(EXIT_FAILURE);
+            }
+            i = get_pile(w.entier);
             v = evaluer(aa_frere(aa_fils(a)));
             remplir_pile(i, v);
+            execute(aa_frere(a));
             break;
         case A_APPEL_FONC:
             execute(aa_fils(a)); /*pb : A_LISTEPARAMS pas dans execute*/
@@ -75,14 +81,16 @@ types_pile evaluer (arbre a) {
     
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
-    ret.type = 'x'; erreur;
+    ret.type = 'x'; /*erreur*/
 
     switch (a->id) {
         case A_IDF:
+            ret.entier = aa_valeur(a);
+            ret.type = 'e';
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
-            ret.type = 'e'; /*Permet de savoir qu'on a initialisée un entier et pas une autre variable*/
+            ret.type = 'e'; /*Permet de savoir qu'on a initialisé un entier et pas une autre variable*/
             break;
         case A_CSTE_REELE:
             ret = pile[getpile(aa_valeur(a))];
@@ -434,6 +442,7 @@ types_pile evaluer (arbre a) {
             break;
         case A_VIDE:
         case A_CHAMP:
+            /*TODO*/
             break;
         default:
             fprintf(stderr, "Erreur arbre invalide dans expression\n");
