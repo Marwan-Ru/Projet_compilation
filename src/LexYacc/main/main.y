@@ -130,7 +130,7 @@
 	/* Structures conditionnelles */
 %type <t_arbre> condition expr_cond tantque pour instruction_pour
 	/* Entrées & sorties */
-%type <t_arbre> resultat_retourne afficher lire liste_variables
+%type <t_arbre> resultat_retourne afficher lire liste_variables suite_afficher
 	/* Déclarations */
 %type <t_int> type_simple nom_type 
 %type <t_int> declaration_fonction un_param 
@@ -350,7 +350,7 @@ type_simple : T_INT { $$ = 0; }
 liste_instructions : DEBUT suite_liste_inst FIN { $$ = aa_concatPereFils(aa_creerNoeud(A_LISTE, -1, -1), $2); }
 				   ; 
 
-suite_liste_inst : { $$ = NULL; }
+suite_liste_inst : { $$ = aa_vide(); }
 		 		 | instruction suite_liste_inst { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTE, -1, -1), $2)); }
 		 		 ;
 
@@ -468,7 +468,7 @@ appel_fonction : IDF PO suite_args PF
 			{ $$ = aa_concatPereFils(aa_creerNoeud(A_APPEL_FONC, $1, td_assocNom($1, PROC, p2)), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 		 ;
 
-suite_args : { $$ = NULL; }
+suite_args : { $$ = aa_vide(); }
 		   | expression { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1, -1)); }
 		   | expression VIRG suite_args { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 		   ;
@@ -503,17 +503,21 @@ instruction_pour: affectation
 	/** Entrées & sorties **/
 
 
-resultat_retourne : { $$ = NULL; }
+resultat_retourne : { $$ = aa_vide(); }
 				  | expression
 				  ;
 
-afficher : AFFICHER PO expression PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, -1, -1), $3); }
+afficher : AFFICHER PO STRING suite_afficher PF { $$ = aa_concatPereFils(aa_creerNoeud(A_AFFICHER, $3, -1), $4); }
 		 ;
+
+suite_afficher : VIRG suite_args { $$ = $2; }
+			   | { $$ = aa_vide(); }
+			   ;
 
 lire : LIRE PO liste_variables PF { $$ = aa_concatPereFils(aa_creerNoeud(A_LIRE, -1, -1), aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 	 ;
 
-liste_variables : { $$ = NULL; }
+liste_variables : { $$ = aa_vide(); }
 		        | variable { $$ = aa_concatPereFrere($1, aa_creerNoeud(A_LISTEPARAMS, -1, -1)); }
 		        | variable VIRG liste_variables { $$ = aa_concatPereFrere($1, aa_concatPereFils(aa_creerNoeud(A_LISTEPARAMS, -1, -1), $3)); }
 		        ;

@@ -143,8 +143,7 @@ begin
 
 	// test"*/'
 
-	print("*/");
-	print(func(z[x.ch1.ch2][2].name));
+	print("%d", func(z[x.ch1.ch2][2].name));
 	
 	c <- -d();
 
@@ -152,11 +151,11 @@ begin
 	c <- 22.6;
 	c <- 'a';
 	c <- '\'';
-	c <- '.';
-	c <- '~';
 	c <- "test";
 	c <- "\"";
 	c <- true;
 	c <- true | (false & 5 != 2.5);
 	read(a.test, b[5], c);
+	print("%d %c %f", a.test, b[5], c);
+	print("*/");
 end
