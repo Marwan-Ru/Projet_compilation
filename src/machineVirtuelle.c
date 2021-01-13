@@ -598,6 +598,7 @@ types_pile evaluer(arbre a, int valeur) {
             /*On utilise le champs index de la table des declarations*/
             ret.entier = get_pile(aa_fils(a)->valeur);
             arbre tmp = aa_fils(a);
+            
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
             if(valeur == 1) ret = pile[ret.entier];
             break;

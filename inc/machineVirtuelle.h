@@ -10,8 +10,8 @@
 #include "tableTypes.h"
 #include "arbreAbstrait.h"
 
-#define TRUE 't'
-#define FALSE 'f'
+#define TRUE 1
+#define FALSE 0
 
 typedef enum { T_INT, T_FLOAT, T_BOOL, T_CHAR, T_ERR } Type;
 
@@ -21,7 +21,7 @@ typedef struct{
     union {
         int entier;
         float reel;
-        char booleen;
+        int booleen;
         char caractere;
     };
 }types_pile;
@@ -36,7 +36,7 @@ types_pile evaluer (arbre a, int i);
 
 /* Retrouve l'emplacement mémoire dans la pile correspondant 
 au numéro de déclaration donné */
-int get_pile (int numdecl);
+types_pile get_pile (int numdecl);
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void set_pile (int i, types_pile v);
