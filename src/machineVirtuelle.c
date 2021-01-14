@@ -276,10 +276,46 @@ types_pile evaluer(arbre a, int valeur) {
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
     ret.type = T_ERR; /*erreur*/
-    int emplacement;
+    int indice, dimension, deplacement, posTabType;
+    arbre tmpArbre;
 
     switch (a->id) {
         case A_IDF:
+            ret.entier = get_pile(aa_num_decl(a));
+
+            if (td_getdecl(aa_num_decl(a)).NATURE == TYPE_T) {
+                /* Il s'agit d'un tableau */
+                posTabType = td_getdecl(aa_num_decl(a)).index;
+                ret.type = tt_tabTypeElem(posTabType);
+                tmpArbre = aa_fils(a);
+                deplacement = 0;
+                /* On ajoute les déplacements des indices */
+                for (dimension = 0; dimension < tt_tabNbDimensions(posTabType); dimension++) {
+                    /* Vérifications */
+                    if (tmpArbre == aa_vide()) {
+                        printf("Il manque des dimensions dans un accès de tableau!\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    tmpArbre = aa_fils(tmpArbre);
+                    indice = evaluer(tmpArbre, 1);
+                    
+                    if (indice < tt_tabDimBornInf(posTabType, dimension) || indice > tt_tabDimBornSup(posTabType, dimension)) {
+                        printf("Un indice de tableau est faux\n");
+                        exit(EXIT_FAILURE);
+                    }
+
+                    /* Subdivision des champs venant avant */
+                    if (dimension != 0) deplacement *= tt_tabDimBornSup(posTabType, dimension) - tt_tabDimBornInf(posTabType, dimension) + 1;
+                    /* Ajout du déplacement pour atteindre le champs désiré */
+                    deplacement += indice;
+
+                    tmpArbre = aa_frere(tmpArbre);
+                }
+                ret.entier += deplacement;
+            }
+            
+            if (valeur == 1) return pile[ret.entier];
+            else return ret;
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
@@ -681,8 +717,8 @@ types_pile evaluer(arbre a, int valeur) {
                 exit(EXIT_FAILURE);
             }
             if(aa_frere(tmp)->id == A_IDF){
-                /*On cherche l'index du champs en le comparant avec le numero elx de l'idf*/
-                /*On utilise un for qui parcoure tout les champs de la structure, on utilise le champs
+                /*On cherche l'index du champs en le comparant avec le numero lex de l'idf*/
+                /*On utilise un for qui parcour tout les champs de la structure. On utilise le champs
                 index de l'idf qui nomme la variable qui contient la structure*/
                 int posStruct = td_getdecl(tmp->valeur).index;
                 for(i=0;i<tt_structNbChamps(posStruct);i++){
