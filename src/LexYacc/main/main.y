@@ -555,6 +555,9 @@ int main(int argc, char *argv[]) {
 
 	execute(tr_get_reg(0).tree);
 
+	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 || strcmp(argv[1], "-d") == 0))
+		atexit(afficherPile);
+
 	tl_detruire();
 	td_detruire();
 	fclose(f);

@@ -2,7 +2,7 @@
 
 types_pile pile[TAILLEPILE];
 types_pile buffer[TAILLEPILE];
-int NIS_utilisation = 0, BC = 0, current = 0;
+int NIS_utilisation = 0, BC = 0, current = 0, tPile = 20;
 region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
@@ -41,6 +41,9 @@ void execute (arbre a) {
             newBC = BC + reg.taille_zone;
             newNIS = newReg.niv_imbric;
             oldNIS = NIS_utilisation;
+
+            /* Sert seulement à l'affichage de la pile */
+            if (tPile < newBC + newReg.taille_zone) tPile = newBC + newReg.taille_zone;
 
             /* Vérification */
             if (newNIS < 0 || newNIS > NIS_utilisation+1) {
@@ -176,11 +179,20 @@ void execute (arbre a) {
             i = 1;
             escape = 0;
             while (tmpStr[i] != '"' || (escape && tmpStr[i] == '"')) {
-                if (tmpStr[i] == '\\') escape = 1;
-                else if (escape && tmpStr[i] == '\\') printf("\\");
-                else if (escape && tmpStr[i] == '"') printf("\"");
-                else if (escape && tmpStr[i] == '%') printf("%%");
-                else if (tmpStr[i] == '%') {
+                if (!escape && tmpStr[i] == '\\') escape = 1;
+                else if (escape && tmpStr[i] == '\\') {
+                    printf("\\");
+                    escape = 0;
+                } else if (escape && tmpStr[i] == '"') {
+                    printf("\"");
+                    escape = 0;
+                } else if (escape && tmpStr[i] == '%') {
+                    printf("%%");
+                    escape = 0;
+                } else if (escape && tmpStr[i] == 'n') {
+                    printf("\n");
+                    escape = 0;
+                } else if (tmpStr[i] == '%') {
                     /* On récupère le prochain argument */
                     if (aa_fils(tmpArbre) == aa_vide()) {
                         printf("Il manque un ou des arguments pour l'affichage de %s\n", tmpStr);
@@ -198,7 +210,7 @@ void execute (arbre a) {
                         printf("%s", tl_getLex(aa_valeur(a)));
                         continue;
                     }
-                    
+
                     tmp = evaluer(aa_fils(tmpArbre), 1);
                     tmpArbre = aa_frere(aa_fils(tmpArbre));
                     switch (tmpStr[i]) {
@@ -235,9 +247,8 @@ void execute (arbre a) {
                             printf("'\%%c' n'est pas un spécificateur de format correct");
                             exit(EXIT_FAILURE);
                     }
-                }
+                } else printf("%c", tmpStr[i]);
                 i++;
-                escape = 0;
             }
             break;
         case A_LIRE:
@@ -292,6 +303,9 @@ types_pile evaluer(arbre a, int valeur) {
         case A_IDF:
             ret.entier = get_pile(aa_num_decl(a));
             ret.type = T_ENTIER;
+
+            aa_afficher(a);
+            printf("|%d,%d|\n", ret.entier, ret.type);
 
             if (td_getdecl(aa_num_decl(a)).NATURE == TYPE_T) {
                 /* Il s'agit d'un tableau */
@@ -831,4 +845,31 @@ void set_pile (int i, types_pile v) {
         fprintf(stderr, "Tentative d'accès en dehors de la pile (%d)\n", i);
         exit(EXIT_FAILURE);
     }
+}
+
+/* Affiche la pile */
+void afficherPile() {
+    int i;
+
+    printf("Pile (%d): ", tPile);
+    for (i =0; i < tPile; i++) {
+        switch (pile[i].type) {
+            case T_ENTIER:
+                printf("%d, ", pile[i].entier);
+                break;
+            case T_REEL:
+                printf("%f, ", pile[i].reel);
+                break;
+            case T_BOOLEEN:
+                printf("%d, ", pile[i].booleen);
+                break;
+            case T_CARA:
+                printf("%c, ", pile[i].caractere);
+                break;
+            default:
+                printf("%d, ", pile[i].entier);
+                break;
+        }
+    }
+    printf("\n");
 }

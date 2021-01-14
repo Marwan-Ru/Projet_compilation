@@ -41,4 +41,7 @@ int get_pile (int numdecl);
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
 void set_pile (int i, types_pile v);
 
+/* Affiche la pile */
+void afficherPile();
+
 #endif
