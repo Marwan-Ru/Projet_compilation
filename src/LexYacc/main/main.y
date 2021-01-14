@@ -3,7 +3,7 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <time.h>
-	#include "pile.h"
+	#include "pileEnt.h"
 
 	#define FICTEMP "tmp/intermediaire.txt"
 
@@ -13,7 +13,7 @@
 	extern int cmp_reg;
 	extern int taille;
 	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice, decalage;
-	pile p, p2; 
+	pileEnt p, p2; 
 	char *msgErr;
 
 	void yyerror (char const *str) {
@@ -526,11 +526,6 @@ liste_variables : { $$ = aa_vide(); }
 
 int main(int argc, char *argv[]) {
 	FILE *f;
-	int afficher_tables = 0;
-	
-	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 ||
-					 strcmp(argv[1], "-d") == 0))
-		afficher_tables = 1;
 
 	tl_init();
 	tr_init();
@@ -549,7 +544,7 @@ int main(int argc, char *argv[]) {
 	tt_ecrireFichier(f);
 	td_ecrireFichier(f);
 
-	if (afficher_tables) {
+	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 || strcmp(argv[1], "-d") == 0)) {
 		tl_afficher();
 		td_afficher();
 		tt_afficher();
@@ -558,6 +553,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	tl_detruire();
+	td_detruire();
 	fclose(f);
 
 	liberer_pile(p);

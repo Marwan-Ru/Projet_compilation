@@ -2,12 +2,12 @@
 
 types_pile pile[TAILLEPILE];
 types_pile buffer[TAILLEPILE];
-int NIS = 0, BC = 0, current = 0;
+int NIS_utilisation = 0, BC = 0, current = 0;
 region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
-    int i, newBC, newNIS, oldNIS, nbParam, escape;
+    int i, newBC, newNIS, oldNIS, escape;
     region newReg, oldReg;
     decl declaration;
     types_pile v, w, x, tmp;
@@ -23,13 +23,15 @@ void execute (arbre a) {
             break;
         case A_OPAFF:
             w = evaluer(aa_fils(a), 0);
-            if(w.type != 'e'){
-                fprintf(stderr, "Erreur affectation dans arbre\n");
+            v = evaluer(aa_frere(aa_fils(a)), 1);
+            
+            /* verif */
+            if (w.type != v.type) {
+                printf("Affectation de deux types différents!\n");
                 exit(EXIT_FAILURE);
             }
-            i = pile[get_pile(w.entier)];
-            v = evaluer(aa_frere(aa_fils(a)), 1);
-            set_pile(i, v);
+
+            set_pile(w.entier, v);
             break;
         case A_APPEL_FONC:
             declaration = td_getdecl(aa_num_decl(a));
@@ -37,10 +39,10 @@ void execute (arbre a) {
             oldReg = reg;
             newBC = BC + reg.taille_zone;
             newNIS = newReg.niv_imbric;
-            oldNIS = NIS;
+            oldNIS = NIS_utilisation;
 
             /* Vérification */
-            if (newNIS < 0 || newNIS > NIS+1) {
+            if (newNIS < 0 || newNIS > NIS_utilisation+1) {
                 printf("La région '%s' est innacessible\n", tl_getLex(aa_valeur(a)));
                 exit(EXIT_FAILURE);
             }
@@ -51,23 +53,23 @@ void execute (arbre a) {
             set_pile(newBC, tmp);
 
             /* Chaînage statique */
-            if (newNIS == NIS+1) {
+            if (newNIS == NIS_utilisation+1) {
                 /* On ajoute la BC puis on copie le chainage statique de la région d'avant */
                 set_pile(newBC+1, tmp);
-                for (i = 0; i < NIS; i++) {
+                for (i = 0; i < NIS_utilisation; i++) {
                     tmp.entier = BC+1+i;
                     set_pile(newBC+2+i, tmp);
                 }
             } else {
                 /* On copie le chainage statique de la dernière région ayant le même NIS */
-                for (i = NIS - newNIS; i < NIS; i++){
+                for (i = NIS_utilisation - newNIS; i < NIS_utilisation; i++){
                     tmp.entier = BC+1+i;
-                    set_pile(newBC+1+i-(NIS-newNIS), tmp);
+                    set_pile(newBC+1+i-(NIS_utilisation-newNIS), tmp);
                 } 
             }
 
             BC = newBC;
-            NIS = newNIS;
+            NIS_utilisation = newNIS;
             reg = newReg;
 
             /* Arguments */
@@ -81,7 +83,7 @@ void execute (arbre a) {
                             printf("L'argument %d d'un appel à la fonction '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
                         }
-                        set_pile(BC+NIS+i, tmp);
+                        set_pile(BC+NIS_utilisation+i, tmp);
                         tmpArbre = aa_frere(tmpArbre);
                     } else {
                         printf("Il manque des arguments dans un appel à la fonction '%s'!\n", tl_getLex(aa_valeur(a)));
@@ -97,7 +99,7 @@ void execute (arbre a) {
                             printf("L'argument %d d'un appel à la procédure '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
                             exit(EXIT_FAILURE);
                         }
-                        set_pile(BC+NIS+i, tmp);
+                        set_pile(BC+NIS_utilisation+i, tmp);
                         tmpArbre = aa_frere(tmpArbre);
                     } else {
                         printf("Il manque des arguments dans un appel à la procédure '%s'!\n", tl_getLex(aa_valeur(a)));
@@ -111,7 +113,7 @@ void execute (arbre a) {
 
             /* Rétablissement du contexte auparavant */
             BC = pile[BC].entier;
-            NIS = oldNIS;
+            NIS_utilisation = oldNIS;
             reg = oldReg;
         case A_IF_THEN_ELSE: 
             x = evaluer(aa_fils(a), 1);
@@ -121,7 +123,7 @@ void execute (arbre a) {
             }
 
             if (x.booleen == TRUE) execute(aa_frere(aa_fils(a)));
-            else if (aa_frere(aa_frere(aa_fils(a))) != aa_vide)
+            else if (aa_frere(aa_frere(aa_fils(a))) != aa_vide())
                 execute(aa_frere(aa_frere(aa_fils(a))));
             break;
         case A_WHILE: 
@@ -171,7 +173,7 @@ void execute (arbre a) {
                 if (tmpStr[i] == '\\') escape = 1;
                 else if (escape && tmpStr[i] == '\\') printf("\\");
                 else if (escape && tmpStr[i] == '"') printf("\"");
-                else if (escape && tmpStr[i] == '%') printf("%");
+                else if (escape && tmpStr[i] == '%') printf("%%");
                 else if (tmpStr[i] == '%') {
                     /* On récupère le prochain argument */
                     if (aa_fils(tmpArbre) == aa_vide()) {
@@ -239,16 +241,16 @@ void execute (arbre a) {
                 tmp = evaluer(aa_fils(tmpArbre), 0);
                 switch (tmp.type) {
                     case T_INT:
-                        scanf("%d", pile[tmp.entier]);
+                        scanf("%d", &(pile[tmp.entier].entier));
                         break;
                     case T_FLOAT:
-                        scanf("%d", pile[tmp.entier]);
+                        scanf("%f", &(pile[tmp.entier].reel));
                         break;
-                    case T_BOOLEAN:
-                        scanf("%d", pile[tmp.entier]);
+                    case T_BOOL:
+                        scanf("%d", &(pile[tmp.entier].booleen));
                         break;
                     case T_CHAR:
-                        scanf("%d", pile[tmp.entier]);
+                        scanf("%c", &(pile[tmp.entier].caractere));
                         break;
                     default:
                         printf("Erreur dans un argument lors d'une lecture\n");
@@ -271,14 +273,14 @@ void execute (arbre a) {
  *Auteur : Marwan Ait Addi
  */
 types_pile evaluer(arbre a, int valeur) {
-    if (a == aa_vide()) return;
-    
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
-    /*initialisation de la structure retournée*/
-    ret.type = T_ERR; /*erreur*/
-    int indice, dimension, deplacement, posTabType;
+    int indice, dimension, deplacement, posTabType, posStruct, i;
     arbre tmpArbre;
 
+    /*initialisation de la structure retournée*/
+    ret.type = T_ERR; /*erreur*/
+    if (a == aa_vide()) return ret;
+    
     switch (a->id) {
         case A_IDF:
             ret.entier = get_pile(aa_num_decl(a));
@@ -297,7 +299,12 @@ types_pile evaluer(arbre a, int valeur) {
                         exit(EXIT_FAILURE);
                     }
                     tmpArbre = aa_fils(tmpArbre);
-                    indice = evaluer(tmpArbre, 1);
+                    tpa = evaluer(tmpArbre, 1);
+                    if (tpa.type != T_INT) {
+                        printf("Les indices de tableau doivent être des entiers!\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    indice = tpa.entier;
                     
                     if (indice < tt_tabDimBornInf(posTabType, dimension) || indice > tt_tabDimBornSup(posTabType, dimension)) {
                         printf("Un indice de tableau est faux\n");
@@ -311,18 +318,19 @@ types_pile evaluer(arbre a, int valeur) {
 
                     tmpArbre = aa_frere(tmpArbre);
                 }
+                /* Multiplication par la taille du type de la table avant l'ajout */
+                deplacement *= td_getdecl(ret.type).exec;
                 ret.entier += deplacement;
             }
             
-            if (valeur == 1) return pile[ret.entier];
-            else return ret;
+            if (valeur == 1) ret = pile[ret.entier];
             break;
         case A_CSTE_ENT:
             ret.entier = aa_valeur(a);
             ret.type = T_INT; /*Permet de savoir qu'on a initialisée un entier et pas une autre variable*/
             break;
         case A_CSTE_REELE:
-            ret.reele = atof(tl_getLex(aa_valeur(a)));
+            ret.reel = atof(tl_getLex(aa_valeur(a)));
             ret.type = T_FLOAT; /*idem*/
             break;
         case A_CSTE_BOOL:
@@ -483,6 +491,8 @@ types_pile evaluer(arbre a, int valeur) {
                 fprintf(stderr, "Erreur, expression dans variable \n");
                 exit(EXIT_FAILURE);
             }
+            tpa = evaluer(aa_fils(a), 1);
+            tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_INT && tpb.type == T_INT){
                 if (tpb.entier == 0) {
                     fprintf(stderr, "Erreur, division par 0 \n");
@@ -695,34 +705,51 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_BOOL;
             break;
         case A_CHAMP:
-            int i;
-            arbre tmp;
-
-            if(aa_fils(a)->id != A_IDF){
+            if(aa_id(aa_fils(a)) != A_IDF){
                 fprintf(stderr, "Un A_CHAMP n'as pas pour fils un IDF dans l'arbre\n");
                 exit(EXIT_FAILURE);
             }
-            if(td_getdecl(aa_fils(a)->valeur).NATURE != TYPE_S){
+            if(td_getdecl(aa_num_decl(aa_fils(a))).NATURE != TYPE_S && valeur < 2){
                 fprintf(stderr, "Premier IDF d'un A_CHAMP n'es pas déclaré en tant que structure\n");
                 exit(EXIT_FAILURE);
             }
             /*On est sur que l'on accede a une structure maintenant, on peut utiliser la tables des types*/
             /*On utilise le champs index de la table des declarations*/
-            ret = get_pile(aa_fils(a)->valeur);
-            tmp = aa_fils(a);
+            if(valeur < 2){
+                ret.entier = get_pile(evaluer(aa_fils(a), 0).entier);
+            }else ret.entier = 0;
+            tmpArbre = aa_fils(a);
 
             /*On regarde ensuite le frère pour savoir a quel champ on accede*/
-            if(aa_frere(tmp) == aa_vide()){
+            if(aa_frere(tmpArbre) == aa_vide()){
                 fprintf(stderr, "Erreur aucun champs scpécifié lors de l'acces au champs d'une structure\n");
                 exit(EXIT_FAILURE);
             }
-            if(aa_frere(tmp)->id == A_IDF){
-                /*On cherche l'index du champs en le comparant avec le numero lex de l'idf*/
-                /*On utilise un for qui parcour tout les champs de la structure. On utilise le champs
+            if(aa_id(aa_frere(tmpArbre)) == A_IDF){
+                /*On cherche l'index du champs en le comparant avec le numero elx de l'idf*/
+                /*On utilise un for qui parcours tout les champs de la structure, on utilise le champs
                 index de l'idf qui nomme la variable qui contient la structure*/
-                int posStruct = td_getdecl(tmp->valeur).index;
+                if(valeur < 2){
+                    posStruct = td_getdecl(aa_num_decl(tmpArbre)).index;
+                }else{
+                    posStruct = valeur - 2;
+                }
+                if(valeur > 2){
+                    for(i=0;i<tt_structNbChamps(posStruct);i++){
+                    /*Si le numLex correspond c'est qu'on accède a ce champs la*/
+                    if(tt_structNumLexChamp(posStruct, i) == aa_num_decl(tmpArbre)) break;
+                    if(i == tt_structNbChamps(posStruct)-1){
+                        fprintf(stderr, "Erreur le champs spécifié lors de l'acces au champs d'une structure n'est pas correct\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    ret.entier += tt_structDeplacementChamp(posStruct, i);
+
+                    /*On recupere le posstruct de la structure que dois representer le truc i*/
+                    posStruct = td_getlastdecl(tt_structIndexChamp(posStruct, i)).index;
+                }
                 for(i=0;i<tt_structNbChamps(posStruct);i++){
-                    if(tt_structNumLexChamp(posStruct, i)) break;
+                    /*Si le numLex correspond c'est qu'on accède a ce champs la*/
+                    if(tt_structNumLexChamp(posStruct, i) == aa_num_decl(aa_frere(tmpArbre))) break;
                     if(i == tt_structNbChamps(posStruct)-1){
                         fprintf(stderr, "Erreur le champs spécifié lors de l'acces au champs d'une structure n'est pas correct\n");
                         exit(EXIT_FAILURE);
@@ -730,7 +757,13 @@ types_pile evaluer(arbre a, int valeur) {
                 }
                 /*On connais maintenant le numero du champs et on peut recup le deplacement a l'interieur de la structure pour ce champs*/
                 ret.entier += tt_structDeplacementChamp(posStruct, i);
-            }else ret.entier += evaluer(aa_frere(tmp), 0);
+                }
+            }else if(aa_id(aa_frere(tmpArbre)) == A_CHAMP) {
+                ret.entier += evaluer(aa_frere(tmpArbre), 2+td_getdecl(aa_num_decl(tmpArbre)).index).entier;
+            }else{
+                fprintf(stderr, "Erreur dans l'arbre, le frere du fils d'un champ m'est mi un champ ni un IDF\n");
+                exit(EXIT_FAILURE);
+            }
 
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
             if(valeur == 1) ret = pile[ret.entier];
@@ -753,7 +786,7 @@ au numéro de déclaration donné */
 int get_pile (int numdecl) {
     decl champ = td_getdecl(numdecl);
     int NIS_decl = tr_get_reg(champ.numregion).niv_imbric, 
-        cs = NIS-NIS_decl, 
+        cs = NIS_utilisation-NIS_decl, 
         deplacement = champ.exec;
 
     return pile[BC+cs].entier+deplacement;

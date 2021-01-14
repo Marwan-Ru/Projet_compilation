@@ -1,32 +1,32 @@
 #include <stdio.h>
-#include "pile.h"
+#include "pileEnt.h"
 
-pile pile_vide()
+pileEnt pile_vide()
 {
   return liste_vide();
 }
 
-int est_pile_vide(pile p)
+int est_pile_vide(pileEnt p)
 {
   return est_liste_vide(p);
 }
 
-pile empiler(pile p,element e)
+pileEnt empiler(pileEnt p,element e)
 {
   return inserer_element_liste(p,e);
 }
 
-element sommet_pile(pile p)
+element sommet_pile(pileEnt p)
 {
   return renvoie_premier_liste(p);
 }
 
-pile depiler(pile p)
+pileEnt depiler(pileEnt p)
 {
   return supprimer_premier_liste(p);
 }
 
-int taille_pile(pile p)
+int taille_pile(pileEnt p)
 {
   int nb=0;
   liste lcourant=p;
@@ -38,15 +38,15 @@ int taille_pile(pile p)
   return nb;
 }
 
-int dans_pile (int x, pile p) {
+int dans_pile (int x, pileEnt p) {
   return dans_liste(x, p);
 }
 
-void liberer_pile (pile l) {
+void liberer_pile (pileEnt l) {
   while (!est_pile_vide(l))
     l = supprimer_premier_liste(l);
 }
 
-void afficher_pile (pile p) {
+void afficher_pile (pileEnt p) {
   afficher_liste (p);
 }

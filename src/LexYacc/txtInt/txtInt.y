@@ -16,6 +16,7 @@
 	#include "tabledecl.h"
 	#include "tableTypes.h"
 	#include "arbreAbstrait.h"
+	#include "machineVirtuelle.h"
 }
 
 %code {
@@ -55,7 +56,7 @@ valTabReg: ENTIER PV ENTIER PV ENTIER { longTab = 0; } arbre valTabReg
 		 |
 		 ;
 
-arbre: PO ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4)); } suite_arbre 
+arbre: PO ENTIER VIRG ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4, $6)); } suite_arbre 
 		{ $$ = $<t_arbre>6; }
 	 ;
 
@@ -70,10 +71,6 @@ valTabDecl : ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER PV ENTIER valTabDecl
 %%
 
 int main(int argc, char *argv[]) {
-	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 ||
-					 strcmp(argv[1], "-d") == 0))
-		yydebug = 1;
-
 	tl_init();
 	tt_init();
 	tr_init();
@@ -81,13 +78,18 @@ int main(int argc, char *argv[]) {
 
 	yyparse();
 
-	tl_afficher();
-	tt_afficher();
-	tr_affiche();
-	tr_afficherArbres();
-	td_afficher();
+	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 || strcmp(argv[1], "-d") == 0)) {
+		tl_afficher();
+		tt_afficher();
+		tr_affiche();
+		tr_afficherArbres();
+		td_afficher();
+	}
+
+	execute (tr_get_reg(0).tree);
 
 	tl_detruire();
+	td_detruire();
 
 	exit(EXIT_SUCCESS);
 }
