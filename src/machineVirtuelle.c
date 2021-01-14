@@ -115,6 +115,8 @@ void execute (arbre a) {
             }
 
             /* Execution du corps */
+            printf("reg.tree :\n");
+            aa_afficher(reg.tree);
             execute(reg.tree);
 
             /* Décrementation de l'indice */
