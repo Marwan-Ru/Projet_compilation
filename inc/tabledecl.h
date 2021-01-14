@@ -34,7 +34,9 @@ typedef struct s_decl{
     int exec;
 }decl;
 
-/*Initialise la table des declarations*/
+/*Initialise la table des declarations
+* auteur : Marwan Ait Addi
+*/
 int td_init();
 
 /*
@@ -43,33 +45,43 @@ int td_init();
  *sa nature (struct ou table) et la valeur adéquate du champs index
  *(recuperation du retour de la fonction d'ajout dans la table des types).
  * Renvoie un message descriptif lors d'une erreur, NULL sinon
+ * auteur : Marwan Ait Addi
  */
 char *td_ajout(int numLex, int nature, int numregion, int index, int exec);
 
 /* Renvoie le numéro de déclaration de l'objet de nature n et de numéro lexicographique numLex
    ayant été déclaré dans la plus profonde région du contexte des régions englobante donné.
-   Renvoie -1 si rien a été trouvé */
+   Renvoie -1 si rien a été trouvé 
+   auteur : Gustav Hubert */
 int td_assocNom (int numLex, enum nature n, pileEnt contexte);
 
-/* Permet de définir tous les champs de la ligne i */
+/* Permet de définir tous les champs de la ligne i 
+ * auteur : Marwan Ait Addi
+ */
 void td_set (int i, int nature, int numregion, int suivant, int index, int exec);
 
-/*Renvoie la declaration stockée a la position num de la table des declarations*/
+/*Renvoie la declaration stockée a la position num de la table des declarations
+auteur : Marwan Ait Addi*/
 decl td_getdecl(int num);
 
-/*Donne la derniere declaration ayant ce numéro (ou declerr si elle n'existe pas)*/
+/*Donne la derniere declaration ayant ce numéro (ou declerr si elle n'existe pas)
+auteur : Marwan Ait Addi*/
 decl td_getlastdecl(int numLex);
 
-/*Affiche une partie de la table dans la console*/
+/*Affiche une partie de la table dans la console
+auteur : Marwan Ait Addi*/
 void td_afficher();
 
-/* Ecrit la table vers le fichier ouvert f */
+/* Ecrit la table vers le fichier ouvert f 
+auteur : Marwan Ait Addi*/
 void td_ecrireFichier (FILE *f);
 
-/* Renvoie le numéro lexicographique d'une déclaration */
+/* Renvoie le numéro lexicographique d'une déclaration 
+auteur : Marwan Ait Addi*/
 int td_getNumLex (int numDecl);
 
-/*Supprime proprement la table des declarations renvoie 0 si tout est ok*/
+/*Supprime proprement la table des declarations renvoie 0 si tout est ok
+auteur : Marwan Ait Addi*/
 int td_detruire();
 
 
