@@ -111,6 +111,9 @@ void execute (arbre a) {
             /* Execution du corps */
             execute(reg.tree);
 
+            /* Décrementation de l'indice */
+            current--;
+
             /* Rétablissement du contexte auparavant */
             BC = pile[BC].entier;
             NIS_utilisation = oldNIS;
