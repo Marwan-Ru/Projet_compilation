@@ -18,6 +18,11 @@ program
     variable i : float ;
     variable j : int ;
 
+proc a 
+    begin
+        j <- 0;
+    end ;
+
 
 begin
     j <- 0;
@@ -33,4 +38,5 @@ begin
         i <- i + -1.0;
         i <- i * 3.0;
     end
+    a();
 end 

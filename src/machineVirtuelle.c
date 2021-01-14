@@ -27,7 +27,6 @@ void execute (arbre a) {
             v = evaluer(aa_frere(aa_fils(a)), 1);
             
             /* verif */
-            printf("w.type = %d v.type = %d\n", w.type, v.type);
             if (w.type != v.type) {
                 printf("Affectation de deux types différents!\n");
                 exit(EXIT_FAILURE);
