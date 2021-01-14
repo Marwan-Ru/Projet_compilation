@@ -50,13 +50,13 @@ valTabType: ENTIER { tt_ajout($1); } valTabType
 		  |
 		  ;
 
-valTabReg: ENTIER PV ENTIER PV ENTIER { longTab = 0; } arbre valTabReg
-			{ tr_ajout_reg ($1, $3, $5, $7); }
+valTabReg: ENTIER PV ENTIER PV ENTIER PV { longTab = 0; } arbre valTabReg
+			{ tr_ajout_reg ($1, $3, $5, $8); }
 		 |
 		 ;
 
 arbre: PO ENTIER VIRG ENTIER VIRG ENTIER PF { $<t_arbre>$ = (tab[longTab++] = aa_creerNoeud($2, $4, $6)); } suite_arbre 
-		{ $$ = $<t_arbre>6; }
+		{ $$ = $<t_arbre>8; }
 	 ;
 
 suite_arbre: BARREVERT ENTIER arbre { aa_concatPereFils(tab[$2], $3); }

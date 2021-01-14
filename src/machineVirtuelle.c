@@ -172,7 +172,7 @@ void execute (arbre a) {
         case A_AFFICHER:
             tmpStr = tl_getLex(aa_valeur(a));
             tmpArbre = aa_fils(a);
-
+            
             /* On traverse la chaîne */
             i = 1;
             escape = 0;
@@ -195,6 +195,7 @@ void execute (arbre a) {
                             printf("L'argument pour l'affichage d'une chaîne de caractères dans %s est incorrect\n", tmpStr);
                             exit(EXIT_FAILURE);
                         } 
+                        printf("Oui oui baguette \n");
                         printf("%s", tl_getLex(aa_valeur(a)));
                         continue;
                     }

@@ -16,7 +16,10 @@
 \|                                 { return (BARREVERT); }
 \_                                 { return (BARREHORI); }
 ([0]|-?[1-9][0-9]*)                { yylval.t_entier = atoi(yytext); return (ENTIER); }
+([0]|[1-9][0-9]*)\.[0-9]+	       { yylval.t_chaine = strdup(yytext); return (TEXTE); } /* réels */
+\"((\\\")|[^(\")])*\"              { yylval.t_chaine = strdup(yytext); return (TEXTE); } /* Chaînes de caractère */
+[a-zA-Z][a-zA-Z0-9]* 	           { yylval.t_chaine = strdup(yytext); return (TEXTE); } /* Identifiants */
 "---"                              { return (SEPARATEUR); }
-[^\-[:blank:]\n].*                 { yylval.t_chaine = strdup(yytext); return (TEXTE); }
 [[:blank:]\r\n]
+.
 %%
