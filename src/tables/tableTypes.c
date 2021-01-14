@@ -22,7 +22,7 @@ void tt_init () {
    Affiche une erreur et quitte si ce n'est pas le cas */
 void verifTaille (int t) {
     if (t > T_TABLETYPES) {
-        fprintf(stderr, "Erreur! Dépassement de la limite de champs autorisées!\n");
+        fprintf(stderr, "Erreur! Dépassement de la limite de champs autorisées (%d > %d)!\n", t, T_TABLETYPES);
         exit(EXIT_FAILURE);
     }
 }
