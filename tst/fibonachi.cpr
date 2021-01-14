@@ -8,7 +8,7 @@ program
 begin
     n <- 5;
     nbr1 <- 0;
-    nr2 <- 1;
+    nbr2 <- 1;
     for i=0; i < n; i <- i+1 do
     begin
         if i <= 1 then
