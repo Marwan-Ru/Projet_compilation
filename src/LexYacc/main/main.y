@@ -552,8 +552,7 @@ int main(int argc, char *argv[]) {
 		tr_afficherArbres();
 	}
 
-	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 || strcmp(argv[1], "-d") == 0))
-		atexit(afficherPile);
+	execute(tr_get_reg(0).tree);
 
 	tl_detruire();
 	td_detruire();

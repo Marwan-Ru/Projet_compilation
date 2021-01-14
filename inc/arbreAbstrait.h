@@ -1,3 +1,6 @@
+/* Auteur : Gustav HUBERT
+   Description : Représente un arbre abstrait */
+
 #ifndef ARBREABSTRAIT
 #define ARBREABSTRAIT
 
@@ -5,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "allocation.h"
-
 typedef enum enum_id {
     A_VIDE,
     A_LISTE,
@@ -52,26 +54,34 @@ typedef struct struct_arbre {
 	struct struct_arbre *fils;
 } *arbre;
 
+/* Renvoie un arbre vide */
 arbre aa_vide ();
 
+/* Crée le noueud d'un arbre à partir de son identifiant, sa valeur et son numéro de déclaration */
 arbre aa_creerNoeud (Identifiant id, int valeur, int num_decl);
 
-/* Renvoie pere */
+/* Concatène l'arbre père avec l'arbre frere. Renvoie l'arbre pere */
 arbre aa_concatPereFrere (arbre pere, arbre frere);
 
-/* Renvoie pere */
+/* Concatène l'arbre père avec l'arbre fils. Renvoie l'arbre pere */
 arbre aa_concatPereFils (arbre pere, arbre fils);
 
+/* Affiche l'arbre dans le terminal */
 void aa_afficher (arbre a);
 
+/* Renvoie le frere de la racine de a */
 arbre aa_frere (arbre a);
 
+/* Renvoie le fils de la racine de a */
 arbre aa_fils (arbre a);
 
+/* Renvoie la valeur de la racine de a */
 int aa_valeur (arbre a);
 
+/* Renvoie le numéro lexical de la racine de a */
 int aa_num_decl (arbre a);
 
+/* Renvoie l'identifiant de de la racine de a */
 Identifiant aa_id (arbre a);
 
 /* Ecrit l'arbre vers le fichier ouver f */
