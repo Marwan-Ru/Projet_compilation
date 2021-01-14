@@ -1,0 +1,22 @@
+program
+variable i : int ;
+begin
+    print("For:\n");
+    for i=0; i < 5; i <- i+1 do
+	begin	
+		print("%d\n", i);
+	end
+    print("While:\n");
+    while i <= 10 do
+	begin
+		i <- i+1;
+        print("%d\n", i);
+	end
+	print("Do While:\n");
+	do
+	begin
+		i <- i+1;
+        print("%d\n", i);
+	end
+	while i <= 15
+end
