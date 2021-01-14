@@ -305,9 +305,6 @@ types_pile evaluer(arbre a, int valeur) {
             ret.entier = get_pile(aa_num_decl(a));
             ret.type = T_ENTIER;
 
-            aa_afficher(a);
-            printf("|%d,%d|\n", ret.entier, ret.type);
-
             if (td_getdecl(aa_num_decl(a)).NATURE == TYPE_T) {
                 /* Il s'agit d'un tableau */
                 posTabType = td_getdecl(aa_num_decl(a)).index;
@@ -836,7 +833,8 @@ int get_pile (int numdecl) {
         cs = NIS_utilisation-NIS_decl, 
         deplacement = champ.exec;
 
-    return pile[BC+cs].entier+deplacement;
+    if (NIS_utilisation == 0) return deplacement;
+    else return pile[BC+cs].entier+deplacement;
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
