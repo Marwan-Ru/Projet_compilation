@@ -1,0 +1,10 @@
+program
+variable a : int ;
+variable b : float ;
+variable c : char ;
+variable d : bool ;
+begin
+    print("Entrez un entier :");
+    read(a);
+    print("Un entier : %d\n", a);
+end

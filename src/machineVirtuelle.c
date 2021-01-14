@@ -259,16 +259,16 @@ void execute (arbre a) {
                 tmp = evaluer(aa_fils(tmpArbre), 0);
                 switch (tmp.type) {
                     case T_ENTIER:
-                        scanf("%d", &(pile[tmp.entier].entier));
+                        scanf(" %d", &(pile[tmp.entier].entier));
                         break;
                     case T_REEL:
-                        scanf("%f", &(pile[tmp.entier].reel));
+                        scanf(" %f", &(pile[tmp.entier].reel));
                         break;
                     case T_BOOLEEN:
-                        scanf("%d", &(pile[tmp.entier].booleen));
+                        scanf(" %d", &(pile[tmp.entier].booleen));
                         break;
                     case T_CARA:
-                        scanf("%c", &(pile[tmp.entier].caractere));
+                        scanf(" %c", &(pile[tmp.entier].caractere));
                         break;
                     default:
                         printf("Erreur dans un argument lors d'une lecture\n");
