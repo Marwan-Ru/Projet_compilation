@@ -50,8 +50,8 @@ valTabType: ENTIER { tt_ajout($1); } valTabType
 		  |
 		  ;
 
-valTabReg: ENTIER PV ENTIER PV ENTIER { longTab = 0; } arbre valTabReg
-			{ tr_ajout_reg ($1, $3, $5, $7); }
+valTabReg: ENTIER PV ENTIER PV ENTIER PV { longTab = 0; } arbre valTabReg
+			{ tr_ajout_reg ($1, $3, $5, $8); }
 		 |
 		 ;
 

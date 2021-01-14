@@ -118,7 +118,7 @@ void tr_ecrireFichier (FILE *f) {
   int i, tot = tr_taille();
 
   for (i = 0; i < tot; i++) {
-    fprintf(f, "%d;%d;%d\n", i, tablereg[i].taille_zone, tablereg[i].niv_imbric);
+    fprintf(f, "%d;%d;%d;", i, tablereg[i].taille_zone, tablereg[i].niv_imbric);
 
     /* arbre */
     aa_ecrireFichier(f, tablereg[i].tree);
