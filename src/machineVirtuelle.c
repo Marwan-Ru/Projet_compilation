@@ -276,7 +276,7 @@ types_pile evaluer(arbre a, int valeur) {
     types_pile ret, tpa, tpb; /*tpa et tpb pour les opérations booléenes*/
     /*initialisation de la structure retournée*/
     ret.type = T_ERR; /*erreur*/
-    int emplacement;
+    int emplacement, posStruct;
 
     switch (a->id) {
         case A_IDF:
@@ -286,7 +286,7 @@ types_pile evaluer(arbre a, int valeur) {
             ret.type = T_INT; /*Permet de savoir qu'on a initialisée un entier et pas une autre variable*/
             break;
         case A_CSTE_REELE:
-            ret.reele = atof(tl_getLex(aa_valeur(a)));
+            ret.reel = atof(tl_getLex(aa_valeur(a)));
             ret.type = T_FLOAT; /*idem*/
             break;
         case A_CSTE_BOOL:
@@ -662,17 +662,19 @@ types_pile evaluer(arbre a, int valeur) {
             int i;
             arbre tmp;
 
-            if(aa_fils(a)->id != A_IDF){
+            if(aa_id(aa_fils(a)) != A_IDF){
                 fprintf(stderr, "Un A_CHAMP n'as pas pour fils un IDF dans l'arbre\n");
                 exit(EXIT_FAILURE);
             }
-            if(td_getdecl(aa_fils(a)->valeur).NATURE != TYPE_S){
+            if(td_getdecl(aa_num_decl(aa_fils(a))).NATURE != TYPE_S && valeur < 2){
                 fprintf(stderr, "Premier IDF d'un A_CHAMP n'es pas déclaré en tant que structure\n");
                 exit(EXIT_FAILURE);
             }
             /*On est sur que l'on accede a une structure maintenant, on peut utiliser la tables des types*/
             /*On utilise le champs index de la table des declarations*/
-            ret = get_pile(aa_fils(a)->valeur);
+            if(valeur < 2){
+                ret.entier = get_pile(evaluer(aa_fils(a), 0).entier);
+            }else ret.entier = 0;
             tmp = aa_fils(a);
 
             /*On regarde ensuite le frère pour savoir a quel champ on accede*/
@@ -680,13 +682,31 @@ types_pile evaluer(arbre a, int valeur) {
                 fprintf(stderr, "Erreur aucun champs scpécifié lors de l'acces au champs d'une structure\n");
                 exit(EXIT_FAILURE);
             }
-            if(aa_frere(tmp)->id == A_IDF){
+            if(aa_id(aa_frere(tmp)) == A_IDF){
                 /*On cherche l'index du champs en le comparant avec le numero elx de l'idf*/
-                /*On utilise un for qui parcoure tout les champs de la structure, on utilise le champs
+                /*On utilise un for qui parcours tout les champs de la structure, on utilise le champs
                 index de l'idf qui nomme la variable qui contient la structure*/
-                int posStruct = td_getdecl(tmp->valeur).index;
+                if(valeur < 2){
+                    posStruct = td_getdecl(aa_num_decl(tmp)).index;
+                }else{
+                    posStruct = valeur - 2;
+                }
+                if(valeur > 2){
+                    for(i=0;i<tt_structNbChamps(posStruct);i++){
+                    /*Si le numLex correspond c'est qu'on accède a ce champs la*/
+                    if(tt_structNumLexChamp(posStruct, i) == aa_num_decl(tmp)) break;
+                    if(i == tt_structNbChamps(posStruct)-1){
+                        fprintf(stderr, "Erreur le champs spécifié lors de l'acces au champs d'une structure n'est pas correct\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    ret.entier += tt_structDeplacementChamp(posStruct, i);
+
+                    /*On recupere le posstruct de la structure que dois representer le truc i*/
+                    posStruct = td_getlastdecl(tt_structIndexChamp(posStruct, i)).index;
+                }
                 for(i=0;i<tt_structNbChamps(posStruct);i++){
-                    if(tt_structNumLexChamp(posStruct, i)) break;
+                    /*Si le numLex correspond c'est qu'on accède a ce champs la*/
+                    if(tt_structNumLexChamp(posStruct, i) == aa_num_decl(aa_frere(tmp))) break;
                     if(i == tt_structNbChamps(posStruct)-1){
                         fprintf(stderr, "Erreur le champs spécifié lors de l'acces au champs d'une structure n'est pas correct\n");
                         exit(EXIT_FAILURE);
@@ -694,7 +714,13 @@ types_pile evaluer(arbre a, int valeur) {
                 }
                 /*On connais maintenant le numero du champs et on peut recup le deplacement a l'interieur de la structure pour ce champs*/
                 ret.entier += tt_structDeplacementChamp(posStruct, i);
-            }else ret.entier += evaluer(aa_frere(tmp), 0);
+                }
+            }else if(aa_id(aa_frere(tmp)) == A_CHAMP) {
+                ret.entier += evaluer(aa_frere(tmp), 2+td_getdecl(aa_num_decl(tmp)).index).entier;
+            }else{
+                fprintf(stderr, "Erreur dans l'arbre, le frere du fils d'un champ m'est mi un champ ni un IDF\n");
+                exit(EXIT_FAILURE);
+            }
 
             /*Si c'est la valeur qu'on cherche on renvoie ce qui se trouve dans la pile a cet index la*/
             if(valeur == 1) ret = pile[ret.entier];
