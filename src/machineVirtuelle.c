@@ -384,6 +384,24 @@ types_pile evaluer(arbre a, int valeur) {
                 exit(EXIT_FAILURE);
             }
             tpa = evaluer(aa_fils(a), 1);
+            /*A_OP_MOINS peut être utilisé pour signifier un nombre négatif*/
+            if(aa_frere(aa_fils(a)) == aa_vide()){
+                if(tpa.type == T_ENTIER){
+                    ret.entier = -tpa.entier;
+                    ret.type = T_ENTIER;
+                }else if(tpa.type == T_REEL){
+                    ret.reel = -tpa.reel;
+                    ret.type = T_REEL;
+                }else if(tpa.type == T_CARA){
+                    ret.caractere = -tpa.caractere;
+                    ret.type = T_CARA;
+                }else{
+                    fprintf(stderr, "Erreur signe moins devant un bool\n");
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            }
+
             tpb = evaluer(aa_frere(aa_fils(a)), 1);
             if(tpa.type == T_ENTIER && tpb.type == T_ENTIER){
                 ret.entier = tpa.entier - tpb.entier;
