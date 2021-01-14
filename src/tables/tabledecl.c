@@ -105,7 +105,8 @@ decl td_getlastdecl(int numLex){
 
 /* Renvoie le numéro de déclaration de l'objet de nature n et de numéro lexicographique numLex
    ayant été déclaré dans la plus profonde région du contexte des régions englobante donné.
-   Renvoie -1 si rien a été trouvé */
+   Renvoie -1 si rien a été trouvé.
+   Auteur: Gustav Hubert */
 int td_assocNom (int numLex, enum nature n, pileEnt contexte) {
     int regMax = 0, regionUtilisation = sommet_pile(contexte);
     int declMax = -1;
