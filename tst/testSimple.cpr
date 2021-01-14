@@ -1,6 +1,0 @@
-program
-variable x : int ;
-begin
-    x <- 22;
-    print("TEST %d\n", x);
-end

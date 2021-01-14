@@ -208,8 +208,6 @@ void execute (arbre a) {
                             printf("L'argument pour l'affichage d'une chaîne de caractères dans %s est incorrect\n", tmpStr);
                             exit(EXIT_FAILURE);
                         } 
-                        printf("Oui oui baguette \n");
-                        printf("%s", tl_getLex(aa_valeur(a)));
                         continue;
                     }
 
@@ -305,9 +303,6 @@ types_pile evaluer(arbre a, int valeur) {
         case A_IDF:
             ret.entier = get_pile(aa_num_decl(a));
             ret.type = T_ENTIER;
-
-            aa_afficher(a);
-            printf("|%d,%d|\n", ret.entier, ret.type);
 
             if (td_getdecl(aa_num_decl(a)).NATURE == TYPE_T) {
                 /* Il s'agit d'un tableau */
@@ -837,7 +832,8 @@ int get_pile (int numdecl) {
         cs = NIS_utilisation-NIS_decl, 
         deplacement = champ.exec;
 
-    return pile[BC+cs].entier+deplacement;
+    if (NIS_utilisation == 0) return deplacement;
+    else return pile[BC+cs].entier+deplacement;
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
