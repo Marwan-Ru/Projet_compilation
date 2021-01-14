@@ -21,9 +21,10 @@ program
 
 begin
     j <- 0;
-    while j < 3 do
-        begin
-            print("Ekip :") ;
-            j <- j+1 ;
+    
+    do 
+        begin 
+            j <- j + -2;  
         end 
+    while j > -5
 end 
