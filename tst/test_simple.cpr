@@ -20,11 +20,11 @@ program
 
 
 begin
-    j <- 0;
+    i <- 0;
     
     do 
         begin 
-            j <- j + -2;  
+            i <- i + -2.5;  
         end 
-    while j > -5
+    while i > -5
 end 
