@@ -1,0 +1,26 @@
+program
+    variable n : int;
+    variable nbr1 : int;
+    variable nbr2 : int;
+    variable suivant : int;
+    variable i : int;
+
+begin
+    n <- 5;
+    nbr1 <- 0;
+    nr2 <- 1;
+    for i=0; i < n; i <- i+1 do
+    begin
+        if i <= 1 then
+            begin
+                suivant <- i;
+            end
+        else 
+            begin
+                suivant <- nbr1 + nbr2;
+                nbr1 <- nbr2;
+                nbr2 <- suivant;
+            end
+        printf("%d\n", suivant);
+    end
+end
