@@ -21,10 +21,16 @@ program
 
 begin
     j <- 0;
-    
     do 
         begin 
             j <- j + -2;  
         end 
     while j > -5
+    
+    i <- 1.0;
+    if i > 0.0 then
+    begin
+        i <- i + -1.0;
+        i <- i * 3.0;
+    end
 end 
