@@ -20,11 +20,17 @@ program
 
 
 begin
-    i <- 0;
-    
+    j <- 0;
     do 
         begin 
-            i <- i + -2.5;  
+            j <- j + -2;  
         end 
-    while i > -5
+    while j > -5
+    
+    i <- 1.0;
+    if i > 0.0 then
+    begin
+        i <- i + -1.0;
+        i <- i * 3.0;
+    end
 end 

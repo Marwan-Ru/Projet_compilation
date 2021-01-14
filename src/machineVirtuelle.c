@@ -329,8 +329,12 @@ types_pile evaluer(arbre a, int valeur) {
                 /* Multiplication par la taille du type de la table avant l'ajout */
                 deplacement *= td_getdecl(ret.type).exec;
                 ret.entier += deplacement;
+            }else if(td_getdecl(aa_num_decl(a)).NATURE == VARI || td_getdecl(aa_num_decl(a)).NATURE == PARAM){
+                ret.type = td_getdecl(aa_num_decl(a)).index;
             }
             
+            
+
             if (valeur == 1) ret = pile[ret.entier];
             break;
         case A_CSTE_ENT:
@@ -374,7 +378,7 @@ types_pile evaluer(arbre a, int valeur) {
                 ret.entier = tpa.entier + tpb.caractere;
                 ret.type = T_ENTIER;
             }else{/*On a fait une addition entre deux types incompatibles*/
-                fprintf(stderr, "Erreur addition entre deux types incompatibles\n");
+                fprintf(stderr, "Erreur addition entre deux types incompatibles %d %d\n", tpa.type, tpb.type);
                 exit(EXIT_FAILURE);
             }
             break;
