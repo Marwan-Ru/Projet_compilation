@@ -1,6 +1,6 @@
 program
 variable x : int ;
 begin
-    x <- 5;
-    print("%d", x);
+    x <- 22;
+    print("TEST %d\n", x);
 end
