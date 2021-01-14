@@ -13,8 +13,6 @@ int main () {
 
   tr_init();
 
-  tr_ajout_reg (0, r1, t1, &p1);
-  tr_ajout_reg (9, 4, 2, &p1);
   /*c1 = get_reg(10);*/
   /* printf("petit test : %d | %d \n", r1, t1); */
 
@@ -31,7 +29,6 @@ int main () {
   tr_ajout_taille(1, 3);
   tr_ajout_taille(2, 3);
   tr_ajout_taille(3, 1);
-  printf("\n somme taille : %d \n", somme_taille());
   tr_affiche ();
 
   /*reg_detruire ();*/

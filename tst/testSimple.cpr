@@ -1,0 +1,6 @@
+program
+variable x : int ;
+begin
+    x <- 5;
+    print("%d", x);
+end

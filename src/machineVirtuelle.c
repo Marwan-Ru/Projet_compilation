@@ -19,7 +19,8 @@ void execute (arbre a) {
     switch (a->id) {
         case A_LISTE:
             execute(aa_fils(a));
-            execute(aa_frere(aa_fils(a)));
+            if (aa_fils(a) != aa_vide() && aa_id(aa_fils(a)) != A_RETOURNER)
+                execute(aa_frere(aa_fils(a)));
             break;
         case A_OPAFF:
             w = evaluer(aa_fils(a), 0);

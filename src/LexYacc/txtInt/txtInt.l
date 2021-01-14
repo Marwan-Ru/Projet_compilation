@@ -16,7 +16,7 @@
 \|                                 { return (BARREVERT); }
 \_                                 { return (BARREHORI); }
 ([0]|-?[1-9][0-9]*)                { yylval.t_entier = atoi(yytext); return (ENTIER); }
-(\")?[a-zA-Z][a-zA-Z0-9]*(\")?     { yylval.t_chaine = strdup(yytext); return (TEXTE); }
 "---"                              { return (SEPARATEUR); }
+[^\-[:blank:]\n].*                 { yylval.t_chaine = strdup(yytext); return (TEXTE); }
 [[:blank:]\r\n]
 %%

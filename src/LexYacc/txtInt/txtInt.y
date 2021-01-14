@@ -36,7 +36,6 @@
 %token PV PO PF VIRG SEPARATEUR BARREVERT BARREHORI
 %token <t_entier> ENTIER 
 %token <t_chaine> TEXTE 
-%token <t_chaine> CHAINE 
 %type <t_arbre> arbre
 
 %%
@@ -80,10 +79,10 @@ int main(int argc, char *argv[]) {
 
 	if (argc > 1 && (strcmp(argv[1], "-debug") == 0 || strcmp(argv[1], "-d") == 0)) {
 		tl_afficher();
+		td_afficher();
 		tt_afficher();
 		tr_affiche();
 		tr_afficherArbres();
-		td_afficher();
 	}
 
 	execute (tr_get_reg(0).tree);
