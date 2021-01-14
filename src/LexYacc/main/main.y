@@ -12,7 +12,7 @@
 	extern int NIS;
 	extern int cmp_reg;
 	extern int taille;
-	int taille_prog, tmp, val[500], cmptVal, taille_decl, indice, decalage;
+	int taille_prog, tmp, val[500], cmptVal = 0, taille_decl, indice, decalage;
 	pileEnt p, p2; 
 	char *msgErr;
 
