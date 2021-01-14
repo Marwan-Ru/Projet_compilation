@@ -4,7 +4,7 @@ program
 
 
 begin
-    j <- 0;
+    j <- 3.14;
     do 
         begin 
             j <- j + -1;  
@@ -18,6 +18,6 @@ begin
         i <- i * 3.0;
     end
     
-    print("j = %d\n", j);
+    print("j = %f\n", j);
     print("i = %f\n", i);
 end 

@@ -1,6 +1,17 @@
-Projet de compilation
+Projet de compilation en L3 Informatique de Paul-Antoine Bernard, Ait-Addi Marwan et Gustav Hubert
 
-https://karczmarczuk.users.greyc.fr/TEACH/TAL/Analex.html
-CARACTERES SPECIAUX : $  \  ^  (  )  [  ]  {  }  <  >  +  -  *  /  |  ?  .  "  %
+Compilation: 
+    make
+    make txtInt
 
-https://www.gnu.org/software/bison/manual/html_node/index.html
+Génération du texte intermédiaire d'un fichier .cpr:
+    bin/main < tst/<fichier.cpr>
+
+Génération du texte intermédiaire d'un fichier .cpr et affichage des tables et arbres:
+    bin/main < tst/<fichier.cpr> -d
+
+Execution :
+    bin/txtInt < tmp/intermediaire.txt
+
+Execution avec affichage des tables et arbres :
+    bin/txtInt < tmp/intermediaire.txt -d

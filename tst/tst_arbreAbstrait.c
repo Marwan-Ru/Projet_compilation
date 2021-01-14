@@ -10,9 +10,9 @@ int main () {
           b = aa_vide(), 
           c = aa_vide();
 
-    a = aa_creerNoeud(A_OPAFF, -1);
-    b = aa_creerNoeud(A_IDF, 6); /* numlex */
-    c = aa_creerNoeud(A_CSTE_CAR, '2');
+    a = aa_creerNoeud(A_OPAFF, -1, -1);
+    b = aa_creerNoeud(A_IDF, 6, -1); /* numlex */
+    c = aa_creerNoeud(A_CSTE_CAR, '2', -1);
 
     aa_concatPereFrere(b, c);
     aa_concatPereFils(a, b);
