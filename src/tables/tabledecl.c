@@ -71,17 +71,9 @@ char * td_ajout(int numLex, int nature, int numregion, int index, int exec){
         /*Chainage dynamique = 1 sauf pour la region 0*/
         if(numregion != 0) decal++;
         
-        for(i=0;i<pos;i++){
-            if((tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) && tabledecl[i].numregion == numregion) 
+        for(i=0;i<T_TABLEDEBORD + T_TABLELEX - 1;i++){
+            if(tabledecl[i].NATURE == nature && tabledecl[i].numregion == numregion && i != pos) 
                 decal += td_getdecl(tabledecl[i].index).exec;
-        }
-        if(pos<T_TABLELEX){
-            i=T_TABLELEX;
-            while(tabledecl[i].NATURE != -1 && i < T_TABLEDEBORD + T_TABLELEX){
-                if((tabledecl[i].NATURE == PARAM || tabledecl[i].NATURE == VARI) && tabledecl[i].numregion == numregion) 
-                    decal += td_getdecl(tabledecl[i].index).exec;
-                i++;
-            }
         }
         tabledecl[pos].exec = decal;
     }else tabledecl[pos].exec = exec;
