@@ -13,7 +13,7 @@
 #define TRUE 1
 #define FALSE 0
 
-typedef enum { T_INT, T_FLOAT, T_BOOL, T_CHAR, T_ERR } Type;
+typedef enum { T_ENTIER, T_REEL, T_BOOLEEN, T_CARA, T_ERR } Type;
 
 /* pile */
 typedef struct{

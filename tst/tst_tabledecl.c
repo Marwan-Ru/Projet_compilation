@@ -11,12 +11,12 @@ int main(){
     tl_ajout("test3");
     tl_ajout("test4");
 
-    /* On va tester l'ajout dans a table de declaration */
-    td_ajout(TYPE_S, "test1", 1, 1, sizeof(int));
-    
-    td_ajout(TYPE_S, "test1", 1, 1, sizeof(int) * 2);
+    /* On va tester le calcul du decalage des variables dans la table de declaration */
+    td_ajout(tl_getLexNum("test1"), TYPE_S, 0, 0, 3);
+    td_ajout(tl_getLexNum("test1"), VARI, 0, 4, 0);
+    td_ajout(tl_getLexNum("test2"), VARI, 0, 4, 0);
 
-    td_affiche();
+    td_afficher();
 
     exit(0);
 }

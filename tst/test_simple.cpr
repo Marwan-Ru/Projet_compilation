@@ -1,0 +1,29 @@
+program
+    type date : struct
+        jour : int ;
+        mois : int ;
+        annee : int ;
+    endstruct ;
+
+    type personne : struct
+        numero : int ;
+        age : int ;
+        naissance : date ;
+    endstruct ;
+
+    type equipe : tab[1..3] of personne ;
+    variable p : personne ;
+    variable te : equipe ;
+    variable b : bool ;
+    variable i : float ;
+    variable j : int ;
+
+
+begin
+    j <- 0;
+    while j < 3 do
+        begin
+            print("Ekip :") ;
+            j <- j+1 ;
+        end 
+end 

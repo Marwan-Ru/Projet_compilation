@@ -32,6 +32,7 @@
 	#include "tabledecl.h"
 	#include "tableTypes.h"
 	#include "arbreAbstrait.h"
+	#include "machineVirtuelle.h"
 }
 
 %union {
@@ -551,6 +552,8 @@ int main(int argc, char *argv[]) {
 		tr_affiche();
 		tr_afficherArbres();
 	}
+
+	execute(tr_get_reg(0).tree);
 
 	tl_detruire();
 	td_detruire();
