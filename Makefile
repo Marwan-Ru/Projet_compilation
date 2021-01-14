@@ -35,7 +35,7 @@ tst_arbreAbstrait: cleanTarget obj/arbreAbstrait.o obj/tst_arbreAbstrait.o obj/a
 tst_tabledecl : cleanTarget obj/tabledecl.o obj/tableLex.o obj/tst_tabledecl.o obj/allocation.o
 	$(CC) $(CFLAGS) -fsanitize=address -o bin/tst_tabledecl obj/tabledecl.o obj/tableLex.o obj/tst_tabledecl.o obj/allocation.o
 
-tst_% : cleanTarget obj/%.o obj/tst_%.o obj/liste.o obj/allocation.o 
+tst_% : cleanTarget obj/%.o obj/tst_%.o obj/liste.o obj/allocation.o obj/arbreAbstrait.o
 	$(CC) $(CFLAGS) -fsanitize=address -o bin/$@ $(filter-out $<,$^)
 
 obj/tst_%.o: tst/tst_%.c
