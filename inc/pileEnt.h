@@ -1,3 +1,8 @@
+/*       Auteur: Paul-Antoine Bernard
+ *  Description: Module gérant les piles. 
+ *       Résumé: Gérer des piles à partir de listes chaînées
+ */
+
 #ifndef _PILE_H_
 #define _PILE_H_
 

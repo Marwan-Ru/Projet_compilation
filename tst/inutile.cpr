@@ -37,7 +37,7 @@ program
                     begin
                         j <- j+1 ;
                         print("\nNumero de securite sociale :") ;
-                        return(te[i,j].numero) ;
+                        return(te[i,j].naissance.annee) ;
                     end 
                     T <- j ;
                 end 

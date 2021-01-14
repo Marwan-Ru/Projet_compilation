@@ -1,3 +1,9 @@
+/*       Auteur: Ait Addi Marwan
+ *  Description: Module gérant la table des declaration. 
+ *  Utilisation: td_init() permet l'initialisation de la table
+ *       Résumé: Contient les fonctions d'ajout de declaration et d'acces a la table
+ */
+
 #ifndef TABLEDECL
 #define TABLEDECL
 

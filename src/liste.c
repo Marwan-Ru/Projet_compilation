@@ -1,3 +1,8 @@
+/*       Auteur: Paul-Antoine Bernard
+ *  Description: Module gérant les listes. 
+ *       Résumé: Gérer des listes chaînées
+ */
+
 #include "liste.h"
 
 liste liste_vide()

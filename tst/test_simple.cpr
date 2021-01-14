@@ -1,6 +1,13 @@
 program
+    type date : struct
+        jour : int ;
+        mois : int ;
+        annee : int ;
+    endstruct ;
+    
     variable i : float ;
     variable j : int ;
+    variable d : date;
 
 
 begin
@@ -20,4 +27,5 @@ begin
     
     print("j = %f\n", j);
     print("i = %f\n", i);
+    print("d.jour = %d\n");
 end 

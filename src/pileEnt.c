@@ -1,3 +1,8 @@
+/*       Auteur: Paul-Antoine Bernard
+ *  Description: Module gérant les piles. 
+ *       Résumé: Gérer des piles à partir de listes chaînées
+ */
+
 #include <stdio.h>
 #include "pileEnt.h"
 
