@@ -552,8 +552,6 @@ int main(int argc, char *argv[]) {
 		tr_afficherArbres();
 	}
 
-	execute(tr_get_reg(0).tree);
-
 	tl_detruire();
 	td_detruire();
 	fclose(f);
