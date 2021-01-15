@@ -2,13 +2,13 @@
 
 types_pile pile[TAILLEPILE];
 types_pile buffer[TAILLEPILE];
-int NIS_utilisation = 0, BC = 0, current = 0, tPile = 20;
+int NIS_utilisation = 0, BC = 0, current = 0, tPile = 20, regInitialise = 0;
 region reg;
 
 /* Execute les instructions se trouvant dans l'arbre a */
 void execute (arbre a) {
     int i, newBC, newNIS, oldNIS, escape;
-    region newReg, oldReg;
+    region oldReg;
     decl declaration;
     types_pile v, w, x, tmp;
     arbre tmpArbre;
@@ -35,15 +35,20 @@ void execute (arbre a) {
             set_pile(w.entier, v);
             break;
         case A_APPEL_FONC:
+            /* Initialisation */
+            if (!regInitialise) {
+                oldReg = tr_get_reg(0);
+                regInitialise = 1;
+            } else oldReg = reg;
+
             declaration = td_getdecl(aa_num_decl(a));
-            newReg = tr_get_reg(declaration.exec);
-            oldReg = reg;
-            newBC = BC + reg.taille_zone;
-            newNIS = newReg.niv_imbric;
+            newBC = BC + oldReg.taille_zone;
+            reg = tr_get_reg(declaration.exec);
+            newNIS = reg.niv_imbric;
             oldNIS = NIS_utilisation;
 
             /* Sert seulement à l'affichage de la pile */
-            if (tPile < newBC + newReg.taille_zone) tPile = newBC + newReg.taille_zone;
+            if (tPile < newBC + reg.taille_zone) tPile = newBC + reg.taille_zone;
 
             /* Vérification */
             if (newNIS < 0 || newNIS > NIS_utilisation+1) {
@@ -74,15 +79,13 @@ void execute (arbre a) {
 
             BC = newBC;
             NIS_utilisation = newNIS;
-            reg = newReg;
-
+            
             /* Arguments */
             tmpArbre = aa_fils(a);
             if (declaration.NATURE == FUNCT) {
                 for (i = 0; i < tt_foncNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        printf("test1\n");
                         tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_foncTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la fonction '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
@@ -99,7 +102,6 @@ void execute (arbre a) {
                 for (i = 0; i < tt_procNbParam(declaration.index); i++) {
                     if (aa_fils(tmpArbre) != aa_vide()) {
                         tmpArbre = aa_fils(tmpArbre);
-                        printf("test2\n");
                         tmp = evaluer(tmpArbre, 1);
                         if (tmp.type != tt_procTypeParam(declaration.index, i)) {
                             printf("L'argument %d d'un appel à la procédure '%s' à un type invalide!\n", i, tl_getLex(aa_valeur(a)));
@@ -115,8 +117,6 @@ void execute (arbre a) {
             }
 
             /* Execution du corps */
-            printf("reg.tree :\n");
-            aa_afficher(reg.tree);
             execute(reg.tree);
 
             /* Décrementation de l'indice */
@@ -126,6 +126,7 @@ void execute (arbre a) {
             BC = pile[BC].entier;
             NIS_utilisation = oldNIS;
             reg = oldReg;
+            break;
         case A_IF_THEN_ELSE: 
             x = evaluer(aa_fils(a), 1);
             if(x.type != T_BOOLEEN){
@@ -832,8 +833,9 @@ int get_pile (int numdecl) {
         cs = NIS_utilisation-NIS_decl, 
         deplacement = champ.exec;
 
-    if (NIS_utilisation == 0) return deplacement;
-    else return pile[BC+cs].entier+deplacement;
+    if (NIS_utilisation == 0) return deplacement; /* Variable globale */
+    else if (cs == 0) return BC+deplacement; /* Variable locale */
+    else return pile[BC+cs].entier+deplacement; /* Variable d'une région englobante */
 }
 
 /* Place la valeur v dans l'emplacement mémoire i de la pile */
@@ -849,8 +851,8 @@ void set_pile (int i, types_pile v) {
 void afficherPile() {
     int i;
 
-    printf("Pile (%d): ", tPile);
-    for (i =0; i < tPile; i++) {
+    printf("Pile (%d):      BC=%d NIS=%d\n", tPile, BC, NIS_utilisation);
+    for (i=0; i < tPile; i++) {
         switch (pile[i].type) {
             case T_ENTIER:
                 printf("%d, ", pile[i].entier);

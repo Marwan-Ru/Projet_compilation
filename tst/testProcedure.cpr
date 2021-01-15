@@ -1,0 +1,16 @@
+program
+    variable ch1 : int;
+    variable ch3 : int;
+
+    proc i 
+        variable T : int ;
+    begin
+        T <- ch3 + 5;
+        ch1 <- T;
+    end ;
+
+begin
+ch3 <- 22;
+i() ;
+print("%d\n", ch1);
+end 
